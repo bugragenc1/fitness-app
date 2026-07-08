@@ -58,7 +58,11 @@ LANG = {
         "calories": "Calories (kcal)",
         "cardio_details": "🏃‍♂️ **Cardio Details**",
         "save_cardio": "Save Cardio",
-        "success_cardio": "cardio session successfully saved!"
+        "success_cardio": "cardio session successfully saved!",
+        "delete_exercise_day": "🗑️ Delete Entire Exercise",
+        "confirm_delete_exercise_day": "Are you sure you want to delete ALL sets of **{ex}** for this date? This cannot be undone.",
+        "yes_delete": "✅ Yes, Delete",
+        "success_delete_exercise_day": "and all its sets for this date were deleted."
     },
     "Türkçe": {
         "groups_title": "🏋️‍♂️ Antrenman Grupları",
@@ -113,7 +117,11 @@ LANG = {
         "calories": "Kalori (kcal)",
         "cardio_details": "🏃‍♂️ **Kardiyo Detayları**",
         "save_cardio": "Kardiyoyu Kaydet",
-        "success_cardio": "kardiyo kaydı başarıyla eklendi!"
+        "success_cardio": "kardiyo kaydı başarıyla eklendi!",
+        "delete_exercise_day": "🗑️ Hareketi Tamamen Sil",
+        "confirm_delete_exercise_day": "Bu tarihteki **{ex}** hareketinin TÜM setlerini silmek istediğinize emin misiniz? Bu işlem geri alınamaz.",
+        "yes_delete": "✅ Evet, Sil",
+        "success_delete_exercise_day": "hareketinin bu tarihteki tüm setleri silindi."
     }
 }
 
@@ -132,6 +140,7 @@ if 'onceki_hareket' not in st.session_state: st.session_state.onceki_hareket = "
 if 'sablon_w' not in st.session_state: st.session_state.sablon_w = 0.0
 if 'sablon_r' not in st.session_state: st.session_state.sablon_r = 10
 if 'grafik_gorunur' not in st.session_state: st.session_state.grafik_gorunur = None  # YENİ: hangi hareketin grafiği açık
+if 'silme_onay_hareket' not in st.session_state: st.session_state.silme_onay_hareket = None  # YENİ: onay bekleyen toplu silme
 
 # --- GOOGLE SHEETS BAĞLANTISI ---
 conn = st.connection("gsheets", type=GSheetsConnection)
@@ -457,20 +466,51 @@ elif st.session_state.sayfa == 'kisi_sayfasi':
             
             with st.expander(expander_baslik):
 
-                # --- YENİ: Grafik göster/gizle butonu (sadece ağırlık hareketlerinde) ---
+                # --- YENİ: Grafik göster/gizle ve hareketi komple silme butonları ---
+                hareket_silme_anahtari = f"{hareket}_{secili_tarih}"
+
                 if mekanik_kontrol != "Kardiyo":
-                    if st.button(f"📈 {t['progress_chart']}", key=f"grafik_btn_{hareket}_{secili_tarih}", use_container_width=True):
+                    c_grafik, c_sil_hareket = st.columns(2)
+                else:
+                    c_sil_hareket = st.container()
+
+                if mekanik_kontrol != "Kardiyo":
+                    with c_grafik:
+                        if st.button(f"📈 {t['progress_chart']}", key=f"grafik_btn_{hareket}_{secili_tarih}", use_container_width=True):
+                            if st.session_state.grafik_gorunur == hareket:
+                                st.session_state.grafik_gorunur = None
+                            else:
+                                st.session_state.grafik_gorunur = hareket
+                            # Not: st.rerun() burada kasıtlı olarak kaldırıldı.
+                            # st.button zaten tıklamada otomatik rerun tetikliyor;
+                            # ek çağrı sayfayı iki kere baştan çalıştırıp gecikme yaratıyordu.
+
+                with c_sil_hareket:
+                    if st.button(t["delete_exercise_day"], key=f"sil_hareket_btn_{hareket_silme_anahtari}", use_container_width=True):
+                        if st.session_state.silme_onay_hareket == hareket_silme_anahtari:
+                            st.session_state.silme_onay_hareket = None
+                        else:
+                            st.session_state.silme_onay_hareket = hareket_silme_anahtari
+
+                # Onay kutusu: kullanıcı gerçekten silmek istediğini teyit etmeden hiçbir şey silinmez
+                if st.session_state.silme_onay_hareket == hareket_silme_anahtari:
+                    st.warning(t["confirm_delete_exercise_day"].format(ex=hareket))
+                    c_onay, c_vazgec = st.columns(2)
+                    if c_onay.button(t["yes_delete"], key=f"onay_sil_{hareket_silme_anahtari}", type="primary", use_container_width=True):
+                        df_antrenmanlar = df_antrenmanlar.drop(hareket_setleri.index)
+                        conn.update(worksheet="Antrenmanlar", data=df_antrenmanlar)
+                        st.cache_data.clear()
+                        st.session_state.silme_onay_hareket = None
                         if st.session_state.grafik_gorunur == hareket:
                             st.session_state.grafik_gorunur = None
-                        else:
-                            st.session_state.grafik_gorunur = hareket
-                        # Not: st.rerun() burada kasıtlı olarak kaldırıldı.
-                        # st.button zaten tıklamada otomatik rerun tetikliyor;
-                        # ek çağrı sayfayı iki kere baştan çalıştırıp gecikme yaratıyordu.
+                        st.success(f"**{hareket}** {t['success_delete_exercise_day']}")
+                        st.rerun()
+                    if c_vazgec.button(t["cancel"], key=f"vazgec_sil_{hareket_silme_anahtari}", use_container_width=True):
+                        st.session_state.silme_onay_hareket = None
 
-                    if st.session_state.grafik_gorunur == hareket:
-                        grafik_ciz(hareket)
-                        st.divider()
+                if mekanik_kontrol != "Kardiyo" and st.session_state.grafik_gorunur == hareket:
+                    grafik_ciz(hareket)
+                    st.divider()
 
                 for idx, row in hareket_setleri.iterrows():
                     
