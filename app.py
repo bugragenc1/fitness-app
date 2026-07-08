@@ -106,8 +106,6 @@ elif st.session_state.sayfa == 'grup_sayfasi':
 # --- SAYFA 3: KİŞİ DETAYI VE HAREKET EKLEME ---
 elif st.session_state.sayfa == 'kisi_sayfasi':
     df_antrenmanlar = veri_getir("Antrenmanlar", ["Tarih", "Grup", "Kullanıcı", "Kas Grubu", "Hareket", "Set", "Ağırlık", "Tekrar", "Mekanik"])
-    
-    # Hareketleri artık CSV'den değil, Google Sheets'ten okuyoruz
     df_hareketler = veri_getir("Hareketler", ["Kas Grubu", "Hareket Tipi", "Mekanik"])
     
     st.title(f"👤 {st.session_state.secili_kisi} - Günlük")
@@ -121,12 +119,10 @@ elif st.session_state.sayfa == 'kisi_sayfasi':
     
     col1, col2 = st.columns(2)
     with col1:
-        # Benzersiz kas gruplarını listele
         mevcut_kas_gruplari = df_hareketler['Kas Grubu'].unique() if not df_hareketler.empty else ["Chest", "Back", "Shoulder", "Biceps", "Triceps", "Legs", "Glutes", "Calves", "Abs", "Forearm", "Neck", "Cardio"]
         secili_kas = st.selectbox("Kas Grubu", mevcut_kas_gruplari)
     with col2:
         filtrelenmis_df = df_hareketler[df_hareketler['Kas Grubu'] == secili_kas]
-        # Eğer henüz o kas grubunda hareket yoksa boş liste döndür
         hareket_listesi = filtrelenmis_df['Hareket Tipi'].unique() if not filtrelenmis_df.empty else []
         secili_hareket = st.selectbox("Hareket", hareket_listesi)
 
@@ -154,7 +150,6 @@ elif st.session_state.sayfa == 'kisi_sayfasi':
                 if key.startswith("w_new_") or key.startswith("r_new_"):
                     del st.session_state[key]
 
-    # --- VERİTABANINA YENİ HAREKET EKLEME PANELİ ---
     with st.expander("➕ Listede Olmayan Yeni Bir Hareket Ekle"):
         st.write("Veritabanına kalıcı olarak yeni bir hareket ekleyebilirsiniz.")
         c_kas_yeni, c_har_yeni, c_mek_yeni = st.columns(3)
@@ -244,6 +239,7 @@ elif st.session_state.sayfa == 'kisi_sayfasi':
 
     st.divider()
     
+    # --- GÜNLÜK ANTRENMAN LİSTESİ (GRUPLANDIRILMIŞ GÖRÜNÜM) ---
     st.subheader(f"📋 {secili_tarih.strftime('%d.%m.%Y')} Antrenmanı")
     
     gunluk_gecmis = df_antrenmanlar[
@@ -253,37 +249,56 @@ elif st.session_state.sayfa == 'kisi_sayfasi':
     ]
     
     if not gunluk_gecmis.empty:
-        for idx, row in gunluk_gecmis.iterrows():
-            if st.session_state.duzenlenen_idx == idx:
-                st.write(f"**{row['Hareket']} - Set {row['Set']} Düzenleniyor**")
-                d1, d2, d3, d4 = st.columns(4)
-                yeni_agirlik = d1.number_input("Ağırlık", value=float(row['Ağırlık']), step=2.5, key=f"edit_w_{idx}")
-                yeni_tekrar = d2.number_input("Tekrar", value=int(row['Tekrar']), step=1, key=f"edit_r_{idx}")
+        # Hareketlere göre benzersiz bir liste oluştur
+        yapilan_hareketler = gunluk_gecmis['Hareket'].unique()
+        
+        for hareket in yapilan_hareketler:
+            # Sadece bu harekete ait setleri çek ve set numarasına göre sırala
+            hareket_setleri = gunluk_gecmis[gunluk_gecmis['Hareket'] == hareket].sort_values(by="Set")
+            toplam_set = len(hareket_setleri)
+            
+            # Başlık için özet metni oluştur (Örn: 80kgx10 | 82.5kgx8 | 85kgx6)
+            ozet_listesi = [f"{row['Ağırlık']}x{row['Tekrar']}" for _, row in hareket_setleri.iterrows()]
+            ozet_metni = " | ".join(ozet_listesi)
+            
+            # Expander (Genişleyebilir Panel) Oluştur
+            with st.expander(f"💪 **{hareket}** ({toplam_set} Set) 👉 {ozet_metni}"):
                 
-                if d3.button("💾 Kaydet", key=f"save_{idx}"):
-                    df_antrenmanlar.at[idx, 'Ağırlık'] = yeni_agirlik
-                    df_antrenmanlar.at[idx, 'Tekrar'] = yeni_tekrar
-                    conn.update(worksheet="Antrenmanlar", data=df_antrenmanlar)
-                    st.session_state.duzenlenen_idx = None
-                    st.cache_data.clear()
-                    st.rerun()
+                # Panel içindeki her bir seti listele
+                for idx, row in hareket_setleri.iterrows():
+                    # Düzenleme modu
+                    if st.session_state.duzenlenen_idx == idx:
+                        st.write(f"**Set {row['Set']} Düzenleniyor**")
+                        d1, d2, d3, d4 = st.columns(4)
+                        yeni_agirlik = d1.number_input("Ağırlık", value=float(row['Ağırlık']), step=2.5, key=f"edit_w_{idx}")
+                        yeni_tekrar = d2.number_input("Tekrar", value=int(row['Tekrar']), step=1, key=f"edit_r_{idx}")
+                        
+                        if d3.button("💾 Kaydet", key=f"save_{idx}"):
+                            df_antrenmanlar.at[idx, 'Ağırlık'] = yeni_agirlik
+                            df_antrenmanlar.at[idx, 'Tekrar'] = yeni_tekrar
+                            conn.update(worksheet="Antrenmanlar", data=df_antrenmanlar)
+                            st.session_state.duzenlenen_idx = None
+                            st.cache_data.clear()
+                            st.rerun()
+                            
+                        if d4.button("İptal", key=f"cancel_{idx}"):
+                            st.session_state.duzenlenen_idx = None
+                            st.rerun()
                     
-                if d4.button("İptal", key=f"cancel_{idx}"):
-                    st.session_state.duzenlenen_idx = None
-                    st.rerun()
-            else:
-                col_metin, col_edit, col_sil = st.columns([5, 1, 1])
-                with col_metin:
-                    st.write(f"💪 **{row['Hareket']}** (Set {row['Set']}) | {row['Ağırlık']}kg x {row['Tekrar']} tekrar")
-                with col_edit:
-                    if st.button("✏️", key=f"edit_btn_{idx}"):
-                        st.session_state.duzenlenen_idx = idx
-                        st.rerun()
-                with col_sil:
-                    if st.button("❌", key=f"sil_btn_{idx}"):
-                        df_antrenmanlar = df_antrenmanlar.drop(idx)
-                        conn.update(worksheet="Antrenmanlar", data=df_antrenmanlar)
-                        st.cache_data.clear()
-                        st.rerun()
+                    # Normal görünüm (Panel içi okuma/silme)
+                    else:
+                        col_metin, col_edit, col_sil = st.columns([5, 1, 1])
+                        with col_metin:
+                            st.write(f"Set {row['Set']}: **{row['Ağırlık']}kg** x {row['Tekrar']} tekrar")
+                        with col_edit:
+                            if st.button("✏️", key=f"edit_btn_{idx}"):
+                                st.session_state.duzenlenen_idx = idx
+                                st.rerun()
+                        with col_sil:
+                            if st.button("❌", key=f"sil_btn_{idx}"):
+                                df_antrenmanlar = df_antrenmanlar.drop(idx)
+                                conn.update(worksheet="Antrenmanlar", data=df_antrenmanlar)
+                                st.cache_data.clear()
+                                st.rerun()
     else:
         st.info("Bu tarihte henüz bir antrenman kaydı yok.")
