@@ -3,10 +3,10 @@ from streamlit_gsheets import GSheetsConnection
 import pandas as pd
 from datetime import date
 
-# Sayfa Yapılandırması
+# --- SAYFA YAPILANDIRMASI ---
 st.set_page_config(page_title="Antrenman Günlüğü", page_icon="💪", layout="centered")
 
-# Oturum (Session State) Değişkenlerini Başlat
+# --- OTURUM (SESSION STATE) DEĞİŞKENLERİNİ BAŞLAT ---
 if 'sayfa' not in st.session_state:
     st.session_state.sayfa = 'ana_sayfa'
 if 'secili_grup' not in st.session_state:
@@ -14,13 +14,14 @@ if 'secili_grup' not in st.session_state:
 if 'secili_kisi' not in st.session_state:
     st.session_state.secili_kisi = None
 
-# Google Sheets Bağlantısı
+# --- GOOGLE SHEETS BAĞLANTISI ---
 conn = st.connection("gsheets", type=GSheetsConnection)
 
 # --- VERİ OKUMA FONKSİYONLARI ---
 def veri_getir(sekme_adi, kolonlar):
     try:
-        df = conn.read(worksheet=sekme_adi, ttl=0)
+        # ttl=5 ile veriyi 5 saniye önbelleğe alıp API kota (rate limit) sorununu çözüyoruz
+        df = conn.read(worksheet=sekme_adi, ttl=5)
         if df.empty:
             return pd.DataFrame(columns=kolonlar)
         return df.dropna(how='all')
@@ -30,13 +31,18 @@ def veri_getir(sekme_adi, kolonlar):
 df_gruplar = veri_getir("Gruplar", ["Grup Adı"])
 df_kullanicilar = veri_getir("Kullanicilar", ["Grup Adı", "Kullanıcı Adı"])
 df_antrenmanlar = veri_getir("Antrenmanlar", ["Tarih", "Grup", "Kullanıcı", "Kas Grubu", "Hareket", "Ağırlık", "Tekrar", "RPE"])
-df_hareketler = pd.read_csv("hareketler.csv")
+
+# Sabit hareket listesini önbelleğe alarak okuma hızını artırıyoruz
+@st.cache_data
+def hareketleri_getir():
+    return pd.read_csv("hareketler.csv")
+
+df_hareketler = hareketleri_getir()
 
 # --- SAYFA 1: ANA SAYFA (GRUPLAR) ---
 if st.session_state.sayfa == 'ana_sayfa':
     st.title("🏋️‍♂️ Antrenman Grupları")
     
-    # Mevcut Grupları Listele
     st.subheader("Mevcut Gruplar")
     if not df_gruplar.empty:
         for index, row in df_gruplar.iterrows():
@@ -56,7 +62,11 @@ if st.session_state.sayfa == 'ana_sayfa':
         if yeni_grup:
             yeni_satir = pd.DataFrame([{"Grup Adı": yeni_grup}])
             guncel_gruplar = pd.concat([df_gruplar, yeni_satir], ignore_index=True)
+            
+            # Veriyi yaz ve önbelleği temizle
             conn.update(worksheet="Gruplar", data=guncel_gruplar)
+            st.cache_data.clear() 
+            
             st.success(f"{yeni_grup} başarıyla oluşturuldu!")
             st.rerun()
 
@@ -89,7 +99,11 @@ elif st.session_state.sayfa == 'grup_sayfasi':
         if yeni_kisi:
             yeni_satir = pd.DataFrame([{"Grup Adı": st.session_state.secili_grup, "Kullanıcı Adı": yeni_kisi}])
             guncel_kullanicilar = pd.concat([df_kullanicilar, yeni_satir], ignore_index=True)
+            
+            # Veriyi yaz ve önbelleği temizle
             conn.update(worksheet="Kullanicilar", data=guncel_kullanicilar)
+            st.cache_data.clear()
+            
             st.success(f"{yeni_kisi} gruba eklendi!")
             st.rerun()
 
@@ -103,7 +117,6 @@ elif st.session_state.sayfa == 'kisi_sayfasi':
         
     st.subheader("Yeni Set Ekle")
     
-    # Takvimden Tarih Seçimi
     secili_tarih = st.date_input("Antrenman Tarihi", value=date.today())
     
     col1, col2 = st.columns(2)
@@ -134,13 +147,16 @@ elif st.session_state.sayfa == 'kisi_sayfasi':
         }])
         
         guncel_antrenmanlar = pd.concat([df_antrenmanlar, yeni_satir], ignore_index=True)
+        
+        # Veriyi yaz ve önbelleği temizle
         conn.update(worksheet="Antrenmanlar", data=guncel_antrenmanlar)
+        st.cache_data.clear()
+        
         st.success("Set başarıyla buluta kaydedildi!")
         st.rerun()
 
     st.divider()
     
-    # Kişiye Özel Geçmiş
     st.subheader("📋 Kişisel Antrenman Geçmişi")
     kisisel_gecmis = df_antrenmanlar[
         (df_antrenmanlar['Grup'] == st.session_state.secili_grup) & 
@@ -148,6 +164,10 @@ elif st.session_state.sayfa == 'kisi_sayfasi':
     ]
     
     if not kisisel_gecmis.empty:
-        st.dataframe(kisisel_gecmis.sort_values(by="Tarih", ascending=False).drop(columns=["Grup", "Kullanıcı"]), use_container_width=True)
+        st.dataframe(
+            kisisel_gecmis.sort_values(by="Tarih", ascending=False).drop(columns=["Grup", "Kullanıcı"]),
+            use_container_width=True,
+            hide_index=True
+        )
     else:
         st.info("Henüz bu kişiye ait bir antrenman kaydı yok.")
