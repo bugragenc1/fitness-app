@@ -251,6 +251,9 @@ elif st.session_state.sayfa == 'kisi_sayfasi':
             gecmis_tum_setler['Tarih'] = pd.to_datetime(gecmis_tum_setler['Tarih'])
             grafik_verisi = gecmis_tum_setler.groupby('Tarih')['Ağırlık'].max().reset_index()
             grafik_verisi = grafik_verisi.sort_values(by='Tarih')
+            # Tarihi saat bilgisi olmayan bir metne çeviriyoruz (örn. "09/07/2026"),
+            # aksi halde grafik ekseni tarihi "zaman" tipi sanıp saat bazlı etiketler gösteriyordu.
+            grafik_verisi['Tarih'] = grafik_verisi['Tarih'].dt.strftime('%d/%m/%Y')
             grafik_verisi.set_index('Tarih', inplace=True)
             grafik_verisi['Ağırlık'] = grafik_verisi['Ağırlık'].astype(float)
             st.line_chart(grafik_verisi['Ağırlık'])
