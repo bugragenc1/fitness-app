@@ -117,17 +117,9 @@ elif st.session_state.sayfa == 'kisi_sayfasi':
         secili_hareket = st.selectbox("Hareket", filtrelenmis_df['Hareket Tipi'].unique())
 
     mekanik_degeri = filtrelenmis_df[filtrelenmis_df['Hareket Tipi'] == secili_hareket]['Mekanik'].values[0]
+    st.info(f"Mekanik: **{mekanik_degeri}**")
 
-    # --- OTOMATİK SET SAYISI BULMA ---
-    bugunku_setler = df_antrenmanlar[
-        (df_antrenmanlar['Tarih'] == secili_tarih.strftime("%Y-%m-%d")) &
-        (df_antrenmanlar['Kullanıcı'] == st.session_state.secili_kisi) &
-        (df_antrenmanlar['Hareket'] == secili_hareket)
-    ]
-    siradaki_set = len(bugunku_setler) + 1
-    
     # --- GEÇMİŞ AĞIRLIĞI BULMA ---
-    # Eğer hareket değiştiyse geçmiş kayıtlara bakıp en son ağırlığı getir
     if st.session_state.onceki_hareket != secili_hareket:
         st.session_state.onceki_hareket = secili_hareket
         gecmis_hareket = df_antrenmanlar[
@@ -140,47 +132,64 @@ elif st.session_state.sayfa == 'kisi_sayfasi':
         else:
             st.session_state.hareket_agirlik = 0.0
 
-    # Üst Bilgi Paneli
-    c_info1, c_info2 = st.columns(2)
-    c_info1.info(f"Sıradaki Set: **Set {siradaki_set}**")
-    c_info2.info(f"Mekanik: **{mekanik_degeri}**")
-
-    # Hızlı Ağırlık Seçici Butonlar
-    st.write("Ağırlık Ayarla:")
-    btn1, btn2, btn3, btn4 = st.columns(4)
-    if btn1.button("+0 kg", use_container_width=True): pass
-    if btn2.button("+2.5 kg", use_container_width=True): st.session_state.hareket_agirlik += 2.5
-    if btn3.button("+5 kg", use_container_width=True): st.session_state.hareket_agirlik += 5.0
-    if btn4.button("+10 kg", use_container_width=True): st.session_state.hareket_agirlik += 10.0
-
-    # Ağırlık (Session state'e bağlı çalışır) ve Tekrar Girdisi
-    col3, col4 = st.columns(2)
-    with col3:
-        agirlik = st.number_input("Ağırlık (kg)", min_value=0.0, step=2.5, key="hareket_agirlik")
-    with col4:
-        tekrar = st.number_input("Tekrar", min_value=1, step=1)
-
-    if st.button("Seti Kaydet", type="primary"):
-        yeni_satir = pd.DataFrame([{
+    st.divider()
+    
+    # --- TOPLU SET EKLEME ALANI ---
+    st.write("📌 **Şablon Ayarları (Alttaki setlere otomatik dolar)**")
+    
+    set_sayisi = st.number_input("Kaç Set Yapılacak?", min_value=1, max_value=10, value=3, step=1)
+    
+    c_hedef1, c_hedef2 = st.columns(2)
+    hedef_agirlik = c_hedef1.number_input("Şablon Ağırlık (kg)", value=float(st.session_state.hareket_agirlik), step=2.5)
+    hedef_tekrar = c_hedef2.number_input("Şablon Tekrar", value=10, step=1)
+    
+    st.write("---")
+    st.write("📝 **Set Detaylarını Düzenle (İsteğe Bağlı)**")
+    
+    # Güncel kalınan seti bul (O gün o hareket için daha önce girilmiş set var mı?)
+    bugunku_setler = df_antrenmanlar[
+        (df_antrenmanlar['Tarih'] == secili_tarih.strftime("%Y-%m-%d")) &
+        (df_antrenmanlar['Kullanıcı'] == st.session_state.secili_kisi) &
+        (df_antrenmanlar['Hareket'] == secili_hareket)
+    ]
+    baslangic_seti = len(bugunku_setler) + 1
+    
+    eklenecek_setler = []
+    
+    # Seçilen set sayısı kadar form oluştur
+    for i in range(set_sayisi):
+        guncel_set_no = baslangic_seti + i
+        c_label, c_w, c_r = st.columns([1,2,2])
+        c_label.markdown(f"<div style='margin-top: 25px;'>**Set {guncel_set_no}**</div>", unsafe_allow_html=True)
+        
+        # Değerler şablondan besleniyor ama kullanıcı ezebiliyor
+        w = c_w.number_input("Ağırlık", value=float(hedef_agirlik), step=2.5, key=f"w_new_{guncel_set_no}")
+        r = c_r.number_input("Tekrar", value=int(hedef_tekrar), step=1, key=f"r_new_{guncel_set_no}")
+        
+        eklenecek_setler.append({
             "Tarih": secili_tarih.strftime("%Y-%m-%d"),
             "Grup": st.session_state.secili_grup,
             "Kullanıcı": st.session_state.secili_kisi,
             "Kas Grubu": secili_kas,
             "Hareket": secili_hareket,
-            "Set": siradaki_set,
-            "Ağırlık": agirlik,
-            "Tekrar": tekrar,
+            "Set": guncel_set_no,
+            "Ağırlık": w,
+            "Tekrar": r,
             "Mekanik": mekanik_degeri
-        }])
+        })
         
-        guncel_antrenmanlar = pd.concat([df_antrenmanlar, yeni_satir], ignore_index=True)
+    if st.button("Tüm Setleri Kaydet", type="primary", use_container_width=True):
+        yeni_satirlar = pd.DataFrame(eklenecek_setler)
+        guncel_antrenmanlar = pd.concat([df_antrenmanlar, yeni_satirlar], ignore_index=True)
+        
         conn.update(worksheet="Antrenmanlar", data=guncel_antrenmanlar)
         st.cache_data.clear()
-        st.success(f"{secili_hareket} Set {siradaki_set} kaydedildi!")
+        st.success(f"{secili_hareket} için {set_sayisi} set başarıyla kaydedildi!")
         st.rerun()
 
     st.divider()
     
+    # --- GÜNLÜK ANTRENMAN LİSTESİ ---
     st.subheader(f"📋 {secili_tarih.strftime('%d.%m.%Y')} Antrenmanı")
     
     gunluk_gecmis = df_antrenmanlar[
@@ -191,12 +200,11 @@ elif st.session_state.sayfa == 'kisi_sayfasi':
     
     if not gunluk_gecmis.empty:
         for idx, row in gunluk_gecmis.iterrows():
-            # EĞER DÜZENLEME MODUNDAYSAK
             if st.session_state.duzenlenen_idx == idx:
                 st.write(f"**{row['Hareket']} - Set {row['Set']} Düzenleniyor**")
                 d1, d2, d3, d4 = st.columns(4)
-                yeni_agirlik = d1.number_input("Ağırlık", value=float(row['Ağırlık']), step=2.5, key=f"w_{idx}")
-                yeni_tekrar = d2.number_input("Tekrar", value=int(row['Tekrar']), step=1, key=f"r_{idx}")
+                yeni_agirlik = d1.number_input("Ağırlık", value=float(row['Ağırlık']), step=2.5, key=f"edit_w_{idx}")
+                yeni_tekrar = d2.number_input("Tekrar", value=int(row['Tekrar']), step=1, key=f"edit_r_{idx}")
                 
                 if d3.button("💾 Kaydet", key=f"save_{idx}"):
                     df_antrenmanlar.at[idx, 'Ağırlık'] = yeni_agirlik
@@ -209,18 +217,16 @@ elif st.session_state.sayfa == 'kisi_sayfasi':
                 if d4.button("İptal", key=f"cancel_{idx}"):
                     st.session_state.duzenlenen_idx = None
                     st.rerun()
-            
-            # NORMAL GÖRÜNÜM
             else:
                 col_metin, col_edit, col_sil = st.columns([5, 1, 1])
                 with col_metin:
                     st.write(f"💪 **{row['Hareket']}** (Set {row['Set']}) | {row['Ağırlık']}kg x {row['Tekrar']} tekrar")
                 with col_edit:
-                    if st.button("✏️ Düzenle", key=f"edit_{idx}"):
+                    if st.button("✏️", key=f"edit_btn_{idx}"):
                         st.session_state.duzenlenen_idx = idx
                         st.rerun()
                 with col_sil:
-                    if st.button("❌ Sil", key=f"sil_{idx}"):
+                    if st.button("❌", key=f"sil_btn_{idx}"):
                         df_antrenmanlar = df_antrenmanlar.drop(idx)
                         conn.update(worksheet="Antrenmanlar", data=df_antrenmanlar)
                         st.cache_data.clear()
