@@ -33,6 +33,10 @@ LANG = {
         "add_to_db": "Add to Database",
         "success_db": "successfully added to the database!",
         "warn_name": "Please enter an exercise name.",
+        "delete_exercise_panel": "🗑️ Delete Selected Exercise",
+        "delete_exercise_desc": "Warning: This will permanently remove the exercise from the list. Past workout logs will not be deleted.",
+        "delete_from_db": "Delete Exercise from Database",
+        "success_delete_db": "successfully deleted from the database!",
         "template_title": "📌 **Template Settings (Autofills sets below)**",
         "how_many_sets": "How Many Sets?",
         "template_w": "Template Weight (kg)",
@@ -77,6 +81,10 @@ LANG = {
         "add_to_db": "Veritabanına Ekle",
         "success_db": "başarıyla veritabanına eklendi!",
         "warn_name": "Lütfen hareket adını girin.",
+        "delete_exercise_panel": "🗑️ Seçili Hareketi Veritabanından Sil",
+        "delete_exercise_desc": "Uyarı: Bu işlem hareketi listeden tamamen kaldırır. Geçmiş antrenman kayıtlarınız silinmez.",
+        "delete_from_db": "Seçili Hareketi Sil",
+        "success_delete_db": "veritabanından başarıyla silindi!",
         "template_title": "📌 **Şablon Ayarları (Alttaki setlere otomatik dolar)**",
         "how_many_sets": "Kaç Set Yapılacak?",
         "template_w": "Şablon Ağırlık (kg)",
@@ -211,7 +219,6 @@ elif st.session_state.sayfa == 'kisi_sayfasi':
         
     st.subheader(t["add_new_set"])
     
-    # Tarih formatı burada Gün/Ay/Yıl olarak ayarlandı
     secili_tarih = st.date_input(t["date"], value=date.today(), format="DD/MM/YYYY")
     
     col1, col2 = st.columns(2)
@@ -247,6 +254,7 @@ elif st.session_state.sayfa == 'kisi_sayfasi':
                 if key.startswith("w_new_") or key.startswith("r_new_"):
                     del st.session_state[key]
 
+    # HAREKET EKLEME PANELİ
     with st.expander(t["new_exercise_panel"]):
         st.write(t["new_exercise_desc"])
         c_kas_yeni, c_har_yeni, c_mek_yeni = st.columns(3)
@@ -268,6 +276,25 @@ elif st.session_state.sayfa == 'kisi_sayfasi':
                 st.rerun()
             else:
                 st.warning(t["warn_name"])
+                
+    # HAREKET SİLME PANELİ
+    if secili_hareket:
+        with st.expander(t["delete_exercise_panel"]):
+            st.warning(t["delete_exercise_desc"])
+            st.write(f"**{secili_hareket}**")
+            
+            if st.button(t["delete_from_db"], type="primary"):
+                # Seçili hareketi df_hareketler listesinden çıkar
+                guncel_hareketler = df_hareketler[df_hareketler['Hareket Tipi'] != secili_hareket]
+                conn.update(worksheet="Hareketler", data=guncel_hareketler)
+                st.cache_data.clear()
+                
+                # Hafızayı sıfırla ki silinen hareket ekranda kalmasın
+                if st.session_state.onceki_hareket == secili_hareket:
+                    st.session_state.onceki_hareket = ""
+                    
+                st.success(f"**{secili_hareket}** {t['success_delete_db']}")
+                st.rerun()
 
     st.divider()
     
