@@ -131,6 +131,7 @@ if 'duzenlenen_idx' not in st.session_state: st.session_state.duzenlenen_idx = N
 if 'onceki_hareket' not in st.session_state: st.session_state.onceki_hareket = ""
 if 'sablon_w' not in st.session_state: st.session_state.sablon_w = 0.0
 if 'sablon_r' not in st.session_state: st.session_state.sablon_r = 10
+if 'grafik_gorunur' not in st.session_state: st.session_state.grafik_gorunur = None  # YENİ: hangi hareketin grafiği açık
 
 # --- GOOGLE SHEETS BAĞLANTISI ---
 conn = st.connection("gsheets", type=GSheetsConnection)
@@ -224,7 +225,25 @@ elif st.session_state.sayfa == 'kisi_sayfasi':
     if st.button(t["back_to_members"]):
         st.session_state.sayfa = 'grup_sayfasi'
         st.rerun()
-        
+
+    # --- YENİ: Herhangi bir hareketin geçmiş ağırlık grafiğini çizen yardımcı fonksiyon ---
+    def grafik_ciz(hareket_adi):
+        gecmis_tum_setler = df_antrenmanlar[
+            (df_antrenmanlar['Grup'] == st.session_state.secili_grup) &
+            (df_antrenmanlar['Kullanıcı'] == st.session_state.secili_kisi) &
+            (df_antrenmanlar['Hareket'] == hareket_adi)
+        ].copy()
+
+        if not gecmis_tum_setler.empty:
+            gecmis_tum_setler['Tarih'] = pd.to_datetime(gecmis_tum_setler['Tarih'])
+            grafik_verisi = gecmis_tum_setler.groupby('Tarih')['Ağırlık'].max().reset_index()
+            grafik_verisi = grafik_verisi.sort_values(by='Tarih')
+            grafik_verisi.set_index('Tarih', inplace=True)
+            grafik_verisi['Ağırlık'] = grafik_verisi['Ağırlık'].astype(float)
+            st.line_chart(grafik_verisi['Ağırlık'])
+        else:
+            st.info(t["no_chart_data"])
+
     st.subheader(t["add_new_set"])
     secili_tarih = st.date_input(t["date"], value=date.today(), format="DD/MM/YYYY")
     
@@ -297,7 +316,6 @@ elif st.session_state.sayfa == 'kisi_sayfasi':
     # --- KARDİYO VE AĞIRLIK İÇİN AKILLI FORM YAPISI ---
     if secili_hareket:
         
-        # EĞER SEÇİLEN HAREKET KARDİYO İSE
         # EĞER SEÇİLEN HAREKET KARDİYO İSE
         if mekanik_degeri == "Kardiyo":
             st.write(t["cardio_details"])
@@ -434,7 +452,20 @@ elif st.session_state.sayfa == 'kisi_sayfasi':
                 expander_baslik = f"💪 **{hareket}** ({toplam_set} {t['set']}) 👉 {ozet_metni}"
             
             with st.expander(expander_baslik):
-                
+
+                # --- YENİ: Grafik göster/gizle butonu (sadece ağırlık hareketlerinde) ---
+                if mekanik_kontrol != "Kardiyo":
+                    if st.button(f"📈 {t['progress_chart']}", key=f"grafik_btn_{hareket}_{secili_tarih}", use_container_width=True):
+                        if st.session_state.grafik_gorunur == hareket:
+                            st.session_state.grafik_gorunur = None
+                        else:
+                            st.session_state.grafik_gorunur = hareket
+                        st.rerun()
+
+                    if st.session_state.grafik_gorunur == hareket:
+                        grafik_ciz(hareket)
+                        st.divider()
+
                 for idx, row in hareket_setleri.iterrows():
                     
                     if st.session_state.duzenlenen_idx == idx:
@@ -483,25 +514,3 @@ elif st.session_state.sayfa == 'kisi_sayfasi':
                                 st.rerun()
     else:
         st.info(t["no_workout"])
-
-    # --- GELİŞİM GRAFİĞİ (SADECE AĞIRLIK İDMANLARI İÇİN) ---
-    st.divider()
-    
-    if secili_hareket and mekanik_degeri != "Kardiyo":
-        st.subheader(f"📈 {secili_hareket} - {t['progress_chart']}")
-        
-        gecmis_tum_setler = df_antrenmanlar[
-            (df_antrenmanlar['Grup'] == st.session_state.secili_grup) & 
-            (df_antrenmanlar['Kullanıcı'] == st.session_state.secili_kisi) &
-            (df_antrenmanlar['Hareket'] == secili_hareket)
-        ].copy()
-        
-        if not gecmis_tum_setler.empty and len(gecmis_tum_setler) > 0:
-            gecmis_tum_setler['Tarih'] = pd.to_datetime(gecmis_tum_setler['Tarih'])
-            grafik_verisi = gecmis_tum_setler.groupby('Tarih')['Ağırlık'].max().reset_index()
-            grafik_verisi = grafik_verisi.sort_values(by='Tarih')
-            grafik_verisi.set_index('Tarih', inplace=True)
-            grafik_verisi['Ağırlık'] = grafik_verisi['Ağırlık'].astype(float)
-            st.line_chart(grafik_verisi['Ağırlık'])
-        else:
-            st.info(t["no_chart_data"])
