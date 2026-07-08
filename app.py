@@ -298,12 +298,27 @@ elif st.session_state.sayfa == 'kisi_sayfasi':
     if secili_hareket:
         
         # EĞER SEÇİLEN HAREKET KARDİYO İSE
+        # EĞER SEÇİLEN HAREKET KARDİYO İSE
         if mekanik_degeri == "Kardiyo":
             st.write(t["cardio_details"])
             
+            # Kalori hesaplama tetikleyicisi
+            def kalori_hesapla():
+                # Dakikada ortalama 10 kalori yakıldığını varsayan basit bir algoritma
+                st.session_state.kardiyo_kalori = int(st.session_state.kardiyo_sure * 10)
+
+            # Session state'e değişkenleri atıyoruz
+            if 'kardiyo_sure' not in st.session_state: st.session_state.kardiyo_sure = 30
+            if 'kardiyo_kalori' not in st.session_state: st.session_state.kardiyo_kalori = 300
+
             c_sure, c_kalori = st.columns(2)
-            kardiyo_sure = c_sure.number_input(t["duration"], min_value=1, value=30, step=1)
-            kardiyo_kalori = c_kalori.number_input(t["calories"], min_value=1, value=300, step=10)
+            # Süre değiştiğinde 'kalori_hesapla' fonksiyonu tetiklenir
+            kardiyo_sure = c_sure.number_input(t["duration"], min_value=1, value=st.session_state.kardiyo_sure, 
+                                               key="kardiyo_sure", step=1, on_change=kalori_hesapla)
+            
+            # Kalori kutusu kendi değerini session_state'den alır
+            kardiyo_kalori = c_kalori.number_input(t["calories"], min_value=1, value=st.session_state.kardiyo_kalori, 
+                                                 key="kardiyo_kalori", step=10)
             
             if st.button(t["save_cardio"], type="primary", use_container_width=True):
                 yeni_satir = pd.DataFrame([{
@@ -312,7 +327,7 @@ elif st.session_state.sayfa == 'kisi_sayfasi':
                     "Kullanıcı": st.session_state.secili_kisi,
                     "Kas Grubu": secili_kas,
                     "Hareket": secili_hareket,
-                    "Set": 1, # Kardiyo genelde tek set kaydedilir
+                    "Set": 1,
                     "Ağırlık": 0,
                     "Tekrar": 0,
                     "Süre (dk)": kardiyo_sure,
@@ -324,7 +339,6 @@ elif st.session_state.sayfa == 'kisi_sayfasi':
                 st.cache_data.clear()
                 st.success(f"{secili_hareket} {t['success_cardio']}")
                 st.rerun()
-
         # EĞER SEÇİLEN HAREKET AĞIRLIK (COMPOUND/İZOLE) İSE
         else:
             st.write(t["template_title"])
