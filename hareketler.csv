@@ -1,0 +1,51 @@
+﻿Kas Grubu,Hareket Tipi,Mekanik
+Chest,Horizontal Press,Compound
+Chest,Incline Press,Compound
+Chest,Decline/Dip Press,Compound
+Chest,Fly/Adduction,Izole
+Back,Vertical Pull,Compound
+Back,Horizontal Row,Compound
+Back,High Row/Upper Back,Compound
+Back,Rear Delt/Scapular Pull,Izole
+Back,Hip Hinge,Compound
+Back,Lat Isolation,Izole
+Shoulder,Vertical Press,Compound
+Shoulder,Lateral Raise,Izole
+Shoulder,Rear Delt,Izole
+Shoulder,Face Pull/Scapular,Compound
+Shoulder,Shrug/Trap,Izole
+Biceps,Standard Supinated Curl,Izole
+Biceps,Incline/Stretch Curl,Izole
+Biceps,Supported/Preacher Curl,Izole
+Biceps,Hammer Curl,Izole
+Biceps,Reverse/Pronated Curl,Izole
+Triceps,Pushdown,Izole
+Triceps,Overhead Extension,Izole
+Triceps,Compound Press,Compound
+Triceps,Single-Arm Isolation,Izole
+Legs,Squat Pattern,Compound
+Legs,Leg Press Pattern,Compound
+Legs,Quad Isolation,Izole
+Legs,Hamstring Curl,Izole
+Legs,Hip Hinge,Compound
+Legs,Single-Leg/Lunge,Compound
+Glutes,Hip Thrust/Bridge,Compound
+Glutes,Kickback/Isolation,Izole
+Legs,Adduction,Izole
+Legs,Abduction,Izole
+Calves,Standing Calf Raise,Izole
+Calves,Seated Calf Raise,Izole
+Abs,Crunch/Flexion,Izole
+Abs,Leg Raise/Hip Flexion,Izole
+Abs,Anti-Extension,Compound
+Abs,Anti-Rotation,Compound
+Abs,Rotation/Oblique,Izole
+Forearm,Flexors/Grip,Izole
+Forearm,Extensors,Izole
+Forearm,Brachioradialis,Izole
+Neck,Flexion/Extension/Isometric,Izole
+Cardio,Treadmill/Jog,Kardiyo
+Cardio,Elliptical,Kardiyo
+Cardio,Bike,Kardiyo
+Cardio,Rowing,Kardiyo
+Cardio,Outdoor Cycling/Walking,Kardiyo
