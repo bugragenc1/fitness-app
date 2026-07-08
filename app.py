@@ -36,6 +36,12 @@ def veri_getir(sekme_adi, kolonlar):
 def hareketleri_getir():
     return pd.read_csv("hareketler.csv")
 
+# Şablon değiştiğinde alt setlerin hafızasını silen fonksiyon
+def alt_setleri_sifirla():
+    for key in list(st.session_state.keys()):
+        if key.startswith("w_new_") or key.startswith("r_new_"):
+            del st.session_state[key]
+
 # --- SAYFA 1: ANA SAYFA (GRUPLAR) ---
 if st.session_state.sayfa == 'ana_sayfa':
     df_gruplar = veri_getir("Gruplar", ["Grup Adı"])
@@ -119,9 +125,11 @@ elif st.session_state.sayfa == 'kisi_sayfasi':
     mekanik_degeri = filtrelenmis_df[filtrelenmis_df['Hareket Tipi'] == secili_hareket]['Mekanik'].values[0]
     st.info(f"Mekanik: **{mekanik_degeri}**")
 
-    # --- GEÇMİŞ AĞIRLIĞI BULMA ---
+    # --- GEÇMİŞ AĞIRLIĞI BULMA VE SIFIRLAMA ---
     if st.session_state.onceki_hareket != secili_hareket:
         st.session_state.onceki_hareket = secili_hareket
+        alt_setleri_sifirla() # Yeni harekete geçildiğinde alt formları temizle
+        
         gecmis_hareket = df_antrenmanlar[
             (df_antrenmanlar['Kullanıcı'] == st.session_state.secili_kisi) & 
             (df_antrenmanlar['Hareket'] == secili_hareket)
@@ -137,16 +145,16 @@ elif st.session_state.sayfa == 'kisi_sayfasi':
     # --- TOPLU SET EKLEME ALANI ---
     st.write("📌 **Şablon Ayarları (Alttaki setlere otomatik dolar)**")
     
-    set_sayisi = st.number_input("Kaç Set Yapılacak?", min_value=1, max_value=10, value=3, step=1)
+    # on_change tetikleyicileri eklendi. Değer değiştiği an alt_setleri_sifirla fonksiyonu çalışır.
+    set_sayisi = st.number_input("Kaç Set Yapılacak?", min_value=1, max_value=10, value=3, step=1, on_change=alt_setleri_sifirla)
     
     c_hedef1, c_hedef2 = st.columns(2)
-    hedef_agirlik = c_hedef1.number_input("Şablon Ağırlık (kg)", value=float(st.session_state.hareket_agirlik), step=2.5)
-    hedef_tekrar = c_hedef2.number_input("Şablon Tekrar", value=10, step=1)
+    hedef_agirlik = c_hedef1.number_input("Şablon Ağırlık (kg)", value=float(st.session_state.hareket_agirlik), step=2.5, on_change=alt_setleri_sifirla)
+    hedef_tekrar = c_hedef2.number_input("Şablon Tekrar", value=10, step=1, on_change=alt_setleri_sifirla)
     
     st.write("---")
     st.write("📝 **Set Detaylarını Düzenle (İsteğe Bağlı)**")
     
-    # Güncel kalınan seti bul (O gün o hareket için daha önce girilmiş set var mı?)
     bugunku_setler = df_antrenmanlar[
         (df_antrenmanlar['Tarih'] == secili_tarih.strftime("%Y-%m-%d")) &
         (df_antrenmanlar['Kullanıcı'] == st.session_state.secili_kisi) &
@@ -156,15 +164,14 @@ elif st.session_state.sayfa == 'kisi_sayfasi':
     
     eklenecek_setler = []
     
-    # Seçilen set sayısı kadar form oluştur
     for i in range(set_sayisi):
         guncel_set_no = baslangic_seti + i
         c_label, c_w, c_r = st.columns([1,2,2])
         c_label.markdown(f"<div style='margin-top: 25px;'>**Set {guncel_set_no}**</div>", unsafe_allow_html=True)
         
-        # Değerler şablondan besleniyor ama kullanıcı ezebiliyor
-        w = c_w.number_input("Ağırlık", value=float(hedef_agirlik), step=2.5, key=f"w_new_{guncel_set_no}")
-        r = c_r.number_input("Tekrar", value=int(hedef_tekrar), step=1, key=f"r_new_{guncel_set_no}")
+        # Benzersiz anahtarlar (key) hareket adını da içerir
+        w = c_w.number_input("Ağırlık", value=float(hedef_agirlik), step=2.5, key=f"w_new_{secili_hareket}_{guncel_set_no}")
+        r = c_r.number_input("Tekrar", value=int(hedef_tekrar), step=1, key=f"r_new_{secili_hareket}_{guncel_set_no}")
         
         eklenecek_setler.append({
             "Tarih": secili_tarih.strftime("%Y-%m-%d"),
@@ -184,6 +191,10 @@ elif st.session_state.sayfa == 'kisi_sayfasi':
         
         conn.update(worksheet="Antrenmanlar", data=guncel_antrenmanlar)
         st.cache_data.clear()
+        
+        # Başarıyla kaydedildikten sonra da set formlarını temizliyoruz
+        alt_setleri_sifirla()
+        
         st.success(f"{secili_hareket} için {set_sayisi} set başarıyla kaydedildi!")
         st.rerun()
 
