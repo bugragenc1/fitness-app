@@ -98,7 +98,6 @@ LANG = {
 # --- SAYFA YAPILANDIRMASI ---
 st.set_page_config(page_title="Workout App", page_icon="💪", layout="centered")
 
-# Dil Seçimi (Sidebar)
 secilen_dil = st.sidebar.selectbox("🌐 Language / Dil", ["English", "Türkçe"], index=0)
 t = LANG[secilen_dil]
 
@@ -211,7 +210,9 @@ elif st.session_state.sayfa == 'kisi_sayfasi':
         st.rerun()
         
     st.subheader(t["add_new_set"])
-    secili_tarih = st.date_input(t["date"], value=date.today())
+    
+    # Tarih formatı burada Gün/Ay/Yıl olarak ayarlandı
+    secili_tarih = st.date_input(t["date"], value=date.today(), format="DD/MM/YYYY")
     
     col1, col2 = st.columns(2)
     with col1:
@@ -337,9 +338,9 @@ elif st.session_state.sayfa == 'kisi_sayfasi':
     
     # --- GÜNLÜK ANTRENMAN LİSTESİ ---
     if secilen_dil == "English":
-        st.subheader(f"📋 {secili_tarih.strftime('%d.%m.%Y')} {t['workout_of']}")
+        st.subheader(f"📋 {secili_tarih.strftime('%d/%m/%Y')} {t['workout_of']}")
     else:
-        st.subheader(f"📋 {secili_tarih.strftime('%d.%m.%Y')} Tarihli {t['workout_of']}")
+        st.subheader(f"📋 {secili_tarih.strftime('%d/%m/%Y')} Tarihli {t['workout_of']}")
     
     gunluk_gecmis = df_antrenmanlar[
         (df_antrenmanlar['Grup'] == st.session_state.secili_grup) & 
