@@ -138,7 +138,11 @@ conn = st.connection("gsheets", type=GSheetsConnection)
 
 def veri_getir(sekme_adi, kolonlar):
     try:
-        df = conn.read(worksheet=sekme_adi, ttl=5)
+        # ttl artırıldı: 5sn yerine 60sn önbellek. Kayıt/silme/güncelleme
+        # sonrasında zaten st.cache_data.clear() ile manuel temizleniyor,
+        # bu yüzden veri bayatlama riski yok; ama her tıklamada Sheets'e
+        # gidilmesi engellenmiş olur (asıl gecikme kaynağı buydu).
+        df = conn.read(worksheet=sekme_adi, ttl=60)
         if df.empty:
             return pd.DataFrame(columns=kolonlar)
         # NaN değerleri 0 ile dolduruyoruz (Eski kayıtlarda Süre/Kalori hatası vermemesi için)
@@ -460,7 +464,9 @@ elif st.session_state.sayfa == 'kisi_sayfasi':
                             st.session_state.grafik_gorunur = None
                         else:
                             st.session_state.grafik_gorunur = hareket
-                        st.rerun()
+                        # Not: st.rerun() burada kasıtlı olarak kaldırıldı.
+                        # st.button zaten tıklamada otomatik rerun tetikliyor;
+                        # ek çağrı sayfayı iki kere baştan çalıştırıp gecikme yaratıyordu.
 
                     if st.session_state.grafik_gorunur == hareket:
                         grafik_ciz(hareket)
