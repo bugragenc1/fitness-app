@@ -306,7 +306,6 @@ elif st.session_state.sayfa == 'grup_sayfasi':
 
 # --- SAYFA 3: KİŞİ DETAYI VE HAREKET EKLEME ---
 elif st.session_state.sayfa == 'kisi_sayfasi':
-    # VERİ ÇEKİMİ - Antrenmanlar ve ProgramDetay'a 'Ekipman' dahil edildi
     df_antrenmanlar = veri_getir("Antrenmanlar", ["Tarih", "Grup", "Kullanıcı", "Kas Grubu", "Hareket", "Set", "Ağırlık", "Tekrar", "Süre (dk)", "Kalori", "Mekanik", "Ekipman"])
     df_hareketler = veri_getir("Hareketler", ["Kas Grubu", "Hareket Tipi", "Mekanik", "Ekipman"])
     df_programlar = veri_getir("Programlar", ["Kullanıcı", "Program Adı"])
@@ -364,9 +363,13 @@ elif st.session_state.sayfa == 'kisi_sayfasi':
                 yukleme_hareketleri = program_icerik_yukle['Hareket'].unique()
 
                 for hareket_l in yukleme_hareketleri:
-                    st.markdown(f"💪 **{hareket_l}**")
                     hareket_setleri_l = program_icerik_yukle[program_icerik_yukle['Hareket'] == hareket_l]
                     kas_grubu_l = hareket_setleri_l.iloc[0]['Kas Grubu']
+                    ekipman_l = hareket_setleri_l.iloc[0]['Ekipman'] if 'Ekipman' in hareket_setleri_l.columns else "-"
+                    
+                    # TAM İSİM OLUŞTURMA (Örn: Dumbbell Chest Bench Press)
+                    tam_isim_l = f"{ekipman_l} {kas_grubu_l} {hareket_l}".replace("- ", "").strip()
+                    st.markdown(f"💪 **{tam_isim_l}**")
 
                     for p_idx, p_row in hareket_setleri_l.iterrows():
                         cLabel, cW, cR = st.columns([1, 2, 2])
@@ -446,7 +449,6 @@ elif st.session_state.sayfa == 'kisi_sayfasi':
         mekanik_degeri = filtrelenmis_df[filtrelenmis_df['Hareket Tipi'] == secili_hareket]['Mekanik'].values[0]
         st.info(f"{t['mechanic']}: **{mekanik_degeri}**") 
         
-        # --- SEÇİLEBİLİR EKİPMAN (GÜNLÜK KAYIT İÇİN) ---
         veritabanindaki_ekipman = filtrelenmis_df[filtrelenmis_df['Hareket Tipi'] == secili_hareket]['Ekipman'].values[0] if 'Ekipman' in filtrelenmis_df.columns else "Barbell"
         varsayilan_idx = EKIPMAN_LISTESI.index(veritabanindaki_ekipman) if veritabanindaki_ekipman in EKIPMAN_LISTESI else 0
         secili_ekipman = st.selectbox(t["equipment"], EKIPMAN_LISTESI, index=varsayilan_idx, key="gunluk_ekipman_sec")
@@ -532,7 +534,7 @@ elif st.session_state.sayfa == 'kisi_sayfasi':
                     "Süre (dk)": kardiyo_sure,
                     "Kalori": kardiyo_kalori,
                     "Mekanik": mekanik_degeri,
-                    "Ekipman": secili_ekipman # <-- Ekipman Eklendi
+                    "Ekipman": secili_ekipman
                 }])
                 guncel_antrenmanlar = pd.concat([df_antrenmanlar, yeni_satir], ignore_index=True)
                 conn.update(worksheet="Antrenmanlar", data=guncel_antrenmanlar)
@@ -584,7 +586,7 @@ elif st.session_state.sayfa == 'kisi_sayfasi':
                     "Süre (dk)": 0,
                     "Kalori": 0,
                     "Mekanik": mekanik_degeri,
-                    "Ekipman": secili_ekipman # <-- Ekipman Eklendi
+                    "Ekipman": secili_ekipman
                 })
                 
             if st.button(t["save_all"], type="primary", use_container_width=True):
@@ -629,16 +631,22 @@ elif st.session_state.sayfa == 'kisi_sayfasi':
         for hareket in yapilan_hareketler:
             hareket_setleri = gunluk_gecmis[gunluk_gecmis['Hareket'] == hareket].sort_values(by="Set")
             toplam_set = len(hareket_setleri)
-            mekanik_kontrol = hareket_setleri.iloc[0]['Mekanik']
+            ilk_satir = hareket_setleri.iloc[0]
+            mekanik_kontrol = ilk_satir['Mekanik']
+            kas_g = ilk_satir['Kas Grubu']
+            ekip_g = ilk_satir['Ekipman'] if 'Ekipman' in ilk_satir else "-"
+            
+            # TAM İSİM OLUŞTURMA İÇİN TEMİZLEME
+            tam_hareket_adi = f"{ekip_g} {kas_g} {hareket}".replace("- ", "").strip()
             
             if mekanik_kontrol == "Kardiyo":
                 ozet_listesi = [f"{row['Süre (dk)']} dk, {row['Kalori']} kcal" for _, row in hareket_setleri.iterrows()]
                 ozet_metni = " | ".join(ozet_listesi)
-                expander_baslik = f"🏃‍♂️ **{hareket}** 👉 {ozet_metni}"
+                expander_baslik = f"🏃‍♂️ **{tam_hareket_adi}** 👉 {ozet_metni}"
             else:
                 ozet_listesi = [f"{row['Ağırlık']}x{row['Tekrar']}" for _, row in hareket_setleri.iterrows()]
                 ozet_metni = " | ".join(ozet_listesi)
-                expander_baslik = f"💪 **{hareket}** ({toplam_set} {t['set']}) 👉 {ozet_metni}"
+                expander_baslik = f"💪 **{tam_hareket_adi}** ({toplam_set} {t['set']}) 👉 {ozet_metni}"
             
             with st.expander(expander_baslik, key=f"exp_gunluk_{hareket}_{secili_tarih}"):
                 hareket_silme_anahtari = f"{hareket}_{secili_tarih}"
@@ -721,7 +729,7 @@ elif st.session_state.sayfa == 'kisi_sayfasi':
 # --- SAYFA 4: ANTRENMAN PROGRAMLARI ---
 elif st.session_state.sayfa == 'program_sayfasi':
     df_programlar = veri_getir("Programlar", ["Kullanıcı", "Program Adı"])
-    df_program_detay = veri_getir("ProgramDetay", ["Program Adı", "Kullanıcı", "Kas Grubu", "Hareket", "Set", "Ağırlık", "Tekrar", "Ekipman"]) # <-- Ekipman Eklendi
+    df_program_detay = veri_getir("ProgramDetay", ["Program Adı", "Kullanıcı", "Kas Grubu", "Hareket", "Set", "Ağırlık", "Tekrar", "Ekipman"])
     df_hareketler = veri_getir("Hareketler", ["Kas Grubu", "Hareket Tipi", "Mekanik", "Ekipman"])
 
     st.title(f"📋 {st.session_state.secili_kisi} - {t['programs_title']}")
@@ -778,9 +786,16 @@ elif st.session_state.sayfa == 'program_sayfasi':
             for hareket_p in program_hareketleri:
                 hareket_setleri_p = program_icerik[program_icerik['Hareket'] == hareket_p].sort_values(by="Set")
                 toplam_set_p = len(hareket_setleri_p)
+                ilk_satir_p = hareket_setleri_p.iloc[0]
+                kas_p = ilk_satir_p['Kas Grubu']
+                ekip_p = ilk_satir_p['Ekipman'] if 'Ekipman' in ilk_satir_p else "-"
+                
+                # TAM İSİM OLUŞTURMA PROGRAM İÇERİĞİ İÇİN
+                tam_hareket_adi_p = f"{ekip_p} {kas_p} {hareket_p}".replace("- ", "").strip()
+                
                 ozet_listesi_p = [f"{row['Ağırlık']}x{row['Tekrar']}" for _, row in hareket_setleri_p.iterrows()]
                 ozet_metni_p = " | ".join(ozet_listesi_p)
-                expander_baslik_p = f"💪 **{hareket_p}** ({toplam_set_p} {t['set']}) 👉 {ozet_metni_p}"
+                expander_baslik_p = f"💪 **{tam_hareket_adi_p}** ({toplam_set_p} {t['set']}) 👉 {ozet_metni_p}"
 
                 with st.expander(expander_baslik_p, key=f"exp_prog_{st.session_state.secili_program}_{hareket_p}"):
                     hareket_silme_anahtari_p = f"{st.session_state.secili_program}_{hareket_p}"
@@ -837,7 +852,6 @@ elif st.session_state.sayfa == 'program_sayfasi':
         p_hareket_listesi = p_filtrelenmis['Hareket Tipi'].unique() if not p_filtrelenmis.empty else []
         p_hareket = pc2.selectbox(t["exercise"], p_hareket_listesi, key="p_hareket_sec")
 
-        # --- SEÇİLEBİLİR EKİPMAN (PROGRAM İÇİN) ---
         if p_hareket:
             p_ekipman_degeri = p_filtrelenmis[p_filtrelenmis['Hareket Tipi'] == p_hareket]['Ekipman'].values[0] if 'Ekipman' in p_filtrelenmis.columns else "Barbell"
             p_varsayilan_idx = EKIPMAN_LISTESI.index(p_ekipman_degeri) if p_ekipman_degeri in EKIPMAN_LISTESI else 0
@@ -902,7 +916,7 @@ elif st.session_state.sayfa == 'program_sayfasi':
                         "Set": p_guncel_set_no,
                         "Ağırlık": p_w,
                         "Tekrar": p_r,
-                        "Ekipman": p_secili_ekipman # <-- Ekipman Eklendi
+                        "Ekipman": p_secili_ekipman
                     })
 
                 if st.button(t["add_to_program"], type="primary", use_container_width=True):
