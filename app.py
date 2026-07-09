@@ -280,7 +280,7 @@ st.markdown(custom_css, unsafe_allow_html=True)
 dil_kolonu, bos_kolon = st.columns([1, 2])
 with dil_kolonu:
     # Varsayılan dil Türkçe (index=0) yapıldı
-    secilen_dil = st.selectbox("🌐 Dil", ["Türkçe", "English"], index=0, label_visibility="collapsed")
+    secilen_dil = st.selectbox("🌐 Dil", ["Türkçe", "English"], index=1, label_visibility="collapsed")
 t = LANG[secilen_dil]
 
 # --- OTURUM DEĞİŞKENLER ---
