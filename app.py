@@ -5,6 +5,7 @@ from datetime import date
 
 # --- DİL (LANGUAGE) SÖZLÜĞÜ ---
 LANG = {
+    # (İngilizce kısmı uzunluk yapmaması adına aynı kalıyor, metinler Türkçe dahil tam ekli)
     "English": {
         "groups_title": "🏋️‍♂️ Workout Groups",
         "existing_groups": "Existing Groups",
@@ -34,14 +35,14 @@ LANG = {
         "success_db": "successfully added to the database!",
         "warn_name": "Please enter an exercise name.",
         "delete_exercise_panel": "🗑️ Delete Selected Exercise",
-        "delete_exercise_desc": "Warning: This will permanently remove the exercise from the list. Past workout logs will not be deleted.",
-        "delete_from_db": "Delete Exercise from Database",
+        "delete_exercise_desc": "Warning: This will permanently remove the exercise from the list.",
+        "delete_from_db": "Delete Exercise",
         "success_delete_db": "successfully deleted from the database!",
-        "template_title": "📌 **Template Settings (Autofills sets below)**",
+        "template_title": "📌 Template Settings",
         "how_many_sets": "How Many Sets?",
         "template_w": "Template Weight (kg)",
         "template_r": "Template Reps",
-        "edit_sets": "📝 **Edit Set Details (Optional)**",
+        "edit_sets": "📝 Edit Set Details",
         "set": "Set",
         "weight": "Weight",
         "reps": "Reps",
@@ -56,15 +57,15 @@ LANG = {
         "no_chart_data": "Not enough data to display a chart for this exercise yet.",
         "duration": "Duration (min)",
         "calories": "Calories (kcal)",
-        "cardio_details": "🏃‍♂️ **Cardio Details**",
+        "cardio_details": "🏃‍♂️ Cardio Details",
         "save_cardio": "Save Cardio",
         "success_cardio": "cardio session successfully saved!",
         "delete_exercise_day": "🗑️ Delete Entire Exercise",
-        "confirm_delete_exercise_day": "Are you sure you want to delete ALL sets of **{ex}** for this date? This cannot be undone.",
+        "confirm_delete_exercise_day": "Are you sure you want to delete ALL sets of **{ex}** for this date?",
         "yes_delete": "✅ Yes, Delete",
         "success_delete_exercise_day": "and all its sets for this date were deleted.",
         "export_csv": "⬇️ Export This Day as CSV",
-        "go_to_programs": "📋 Workout Programs",
+        "go_to_programs": "📋 Programs",
         "programs_title": "Workout Programs",
         "back_to_person": "⬅️ Back",
         "existing_programs": "Existing Programs",
@@ -91,9 +92,9 @@ LANG = {
         "program_preview": "Preview & Adjust (optional)",
         "load_program_btn": "📥 Load All Exercises for Today",
         "success_load_program": "loaded into today's log!",
-        "cardio_not_supported_in_program": "Cardio exercises aren't supported in programs — only weight-based exercises can be added.",
-        "delete_exercise_from_program": "🗑️ Delete This Exercise from Program",
-        "confirm_delete_exercise_from_program": "Are you sure you want to delete ALL sets of **{ex}** from this program? This cannot be undone.",
+        "cardio_not_supported_in_program": "Cardio exercises aren't supported in programs.",
+        "delete_exercise_from_program": "🗑️ Delete This Exercise",
+        "confirm_delete_exercise_from_program": "Are you sure you want to delete ALL sets of **{ex}** from this program?",
         "success_delete_exercise_from_program": "removed from the program.",
         "save_all_changes": "💾 Save All Changes",
         "success_save_all_changes": "All changes saved!",
@@ -103,13 +104,14 @@ LANG = {
         "stats_title": "📊 Personal & Group Statistics",
         "personal_summary": "👤 Personal Summary",
         "total_days": "Total Workout Days",
-        "most_frequent": "Most Performed Exercise",
-        "total_cardio": "Total Cardio Duration",
+        "most_frequent": "Most Performed",
+        "total_cardio": "Total Cardio",
         "weight_history": "📈 Exercise Weight History",
         "select_stat_ex": "Select an exercise to view weight progress",
         "group_comparison": "🏆 Group Comparison",
         "comp_days": "Workout Days by Member",
-        "comp_cardio": "Total Cardio Duration (min) by Member"
+        "comp_cardio": "Total Cardio Duration (min) by Member",
+        "nav_daily": "📝 Daily Log"
     },
     "Türkçe": {
         "groups_title": "🏋️‍♂️ Antrenman Grupları",
@@ -140,14 +142,14 @@ LANG = {
         "success_db": "başarıyla veritabanına eklendi!",
         "warn_name": "Lütfen hareket adını girin.",
         "delete_exercise_panel": "🗑️ Seçili Hareketi Veritabanından Sil",
-        "delete_exercise_desc": "Uyarı: Bu işlem hareketi listeden tamamen kaldırır. Geçmiş antrenman kayıtlarınız silinmez.",
+        "delete_exercise_desc": "Uyarı: Bu işlem hareketi listeden tamamen kaldırır. Geçmiş kayıtlar silinmez.",
         "delete_from_db": "Seçili Hareketi Sil",
         "success_delete_db": "veritabanından başarıyla silindi!",
-        "template_title": "📌 **Şablon Ayarları (Alttaki setlere otomatik dolar)**",
+        "template_title": "📌 Şablon Ayarları",
         "how_many_sets": "Kaç Set Yapılacak?",
         "template_w": "Şablon Ağırlık (kg)",
         "template_r": "Şablon Tekrar",
-        "edit_sets": "📝 **Set Detaylarını Düzenle (İsteğe Bağlı)**",
+        "edit_sets": "📝 Set Detaylarını Düzenle",
         "set": "Set",
         "weight": "Ağırlık",
         "reps": "Tekrar",
@@ -159,18 +161,18 @@ LANG = {
         "cancel": "İptal",
         "no_workout": "Bu tarihte henüz bir antrenman kaydı yok.",
         "progress_chart": "Gelişim Grafiği",
-        "no_chart_data": "Bu hareket için grafiği oluşturacak yeterli veri henüz yok.",
+        "no_chart_data": "Grafik için yeterli veri henüz yok.",
         "duration": "Süre (dk)",
         "calories": "Kalori (kcal)",
-        "cardio_details": "🏃‍♂️ **Kardiyo Detayları**",
+        "cardio_details": "🏃‍♂️ Kardiyo Detayları",
         "save_cardio": "Kardiyoyu Kaydet",
-        "success_cardio": "kardiyo kaydı başarıyla eklendi!",
+        "success_cardio": "kardiyo kaydı eklendi!",
         "delete_exercise_day": "🗑️ Hareketi Tamamen Sil",
-        "confirm_delete_exercise_day": "Bu tarihteki **{ex}** hareketinin TÜM setlerini silmek istediğinize emin misiniz? Bu işlem geri alınamaz.",
+        "confirm_delete_exercise_day": "Bu tarihteki **{ex}** hareketinin TÜM setlerini silmek istediğinize emin misiniz?",
         "yes_delete": "✅ Evet, Sil",
         "success_delete_exercise_day": "hareketinin bu tarihteki tüm setleri silindi.",
-        "export_csv": "⬇️ Bu Günü CSV Olarak Dışa Aktar",
-        "go_to_programs": "📋 Antrenman Programları",
+        "export_csv": "⬇️ Bu Günü CSV Aktar",
+        "go_to_programs": "📋 Programlar",
         "programs_title": "Antrenman Programları",
         "back_to_person": "⬅️ Geri Dön",
         "existing_programs": "Mevcut Programlar",
@@ -183,47 +185,110 @@ LANG = {
         "program_content": "📝 Program İçeriği",
         "no_program_content": "Bu programa henüz hareket eklenmemiş.",
         "add_exercise_to_program": "➕ Programa Hareket Ekle",
-        "target_sets": "Hedef Set Sayısı",
+        "target_sets": "Hedef Set",
         "target_weight": "Hedef Ağırlık (kg)",
         "target_reps": "Hedef Tekrar",
         "add_to_program": "Programa Ekle",
         "success_add_to_program": "programa eklendi!",
         "delete_program_panel": "🗑️ Bu Programı Sil",
-        "delete_program_desc": "Uyarı: Bu işlem programı ve içindeki tüm hareketleri kalıcı olarak siler.",
+        "delete_program_desc": "Uyarı: Programı ve içindeki tüm hareketleri siler.",
         "delete_program_btn": "Programı Sil",
         "success_delete_program": "Program başarıyla silindi.",
         "load_program_panel": "📥 Bugün İçin Bir Program Yükle",
         "select_program": "Program Seç",
-        "program_preview": "Önizle ve Ayarla (isteğe bağlı)",
+        "program_preview": "Önizle ve Ayarla",
         "load_program_btn": "📥 Tüm Hareketleri Bugüne Yükle",
         "success_load_program": "bugünün kaydına yüklendi!",
-        "cardio_not_supported_in_program": "Kardiyo hareketler programlarda desteklenmiyor — sadece ağırlık hareketleri eklenebilir.",
-        "delete_exercise_from_program": "🗑️ Bu Hareketi Programdan Sil",
-        "confirm_delete_exercise_from_program": "Bu programdaki **{ex}** hareketinin TÜM setlerini silmek istediğinize emin misiniz? Bu işlem geri alınamaz.",
+        "cardio_not_supported_in_program": "Kardiyo hareketler programlarda desteklenmiyor.",
+        "delete_exercise_from_program": "🗑️ Hareketi Programdan Sil",
+        "confirm_delete_exercise_from_program": "Bu programdaki **{ex}** hareketinin TÜM setlerini silmek istediğinize emin misiniz?",
         "success_delete_exercise_from_program": "programdan kaldırıldı.",
         "save_all_changes": "💾 Tüm Değişiklikleri Kaydet",
         "success_save_all_changes": "Tüm değişiklikler kaydedildi!",
         "equipment_type": "Ekipman Tipi",
         "equipment": "Ekipman",
         "go_to_stats": "📊 İstatistikler",
-        "stats_title": "📊 Kişisel ve Grup İstatistikleri",
+        "stats_title": "📊 İstatistikler",
         "personal_summary": "👤 Kişisel Özet",
-        "total_days": "Toplam Antrenman Günü",
-        "most_frequent": "En Çok Yapılan Hareket",
-        "total_cardio": "Toplam Kardiyo Süresi",
-        "weight_history": "📈 Hareket Ağırlık Grafiği",
-        "select_stat_ex": "Gelişimini görmek istediğin hareketi seç",
+        "total_days": "Toplam Gün",
+        "most_frequent": "En Sık Hareket",
+        "total_cardio": "Toplam Kardiyo",
+        "weight_history": "📈 Ağırlık Grafiği",
+        "select_stat_ex": "Hareketi Seç",
         "group_comparison": "🏆 Grup İçi Karşılaştırma",
         "comp_days": "Üyelere Göre Antrenman Günleri",
-        "comp_cardio": "Üyelere Göre Toplam Kardiyo Süresi (dk)"
+        "comp_cardio": "Üyelere Göre Toplam Kardiyo (dk)",
+        "nav_daily": "📝 Günlük"
     }
 }
 
 # --- KÜRESEL DEĞİŞKENLER ---
 EKIPMAN_LISTESI = ["Barbell", "Dumbbell", "Machine", "Cable", "Bodyweight", "Band", "Smith Machine", "Kettlebell", "Other", "-"]
 
-# --- SAYFA YAPILANDIRMASI ---
-st.set_page_config(page_title="Workout App", page_icon="💪", layout="centered")
+# --- SAYFA YAPILANDIRMASI & ÖZEL MOBİL CSS ---
+st.set_page_config(page_title="Workout App", page_icon="💪", layout="centered", initial_sidebar_state="collapsed")
+
+custom_css = """
+<style>
+    /* Default Streamlit Branding'i Gizle */
+    #MainMenu {visibility: hidden;}
+    header {visibility: hidden;}
+    footer {visibility: hidden;}
+    
+    /* Mobil Uyumlu Modern Font ve Padding Ayarları */
+    .block-container {
+        padding-top: 1.5rem;
+        padding-bottom: 2rem;
+        padding-left: 1rem;
+        padding-right: 1rem;
+        max-width: 800px;
+    }
+    
+    /* Global Buton Tasarımı (Pill Shape & Hover Effect) */
+    div[data-testid="stButton"] > button {
+        border-radius: 20px;
+        font-weight: 600;
+        border: none;
+        transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+    }
+    div[data-testid="stButton"] > button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.25);
+    }
+    div[data-testid="stButton"] > button:active {
+        transform: translateY(0);
+        box-shadow: 0 1px 2px rgba(0,0,0,0.15);
+    }
+
+    /* Metric (İstatistik Kartları) Tasarımı */
+    div[data-testid="metric-container"] {
+        background-color: rgba(255, 255, 255, 0.03);
+        border-radius: 15px;
+        padding: 15px;
+        border: 1px solid rgba(255,255,255,0.1);
+        text-align: center;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+    
+    /* Expander Tasarımı */
+    .streamlit-expanderHeader {
+        font-weight: 600 !important;
+        font-size: 1.1rem !important;
+    }
+    
+    /* Başlıkların Ortalanması */
+    h1, h2, h3 {
+        text-align: center;
+    }
+    
+    /* Form inputlarına biraz daha dolgunluk */
+    input, select {
+        border-radius: 10px !important;
+    }
+</style>
+"""
+st.markdown(custom_css, unsafe_allow_html=True)
 
 secilen_dil = st.sidebar.selectbox("🌐 Language / Dil", ["English", "Türkçe"], index=0)
 t = LANG[secilen_dil]
@@ -232,14 +297,12 @@ t = LANG[secilen_dil]
 if 'sayfa' not in st.session_state: st.session_state.sayfa = 'ana_sayfa'
 if 'secili_grup' not in st.session_state: st.session_state.secili_grup = None
 if 'secili_kisi' not in st.session_state: st.session_state.secili_kisi = None
-if 'duzenlenen_idx' not in st.session_state: st.session_state.duzenlenen_idx = None
 if 'onceki_hareket' not in st.session_state: st.session_state.onceki_hareket = ""
 if 'sablon_w' not in st.session_state: st.session_state.sablon_w = 0.0
 if 'sablon_r' not in st.session_state: st.session_state.sablon_r = 10
 if 'grafik_gorunur' not in st.session_state: st.session_state.grafik_gorunur = None
 if 'silme_onay_hareket' not in st.session_state: st.session_state.silme_onay_hareket = None
 if 'secili_program' not in st.session_state: st.session_state.secili_program = None
-if 'program_duzenlenen_idx' not in st.session_state: st.session_state.program_duzenlenen_idx = None
 if 'program_silme_onay_hareket' not in st.session_state: st.session_state.program_silme_onay_hareket = None
 if 'p_onceki_hareket' not in st.session_state: st.session_state.p_onceki_hareket = ""
 if 'p_sablon_w' not in st.session_state: st.session_state.p_sablon_w = 0.0
@@ -248,11 +311,11 @@ if 'p_sablon_r' not in st.session_state: st.session_state.p_sablon_r = 10
 # --- GOOGLE SHEETS BAĞLANTISI ---
 conn = st.connection("gsheets", type=GSheetsConnection)
 
+@st.cache_data(ttl=60)
 def veri_getir(sekme_adi, kolonlar):
     try:
-        df = conn.read(worksheet=sekme_adi, ttl=60)
-        if df.empty:
-            return pd.DataFrame(columns=kolonlar)
+        df = conn.read(worksheet=sekme_adi)
+        if df.empty: return pd.DataFrame(columns=kolonlar)
         df.fillna(0, inplace=True)
         return df.dropna(how='all')
     except:
@@ -262,492 +325,330 @@ def sablon_guncelle():
     yeni_w = st.session_state.sablon_w
     yeni_r = st.session_state.sablon_r
     for key in list(st.session_state.keys()):
-        if key.startswith("w_new_"):
-            st.session_state[key] = yeni_w
-        elif key.startswith("r_new_"):
-            st.session_state[key] = yeni_r
+        if key.startswith("w_new_"): st.session_state[key] = yeni_w
+        elif key.startswith("r_new_"): st.session_state[key] = yeni_r
+
+# Ortak Navigasyon Barı (Mobil Uyumlu Tab Görünümü)
+def render_top_nav():
+    st.write("")
+    n1, n2, n3, n4 = st.columns([1,1,1,1.5])
+    with n1:
+        if st.button("👥 " + t["back_to_groups"].split(" ")[-1], use_container_width=True):
+            st.session_state.sayfa = 'grup_sayfasi'
+            st.rerun()
+    with n2:
+        if st.button(t["nav_daily"], type="primary" if st.session_state.sayfa == 'kisi_sayfasi' else "secondary", use_container_width=True):
+            st.session_state.sayfa = 'kisi_sayfasi'
+            st.rerun()
+    with n3:
+        if st.button("📋 Prog", type="primary" if st.session_state.sayfa == 'program_sayfasi' else "secondary", use_container_width=True):
+            st.session_state.sayfa = 'program_sayfasi'
+            st.rerun()
+    with n4:
+        if st.button("📊 İstat", type="primary" if st.session_state.sayfa == 'istatistik_sayfasi' else "secondary", use_container_width=True):
+            st.session_state.sayfa = 'istatistik_sayfasi'
+            st.rerun()
+    st.divider()
 
 # --- SAYFA 1: ANA SAYFA (GRUPLAR) ---
 if st.session_state.sayfa == 'ana_sayfa':
     df_gruplar = veri_getir("Gruplar", ["Grup Adı"])
-    st.title(t["groups_title"])
-    st.subheader(t["existing_groups"])
-    if not df_gruplar.empty:
-        for index, row in df_gruplar.iterrows():
-            grup_adi = row['Grup Adı']
-            if st.button(f"📁 {grup_adi}", use_container_width=True):
-                st.session_state.secili_grup = grup_adi
-                st.session_state.sayfa = 'grup_sayfasi'
+    st.markdown(f"<h1>{t['groups_title']}</h1>", unsafe_allow_html=True)
+    
+    # Grupları şık bir Container içinde göster
+    with st.container(border=True):
+        st.markdown(f"<h3 style='font-size: 1.2rem; color: #888;'>{t['existing_groups']}</h3>", unsafe_allow_html=True)
+        if not df_gruplar.empty:
+            for index, row in df_gruplar.iterrows():
+                if st.button(f"📁 {row['Grup Adı']}", use_container_width=True):
+                    st.session_state.secili_grup = row['Grup Adı']
+                    st.session_state.sayfa = 'grup_sayfasi'
+                    st.rerun()
+        else:
+            st.info(t["no_group"])
+            
+    with st.container(border=True):
+        st.markdown(f"<h3 style='font-size: 1.2rem; color: #888;'>➕ {t['new_group']}</h3>", unsafe_allow_html=True)
+        yeni_grup = st.text_input(t["new_group"], label_visibility="collapsed")
+        if st.button(t["add_group"], type="primary", use_container_width=True):
+            if yeni_grup:
+                yeni_satir = pd.DataFrame([{"Grup Adı": yeni_grup}])
+                guncel_gruplar = pd.concat([df_gruplar, yeni_satir], ignore_index=True)
+                conn.update(worksheet="Gruplar", data=guncel_gruplar)
+                st.cache_data.clear() 
+                st.success(f"{yeni_grup} {t['success_group']}")
                 st.rerun()
-    else:
-        st.info(t["no_group"])
-        
-    st.divider()
-    yeni_grup = st.text_input(t["new_group"])
-    if st.button(t["add_group"], type="primary"):
-        if yeni_grup:
-            yeni_satir = pd.DataFrame([{"Grup Adı": yeni_grup}])
-            guncel_gruplar = pd.concat([df_gruplar, yeni_satir], ignore_index=True)
-            conn.update(worksheet="Gruplar", data=guncel_gruplar)
-            st.cache_data.clear() 
-            st.success(f"{yeni_grup} {t['success_group']}")
-            st.rerun()
 
 # --- SAYFA 2: GRUP İÇİ (KİŞİLER) ---
 elif st.session_state.sayfa == 'grup_sayfasi':
     df_kullanicilar = veri_getir("Kullanicilar", ["Grup Adı", "Kullanıcı Adı"])
-    st.title(f"📁 {st.session_state.secili_grup}")
+    st.markdown(f"<h1>📁 {st.session_state.secili_grup}</h1>", unsafe_allow_html=True)
     
-    if st.button(t["back_to_groups"]):
+    if st.button(t["back_to_groups"], use_container_width=True):
         st.session_state.sayfa = 'ana_sayfa'
         st.rerun()
         
-    st.subheader(t["members"])
-    grup_uyeleri = df_kullanicilar[df_kullanicilar['Grup Adı'] == st.session_state.secili_grup]
-    
-    if not grup_uyeleri.empty:
-        for index, row in grup_uyeleri.iterrows():
-            kisi_adi = row['Kullanıcı Adı']
-            if st.button(f"👤 {kisi_adi}", use_container_width=True):
-                st.session_state.secili_kisi = kisi_adi
-                st.session_state.sayfa = 'kisi_sayfasi'
-                st.rerun()
-    else:
-        st.info(t["no_member"])
+    with st.container(border=True):
+        st.markdown(f"<h3 style='font-size: 1.2rem; color: #888;'>{t['members']}</h3>", unsafe_allow_html=True)
+        grup_uyeleri = df_kullanicilar[df_kullanicilar['Grup Adı'] == st.session_state.secili_grup]
         
-    st.divider()
-    yeni_kisi = st.text_input(t["new_member"])
-    if st.button(t["add_member"], type="primary"):
-        if yeni_kisi:
-            yeni_satir = pd.DataFrame([{"Grup Adı": st.session_state.secili_grup, "Kullanıcı Adı": yeni_kisi}])
-            guncel_kullanicilar = pd.concat([df_kullanicilar, yeni_satir], ignore_index=True)
-            conn.update(worksheet="Kullanicilar", data=guncel_kullanicilar)
-            st.cache_data.clear()
-            st.success(f"{yeni_kisi} {t['success_member']}")
-            st.rerun()
+        if not grup_uyeleri.empty:
+            for index, row in grup_uyeleri.iterrows():
+                if st.button(f"👤 {row['Kullanıcı Adı']}", use_container_width=True):
+                    st.session_state.secili_kisi = row['Kullanıcı Adı']
+                    st.session_state.sayfa = 'kisi_sayfasi'
+                    st.rerun()
+        else:
+            st.info(t["no_member"])
+            
+    with st.container(border=True):
+        st.markdown(f"<h3 style='font-size: 1.2rem; color: #888;'>➕ {t['new_member']}</h3>", unsafe_allow_html=True)
+        yeni_kisi = st.text_input(t["new_member"], label_visibility="collapsed")
+        if st.button(t["add_member"], type="primary", use_container_width=True):
+            if yeni_kisi:
+                yeni_satir = pd.DataFrame([{"Grup Adı": st.session_state.secili_grup, "Kullanıcı Adı": yeni_kisi}])
+                guncel_kullanicilar = pd.concat([df_kullanicilar, yeni_satir], ignore_index=True)
+                conn.update(worksheet="Kullanicilar", data=guncel_kullanicilar)
+                st.cache_data.clear()
+                st.success(f"{yeni_kisi} {t['success_member']}")
+                st.rerun()
 
-# --- SAYFA 3: KİŞİ DETAYI VE HAREKET EKLEME ---
+# --- SAYFA 3: KİŞİ DETAYI (GÜNLÜK) ---
 elif st.session_state.sayfa == 'kisi_sayfasi':
+    render_top_nav()
+    st.markdown(f"<h2>👤 {st.session_state.secili_kisi} - {t['daily_log']}</h2>", unsafe_allow_html=True)
+    
     df_antrenmanlar = veri_getir("Antrenmanlar", ["Tarih", "Grup", "Kullanıcı", "Kas Grubu", "Hareket", "Set", "Ağırlık", "Tekrar", "Süre (dk)", "Kalori", "Mekanik", "Ekipman"])
     df_hareketler = veri_getir("Hareketler", ["Kas Grubu", "Hareket Tipi", "Mekanik", "Ekipman"])
     df_programlar = veri_getir("Programlar", ["Kullanıcı", "Program Adı"])
     df_program_detay = veri_getir("ProgramDetay", ["Program Adı", "Kullanıcı", "Kas Grubu", "Hareket", "Set", "Ağırlık", "Tekrar", "Ekipman"])
     
-    st.title(f"👤 {st.session_state.secili_kisi} - {t['daily_log']}")
-    
-    if st.button(t["back_to_members"]):
-        st.session_state.sayfa = 'grup_sayfasi'
-        st.rerun()
-
-    btn_col1, btn_col2 = st.columns(2)
-    with btn_col1:
-        if st.button(t["go_to_programs"], use_container_width=True):
-            st.session_state.sayfa = 'program_sayfasi'
-            st.rerun()
-    with btn_col2:
-        if st.button(t["go_to_stats"], use_container_width=True):
-            st.session_state.sayfa = 'istatistik_sayfasi'
-            st.rerun()
-
     def grafik_ciz(hareket_adi):
         gecmis_tum_setler = df_antrenmanlar[
             (df_antrenmanlar['Grup'] == st.session_state.secili_grup) &
             (df_antrenmanlar['Kullanıcı'] == st.session_state.secili_kisi) &
             (df_antrenmanlar['Hareket'] == hareket_adi)
         ].copy()
-
         if not gecmis_tum_setler.empty:
             gecmis_tum_setler['Tarih'] = pd.to_datetime(gecmis_tum_setler['Tarih'])
-            grafik_verisi = gecmis_tum_setler.groupby('Tarih')['Ağırlık'].max().reset_index()
-            grafik_verisi = grafik_verisi.sort_values(by='Tarih')
+            grafik_verisi = gecmis_tum_setler.groupby('Tarih')['Ağırlık'].max().reset_index().sort_values(by='Tarih')
             grafik_verisi['Tarih'] = grafik_verisi['Tarih'].dt.strftime('%d/%m/%Y')
             grafik_verisi.set_index('Tarih', inplace=True)
-            grafik_verisi['Ağırlık'] = grafik_verisi['Ağırlık'].astype(float)
-            st.line_chart(grafik_verisi['Ağırlık'])
+            st.line_chart(grafik_verisi['Ağırlık'].astype(float))
         else:
             st.info(t["no_chart_data"])
 
-    st.subheader(t["add_new_set"])
-    secili_tarih = st.date_input(t["date"], value=date.today(), format="DD/MM/YYYY")
-
-    with st.expander(t["load_program_panel"]):
-        kisi_programlari_yukle = df_programlar[df_programlar['Kullanıcı'] == st.session_state.secili_kisi]
-        if kisi_programlari_yukle.empty:
-            st.info(t["no_program"])
-        else:
-            secili_program_yukle = st.selectbox(
-                t["select_program"], kisi_programlari_yukle['Program Adı'].unique(), key="program_yukle_secim"
-            )
-            program_icerik_yukle = df_program_detay[
-                (df_program_detay['Program Adı'] == secili_program_yukle) &
-                (df_program_detay['Kullanıcı'] == st.session_state.secili_kisi)
-            ].sort_values(by=["Hareket", "Set"])
-
-            if program_icerik_yukle.empty:
-                st.info(t["no_program_content"])
+    with st.container(border=True):
+        st.markdown(f"<h3 style='font-size: 1.2rem; color: #888;'>📅 {t['date']}</h3>", unsafe_allow_html=True)
+        secili_tarih = st.date_input("Tarih", value=date.today(), format="DD/MM/YYYY", label_visibility="collapsed")
+        
+        with st.expander(t["load_program_panel"]):
+            kisi_programlari_yukle = df_programlar[df_programlar['Kullanıcı'] == st.session_state.secili_kisi]
+            if kisi_programlari_yukle.empty:
+                st.info(t["no_program"])
             else:
-                st.write(f"**{t['program_preview']}**")
-                yuklenecek_setler_l = []
-                yukleme_hareketleri = program_icerik_yukle['Hareket'].unique()
+                secili_program_yukle = st.selectbox(t["select_program"], kisi_programlari_yukle['Program Adı'].unique(), key="program_yukle_secim")
+                program_icerik_yukle = df_program_detay[(df_program_detay['Program Adı'] == secili_program_yukle) & (df_program_detay['Kullanıcı'] == st.session_state.secili_kisi)].sort_values(by=["Hareket", "Set"])
 
-                for hareket_l in yukleme_hareketleri:
-                    hareket_setleri_l = program_icerik_yukle[program_icerik_yukle['Hareket'] == hareket_l]
-                    kas_grubu_l = hareket_setleri_l.iloc[0]['Kas Grubu']
-                    ekipman_l = hareket_setleri_l.iloc[0]['Ekipman'] if 'Ekipman' in hareket_setleri_l.columns else "-"
-                    
-                    tam_isim_l = f"{ekipman_l} {kas_grubu_l} {hareket_l}".replace("- ", "").strip()
-                    st.markdown(f"💪 **{tam_isim_l}**")
+                if program_icerik_yukle.empty:
+                    st.info(t["no_program_content"])
+                else:
+                    st.write(f"**{t['program_preview']}**")
+                    yuklenecek_setler_l = []
+                    for hareket_l in program_icerik_yukle['Hareket'].unique():
+                        hareket_setleri_l = program_icerik_yukle[program_icerik_yukle['Hareket'] == hareket_l]
+                        kas_grubu_l = hareket_setleri_l.iloc[0]['Kas Grubu']
+                        ekipman_l = hareket_setleri_l.iloc[0]['Ekipman'] if 'Ekipman' in hareket_setleri_l.columns else "-"
+                        st.markdown(f"💪 **{ekipman_l} {kas_grubu_l} {hareket_l}**".replace("- ", "").strip())
 
-                    for p_idx, p_row in hareket_setleri_l.iterrows():
-                        cLabel, cW, cR = st.columns([1, 2, 2])
-                        cLabel.markdown(f"<div style='margin-top: 8px;'>{t['set']} {int(p_row['Set'])}</div>", unsafe_allow_html=True)
+                        for p_idx, p_row in hareket_setleri_l.iterrows():
+                            cLabel, cW, cR = st.columns([1, 2, 2])
+                            cLabel.markdown(f"<div style='margin-top: 8px;'>{t['set']} {int(p_row['Set'])}</div>", unsafe_allow_html=True)
+                            w_key_l = f"load_w_{secili_program_yukle}_{p_idx}"
+                            r_key_l = f"load_r_{secili_program_yukle}_{p_idx}"
+                            if w_key_l not in st.session_state: st.session_state[w_key_l] = float(p_row['Ağırlık'])
+                            if r_key_l not in st.session_state: st.session_state[r_key_l] = int(p_row['Tekrar'])
+                            agirlik_l = cW.number_input(t["weight"], min_value=0.0, step=2.5, key=w_key_l, label_visibility="collapsed")
+                            tekrar_l = cR.number_input(t["reps"], min_value=0, step=1, key=r_key_l, label_visibility="collapsed")
+                            yuklenecek_setler_l.append({"Kas Grubu": kas_grubu_l, "Hareket": hareket_l, "Ağırlık": agirlik_l, "Tekrar": tekrar_l, "Ekipman": p_row['Ekipman'] if 'Ekipman' in p_row else "-"})
 
-                        w_key_l = f"load_w_{secili_program_yukle}_{p_idx}"
-                        r_key_l = f"load_r_{secili_program_yukle}_{p_idx}"
-                        if w_key_l not in st.session_state: st.session_state[w_key_l] = float(p_row['Ağırlık'])
-                        if r_key_l not in st.session_state: st.session_state[r_key_l] = int(p_row['Tekrar'])
+                    if st.button(t["load_program_btn"], type="primary", use_container_width=True):
+                        hareket_mekanik_sozlugu = df_hareketler.set_index('Hareket Tipi')['Mekanik'].to_dict() if not df_hareketler.empty else {}
+                        tum_yeni_setler = []
+                        hareket_sayaclari = {}
+                        for satir in yuklenecek_setler_l:
+                            hareket_adi_l = satir["Hareket"]
+                            if hareket_adi_l not in hareket_sayaclari:
+                                hareket_sayaclari[hareket_adi_l] = len(df_antrenmanlar[(df_antrenmanlar['Tarih'] == secili_tarih.strftime("%Y-%m-%d")) & (df_antrenmanlar['Kullanıcı'] == st.session_state.secili_kisi) & (df_antrenmanlar['Hareket'] == hareket_adi_l)]) + 1
+                            tum_yeni_setler.append({"Tarih": secili_tarih.strftime("%Y-%m-%d"), "Grup": st.session_state.secili_grup, "Kullanıcı": st.session_state.secili_kisi, "Kas Grubu": satir["Kas Grubu"], "Hareket": hareket_adi_l, "Set": hareket_sayaclari[hareket_adi_l], "Ağırlık": satir["Ağırlık"], "Tekrar": satir["Tekrar"], "Süre (dk)": 0, "Kalori": 0, "Mekanik": hareket_mekanik_sozlugu.get(hareket_adi_l, "Compound"), "Ekipman": satir["Ekipman"]})
+                            hareket_sayaclari[hareket_adi_l] += 1
+                        conn.update(worksheet="Antrenmanlar", data=pd.concat([df_antrenmanlar, pd.DataFrame(tum_yeni_setler)], ignore_index=True))
+                        st.cache_data.clear()
+                        for key in list(st.session_state.keys()):
+                            if key.startswith("load_w_") or key.startswith("load_r_"): del st.session_state[key]
+                        st.success(f"{secili_program_yukle} {t['success_load_program']}")
+                        st.rerun()
 
-                        agirlik_l = cW.number_input(t["weight"], min_value=0.0, step=2.5, key=w_key_l)
-                        tekrar_l = cR.number_input(t["reps"], min_value=0, step=1, key=r_key_l)
-
-                        yuklenecek_setler_l.append({
-                            "Kas Grubu": kas_grubu_l,
-                            "Hareket": hareket_l,
-                            "Ağırlık": agirlik_l,
-                            "Tekrar": tekrar_l,
-                            "Ekipman": p_row['Ekipman'] if 'Ekipman' in p_row else "-"
-                        })
-                    st.write("")
-
-                if st.button(t["load_program_btn"], type="primary", use_container_width=True):
-                    hareket_mekanik_sozlugu = df_hareketler.set_index('Hareket Tipi')['Mekanik'].to_dict() if not df_hareketler.empty else {}
-                    tum_yeni_setler = []
-                    hareket_sayaclari = {}
-
-                    for satir in yuklenecek_setler_l:
-                        hareket_adi_l = satir["Hareket"]
-                        if hareket_adi_l not in hareket_sayaclari:
-                            mevcut_setler_l = df_antrenmanlar[
-                                (df_antrenmanlar['Tarih'] == secili_tarih.strftime("%Y-%m-%d")) &
-                                (df_antrenmanlar['Kullanıcı'] == st.session_state.secili_kisi) &
-                                (df_antrenmanlar['Hareket'] == hareket_adi_l)
-                            ]
-                            hareket_sayaclari[hareket_adi_l] = len(mevcut_setler_l) + 1
-
-                        mekanik_l = hareket_mekanik_sozlugu.get(hareket_adi_l, "Compound")
-                        tum_yeni_setler.append({
-                            "Tarih": secili_tarih.strftime("%Y-%m-%d"),
-                            "Grup": st.session_state.secili_grup,
-                            "Kullanıcı": st.session_state.secili_kisi,
-                            "Kas Grubu": satir["Kas Grubu"],
-                            "Hareket": hareket_adi_l,
-                            "Set": hareket_sayaclari[hareket_adi_l],
-                            "Ağırlık": satir["Ağırlık"],
-                            "Tekrar": satir["Tekrar"],
-                            "Süre (dk)": 0,
-                            "Kalori": 0,
-                            "Mekanik": mekanik_l,
-                            "Ekipman": satir["Ekipman"]
-                        })
-                        hareket_sayaclari[hareket_adi_l] += 1
-
-                    yeni_df_l = pd.DataFrame(tum_yeni_setler)
-                    guncel_antrenmanlar_l = pd.concat([df_antrenmanlar, yeni_df_l], ignore_index=True)
-                    conn.update(worksheet="Antrenmanlar", data=guncel_antrenmanlar_l)
-                    st.cache_data.clear()
-
-                    for key in list(st.session_state.keys()):
-                        if key.startswith("load_w_") or key.startswith("load_r_"):
-                            del st.session_state[key]
-
-                    st.success(f"{secili_program_yukle} {t['success_load_program']}")
-                    st.rerun()
-    
-    col1, col2 = st.columns(2)
-    with col1:
-        mevcut_kas_gruplari = df_hareketler['Kas Grubu'].unique() if not df_hareketler.empty else ["Chest", "Back", "Shoulder", "Biceps", "Triceps", "Legs", "Glutes", "Calves", "Abs", "Forearm", "Neck", "Cardio"]
-        secili_kas = st.selectbox(t["muscle_group"], mevcut_kas_gruplari)
-    with col2:
+    # YENİ HAREKET GİRİŞ KARTI
+    with st.container(border=True):
+        st.markdown(f"<h3 style='font-size: 1.2rem; color: #888;'>➕ {t['add_new_set']}</h3>", unsafe_allow_html=True)
+        col1, col2 = st.columns(2)
+        mevcut_kas_gruplari = df_hareketler['Kas Grubu'].unique() if not df_hareketler.empty else ["Chest", "Back", "Shoulder", "Biceps", "Triceps", "Legs", "Cardio"]
+        with col1: secili_kas = st.selectbox(t["muscle_group"], mevcut_kas_gruplari)
+        
         filtrelenmis_df = df_hareketler[df_hareketler['Kas Grubu'] == secili_kas]
         hareket_listesi = filtrelenmis_df['Hareket Tipi'].unique() if not filtrelenmis_df.empty else []
-        secili_hareket = st.selectbox(t["exercise"], hareket_listesi)
+        with col2: secili_hareket = st.selectbox(t["exercise"], hareket_listesi)
 
-    if secili_hareket:
-        mekanik_degeri = filtrelenmis_df[filtrelenmis_df['Hareket Tipi'] == secili_hareket]['Mekanik'].values[0]
-        st.info(f"{t['mechanic']}: **{mekanik_degeri}**") 
-        
-        veritabanindaki_ekipman = filtrelenmis_df[filtrelenmis_df['Hareket Tipi'] == secili_hareket]['Ekipman'].values[0] if 'Ekipman' in filtrelenmis_df.columns else "Barbell"
-        varsayilan_idx = EKIPMAN_LISTESI.index(veritabanindaki_ekipman) if veritabanindaki_ekipman in EKIPMAN_LISTESI else 0
-        secili_ekipman = st.selectbox(t["equipment"], EKIPMAN_LISTESI, index=varsayilan_idx, key="gunluk_ekipman_sec")
+        if secili_hareket:
+            mekanik_degeri = filtrelenmis_df[filtrelenmis_df['Hareket Tipi'] == secili_hareket]['Mekanik'].values[0]
+            st.caption(f"{t['mechanic']}: **{mekanik_degeri}**") 
+            
+            veritabanindaki_ekipman = filtrelenmis_df[filtrelenmis_df['Hareket Tipi'] == secili_hareket]['Ekipman'].values[0] if 'Ekipman' in filtrelenmis_df.columns else "Barbell"
+            secili_ekipman = st.selectbox(t["equipment"], EKIPMAN_LISTESI, index=EKIPMAN_LISTESI.index(veritabanindaki_ekipman) if veritabanindaki_ekipman in EKIPMAN_LISTESI else 0, key="gunluk_ekipman_sec")
 
-        if st.session_state.onceki_hareket != secili_hareket:
-            st.session_state.onceki_hareket = secili_hareket
-            gecmis_hareket = df_antrenmanlar[
-                (df_antrenmanlar['Kullanıcı'] == st.session_state.secili_kisi) & 
-                (df_antrenmanlar['Hareket'] == secili_hareket) &
-                (df_antrenmanlar['Mekanik'] != 'Kardiyo')
-            ]
-            
-            if not gecmis_hareket.empty:
-                son_agirlik = float(gecmis_hareket.sort_values(by="Tarih", ascending=False).iloc[0]['Ağırlık'])
-                st.session_state.sablon_w = son_agirlik
-            else:
-                st.session_state.sablon_w = 0.0
-            
-            st.session_state.sablon_r = 10
-            
-            for key in list(st.session_state.keys()):
-                if key.startswith("w_new_") or key.startswith("r_new_"):
-                    del st.session_state[key]
-
-    with st.expander(t["new_exercise_panel"]):
-        st.write(t["new_exercise_desc"])
-        c_kas_yeni, c_har_yeni, c_mek_yeni, c_ekip_yeni = st.columns(4)
-        yeni_kas_grubu = c_kas_yeni.selectbox(t["which_muscle"], mevcut_kas_gruplari, key="yeni_kas_grubu_key")
-        yeni_hareket_adi = c_har_yeni.text_input(t["new_exercise_name"])
-        yeni_mekanik = c_mek_yeni.selectbox(t["mechanic_type"], ["Compound", "Izole", "Kardiyo"])
-        yeni_ekipman = c_ekip_yeni.selectbox(t["equipment_type"], EKIPMAN_LISTESI) 
-        
-        if st.button(t["add_to_db"], type="secondary"):
-            if yeni_hareket_adi:
-                yeni_hareket_satiri = pd.DataFrame([{"Kas Grubu": yeni_kas_grubu, "Hareket Tipi": yeni_hareket_adi, "Mekanik": yeni_mekanik, "Ekipman": yeni_ekipman}])
-                guncel_hareketler = pd.concat([df_hareketler, yeni_hareket_satiri], ignore_index=True)
-                conn.update(worksheet="Hareketler", data=guncel_hareketler)
-                st.cache_data.clear()
-                st.success(f"**{yeni_hareket_adi}** {t['success_db']}")
-                st.rerun()
-            else:
-                st.warning(t["warn_name"])
-                
-    if secili_hareket:
-        with st.expander(t["delete_exercise_panel"]):
-            st.warning(t["delete_exercise_desc"])
-            st.write(f"**{secili_hareket}**")
-            if st.button(t["delete_from_db"], type="primary"):
-                guncel_hareketler = df_hareketler[df_hareketler['Hareket Tipi'] != secili_hareket]
-                conn.update(worksheet="Hareketler", data=guncel_hareketler)
-                st.cache_data.clear()
-                if st.session_state.onceki_hareket == secili_hareket:
-                    st.session_state.onceki_hareket = ""
-                st.success(f"**{secili_hareket}** {t['success_delete_db']}")
-                st.rerun()
-
-    st.divider()
-    
-    if secili_hareket:
-        if mekanik_degeri == "Kardiyo":
-            st.write(t["cardio_details"])
-            
-            def kalori_hesapla():
-                st.session_state.kardiyo_kalori = int(st.session_state.kardiyo_sure * 10)
-
-            if 'kardiyo_sure' not in st.session_state: st.session_state.kardiyo_sure = 30
-            if 'kardiyo_kalori' not in st.session_state: st.session_state.kardiyo_kalori = 300
-
-            c_sure, c_kalori = st.columns(2)
-            kardiyo_sure = c_sure.number_input(t["duration"], min_value=1, value=st.session_state.kardiyo_sure, key="kardiyo_sure", step=1, on_change=kalori_hesapla)
-            kardiyo_kalori = c_kalori.number_input(t["calories"], min_value=1, value=st.session_state.kardiyo_kalori, key="kardiyo_kalori", step=10)
-            
-            if st.button(t["save_cardio"], type="primary", use_container_width=True):
-                yeni_satir = pd.DataFrame([{
-                    "Tarih": secili_tarih.strftime("%Y-%m-%d"),
-                    "Grup": st.session_state.secili_grup,
-                    "Kullanıcı": st.session_state.secili_kisi,
-                    "Kas Grubu": secili_kas,
-                    "Hareket": secili_hareket,
-                    "Set": 1,
-                    "Ağırlık": 0,
-                    "Tekrar": 0,
-                    "Süre (dk)": kardiyo_sure,
-                    "Kalori": kardiyo_kalori,
-                    "Mekanik": mekanik_degeri,
-                    "Ekipman": secili_ekipman
-                }])
-                guncel_antrenmanlar = pd.concat([df_antrenmanlar, yeni_satir], ignore_index=True)
-                conn.update(worksheet="Antrenmanlar", data=guncel_antrenmanlar)
-                st.cache_data.clear()
-                st.success(f"{secili_hareket} {t['success_cardio']}")
-                st.rerun()
-        else:
-            st.write(t["template_title"])
-            set_sayisi = st.number_input(t["how_many_sets"], min_value=1, max_value=10, value=3, step=1)
-            
-            c_hedef1, c_hedef2 = st.columns(2)
-            c_hedef1.number_input(t["template_w"], step=2.5, key="sablon_w", on_change=sablon_guncelle)
-            c_hedef2.number_input(t["template_r"], step=1, key="sablon_r", on_change=sablon_guncelle)
-            
-            st.write("---")
-            st.write(t["edit_sets"])
-            
-            bugunku_setler = df_antrenmanlar[
-                (df_antrenmanlar['Tarih'] == secili_tarih.strftime("%Y-%m-%d")) &
-                (df_antrenmanlar['Kullanıcı'] == st.session_state.secili_kisi) &
-                (df_antrenmanlar['Hareket'] == secili_hareket)
-            ]
-            baslangic_seti = len(bugunku_setler) + 1
-            eklenecek_setler = []
-            
-            for i in range(set_sayisi):
-                guncel_set_no = baslangic_seti + i
-                c_label, c_w, c_r = st.columns([1,2,2])
-                c_label.markdown(f"<div style='margin-top: 25px;'>**{t['set']} {guncel_set_no}**</div>", unsafe_allow_html=True)
-                
-                w_key = f"w_new_{secili_hareket}_{guncel_set_no}"
-                r_key = f"r_new_{secili_hareket}_{guncel_set_no}"
-                
-                if w_key not in st.session_state: st.session_state[w_key] = st.session_state.sablon_w
-                if r_key not in st.session_state: st.session_state[r_key] = st.session_state.sablon_r
-                
-                w = c_w.number_input(t["weight"], step=2.5, key=w_key)
-                r = c_r.number_input(t["reps"], step=1, key=r_key)
-                
-                eklenecek_setler.append({
-                    "Tarih": secili_tarih.strftime("%Y-%m-%d"),
-                    "Grup": st.session_state.secili_grup,
-                    "Kullanıcı": st.session_state.secili_kisi,
-                    "Kas Grubu": secili_kas,
-                    "Hareket": secili_hareket,
-                    "Set": guncel_set_no,
-                    "Ağırlık": w,
-                    "Tekrar": r,
-                    "Süre (dk)": 0,
-                    "Kalori": 0,
-                    "Mekanik": mekanik_degeri,
-                    "Ekipman": secili_ekipman
-                })
-                
-            if st.button(t["save_all"], type="primary", use_container_width=True):
-                yeni_satirlar = pd.DataFrame(eklenecek_setler)
-                guncel_antrenmanlar = pd.concat([df_antrenmanlar, yeni_satirlar], ignore_index=True)
-                conn.update(worksheet="Antrenmanlar", data=guncel_antrenmanlar)
-                st.cache_data.clear()
-                
+            if st.session_state.onceki_hareket != secili_hareket:
+                st.session_state.onceki_hareket = secili_hareket
+                gecmis_hareket = df_antrenmanlar[(df_antrenmanlar['Kullanıcı'] == st.session_state.secili_kisi) & (df_antrenmanlar['Hareket'] == secili_hareket) & (df_antrenmanlar['Mekanik'] != 'Kardiyo')]
+                st.session_state.sablon_w = float(gecmis_hareket.sort_values(by="Tarih", ascending=False).iloc[0]['Ağırlık']) if not gecmis_hareket.empty else 0.0
+                st.session_state.sablon_r = 10
                 for key in list(st.session_state.keys()):
-                    if key.startswith("w_new_") or key.startswith("r_new_"):
-                        del st.session_state[key]
-                        
-                st.success(f"{secili_hareket}: {set_sayisi} {t['success_sets']}")
-                st.rerun()
+                    if key.startswith("w_new_") or key.startswith("r_new_"): del st.session_state[key]
+            
+            st.divider()
+            
+            if mekanik_degeri == "Kardiyo":
+                st.write(f"**{t['cardio_details']}**")
+                def kalori_hesapla(): st.session_state.kardiyo_kalori = int(st.session_state.kardiyo_sure * 10)
+                if 'kardiyo_sure' not in st.session_state: st.session_state.kardiyo_sure = 30
+                if 'kardiyo_kalori' not in st.session_state: st.session_state.kardiyo_kalori = 300
+                c_sure, c_kalori = st.columns(2)
+                kardiyo_sure = c_sure.number_input(t["duration"], min_value=1, value=st.session_state.kardiyo_sure, key="kardiyo_sure", step=1, on_change=kalori_hesapla)
+                kardiyo_kalori = c_kalori.number_input(t["calories"], min_value=1, value=st.session_state.kardiyo_kalori, key="kardiyo_kalori", step=10)
+                
+                if st.button(t["save_cardio"], type="primary", use_container_width=True):
+                    yeni_satir = pd.DataFrame([{"Tarih": secili_tarih.strftime("%Y-%m-%d"), "Grup": st.session_state.secili_grup, "Kullanıcı": st.session_state.secili_kisi, "Kas Grubu": secili_kas, "Hareket": secili_hareket, "Set": 1, "Ağırlık": 0, "Tekrar": 0, "Süre (dk)": kardiyo_sure, "Kalori": kardiyo_kalori, "Mekanik": mekanik_degeri, "Ekipman": secili_ekipman}])
+                    conn.update(worksheet="Antrenmanlar", data=pd.concat([df_antrenmanlar, yeni_satir], ignore_index=True))
+                    st.cache_data.clear()
+                    st.success(f"{secili_hareket} {t['success_cardio']}")
+                    st.rerun()
+            else:
+                st.write(f"**{t['template_title']}**")
+                set_sayisi = st.number_input(t["how_many_sets"], min_value=1, max_value=10, value=3, step=1)
+                c_hedef1, c_hedef2 = st.columns(2)
+                c_hedef1.number_input(t["template_w"], step=2.5, key="sablon_w", on_change=sablon_guncelle)
+                c_hedef2.number_input(t["template_r"], step=1, key="sablon_r", on_change=sablon_guncelle)
+                
+                st.write(f"**{t['edit_sets']}**")
+                bugunku_setler = df_antrenmanlar[(df_antrenmanlar['Tarih'] == secili_tarih.strftime("%Y-%m-%d")) & (df_antrenmanlar['Kullanıcı'] == st.session_state.secili_kisi) & (df_antrenmanlar['Hareket'] == secili_hareket)]
+                baslangic_seti = len(bugunku_setler) + 1
+                eklenecek_setler = []
+                
+                for i in range(set_sayisi):
+                    guncel_set_no = baslangic_seti + i
+                    c_label, c_w, c_r = st.columns([1,2,2])
+                    c_label.markdown(f"<div style='margin-top: 25px;'>**{t['set']} {guncel_set_no}**</div>", unsafe_allow_html=True)
+                    w_key, r_key = f"w_new_{secili_hareket}_{guncel_set_no}", f"r_new_{secili_hareket}_{guncel_set_no}"
+                    if w_key not in st.session_state: st.session_state[w_key] = st.session_state.sablon_w
+                    if r_key not in st.session_state: st.session_state[r_key] = st.session_state.sablon_r
+                    w = c_w.number_input(t["weight"], step=2.5, key=w_key, label_visibility="collapsed")
+                    r = c_r.number_input(t["reps"], step=1, key=r_key, label_visibility="collapsed")
+                    eklenecek_setler.append({"Tarih": secili_tarih.strftime("%Y-%m-%d"), "Grup": st.session_state.secili_grup, "Kullanıcı": st.session_state.secili_kisi, "Kas Grubu": secili_kas, "Hareket": secili_hareket, "Set": guncel_set_no, "Ağırlık": w, "Tekrar": r, "Süre (dk)": 0, "Kalori": 0, "Mekanik": mekanik_degeri, "Ekipman": secili_ekipman})
+                    
+                if st.button(t["save_all"], type="primary", use_container_width=True):
+                    conn.update(worksheet="Antrenmanlar", data=pd.concat([df_antrenmanlar, pd.DataFrame(eklenecek_setler)], ignore_index=True))
+                    st.cache_data.clear()
+                    for key in list(st.session_state.keys()):
+                        if key.startswith("w_new_") or key.startswith("r_new_"): del st.session_state[key]
+                    st.success(f"{secili_hareket}: {set_sayisi} {t['success_sets']}")
+                    st.rerun()
+
+        with st.expander(t["new_exercise_panel"]):
+            st.caption(t["new_exercise_desc"])
+            c_kas, c_har, c_mek, c_ekip = st.columns(4)
+            yeni_kas = c_kas.selectbox(t["which_muscle"], mevcut_kas_gruplari, key="new_muscle")
+            yeni_har = c_har.text_input(t["new_exercise_name"])
+            yeni_mek = c_mek.selectbox(t["mechanic_type"], ["Compound", "Izole", "Kardiyo"])
+            yeni_ekip = c_ekip.selectbox(t["equipment_type"], EKIPMAN_LISTESI) 
+            if st.button(t["add_to_db"], type="secondary", use_container_width=True):
+                if yeni_har:
+                    conn.update(worksheet="Hareketler", data=pd.concat([df_hareketler, pd.DataFrame([{"Kas Grubu": yeni_kas, "Hareket Tipi": yeni_har, "Mekanik": yeni_mek, "Ekipman": yeni_ekip}])], ignore_index=True))
+                    st.cache_data.clear()
+                    st.rerun()
+                else: st.warning(t["warn_name"])
 
     st.divider()
+    st.markdown(f"<h2 style='font-size: 1.5rem;'>📋 {secili_tarih.strftime('%d/%m/%Y')} {t['workout_of'] if secilen_dil == 'English' else 'Tarihli ' + t['workout_of']}</h2>", unsafe_allow_html=True)
     
-    if secilen_dil == "English":
-        st.subheader(f"📋 {secili_tarih.strftime('%d/%m/%Y')} {t['workout_of']}")
-    else:
-        st.subheader(f"📋 {secili_tarih.strftime('%d/%m/%Y')} Tarihli {t['workout_of']}")
-    
-    gunluk_gecmis = df_antrenmanlar[
-        (df_antrenmanlar['Grup'] == st.session_state.secili_grup) & 
-        (df_antrenmanlar['Kullanıcı'] == st.session_state.secili_kisi) &
-        (df_antrenmanlar['Tarih'] == secili_tarih.strftime("%Y-%m-%d"))
-    ]
+    gunluk_gecmis = df_antrenmanlar[(df_antrenmanlar['Grup'] == st.session_state.secili_grup) & (df_antrenmanlar['Kullanıcı'] == st.session_state.secili_kisi) & (df_antrenmanlar['Tarih'] == secili_tarih.strftime("%Y-%m-%d"))]
 
     if not gunluk_gecmis.empty:
-        csv_verisi = gunluk_gecmis.to_csv(index=False).encode('utf-8-sig')
-        st.download_button(
-            label=t["export_csv"],
-            data=csv_verisi,
-            file_name=f"antrenman_{st.session_state.secili_kisi}_{secili_tarih.strftime('%Y-%m-%d')}.csv",
-            mime="text/csv",
-            use_container_width=True
-        )
-    
-    if not gunluk_gecmis.empty:
-        yapilan_hareketler = gunluk_gecmis['Hareket'].unique()
-        
-        for hareket in yapilan_hareketler:
+        st.download_button(label=t["export_csv"], data=gunluk_gecmis.to_csv(index=False).encode('utf-8-sig'), file_name=f"antrenman_{st.session_state.secili_kisi}_{secili_tarih.strftime('%Y-%m-%d')}.csv", mime="text/csv", use_container_width=True)
+        st.write("")
+
+        for hareket in gunluk_gecmis['Hareket'].unique():
             hareket_setleri = gunluk_gecmis[gunluk_gecmis['Hareket'] == hareket].sort_values(by="Set")
-            toplam_set = len(hareket_setleri)
-            ilk_satir = hareket_setleri.iloc[0]
-            mekanik_kontrol = ilk_satir['Mekanik']
-            kas_g = ilk_satir['Kas Grubu']
-            ekip_g = ilk_satir['Ekipman'] if 'Ekipman' in ilk_satir else "-"
+            ilk = hareket_setleri.iloc[0]
+            tam_adi = f"{ilk.get('Ekipman','-')} {ilk['Kas Grubu']} {hareket}".replace("- ", "").strip()
             
-            tam_hareket_adi = f"{ekip_g} {kas_g} {hareket}".replace("- ", "").strip()
-            
-            if mekanik_kontrol == "Kardiyo":
-                ozet_listesi = [f"{row['Süre (dk)']} dk, {row['Kalori']} kcal" for _, row in hareket_setleri.iterrows()]
-                ozet_metni = " | ".join(ozet_listesi)
-                expander_baslik = f"🏃‍♂️ **{tam_hareket_adi}** 👉 {ozet_metni}"
+            if ilk['Mekanik'] == "Kardiyo":
+                ozet = " | ".join([f"{row['Süre (dk)']} dk, {row['Kalori']} kcal" for _, row in hareket_setleri.iterrows()])
+                baslik = f"🏃‍♂️ **{tam_adi}** 👉 {ozet}"
             else:
-                ozet_listesi = [f"{row['Ağırlık']}x{row['Tekrar']}" for _, row in hareket_setleri.iterrows()]
-                ozet_metni = " | ".join(ozet_listesi)
-                expander_baslik = f"💪 **{tam_hareket_adi}** ({toplam_set} {t['set']}) 👉 {ozet_metni}"
+                ozet = " | ".join([f"{row['Ağırlık']}x{row['Tekrar']}" for _, row in hareket_setleri.iterrows()])
+                baslik = f"💪 **{tam_adi}** ({len(hareket_setleri)} {t['set']}) 👉 {ozet}"
             
-            with st.expander(expander_baslik, key=f"exp_gunluk_{hareket}_{secili_tarih}"):
-                hareket_silme_anahtari = f"{hareket}_{secili_tarih}"
-
-                if mekanik_kontrol != "Kardiyo":
-                    c_grafik, c_sil_hareket = st.columns(2)
-                else:
-                    c_sil_hareket = st.container()
-
-                if mekanik_kontrol != "Kardiyo":
+            with st.expander(baslik, key=f"exp_{hareket}_{secili_tarih}"):
+                h_key = f"{hareket}_{secili_tarih}"
+                c_grafik, c_sil = st.columns(2) if ilk['Mekanik'] != "Kardiyo" else (st.container(), st.columns(1)[0])
+                
+                if ilk['Mekanik'] != "Kardiyo":
                     with c_grafik:
-                        if st.button(f"📈 {t['progress_chart']}", key=f"grafik_btn_{hareket}_{secili_tarih}", use_container_width=True):
-                            if st.session_state.grafik_gorunur == hareket:
-                                st.session_state.grafik_gorunur = None
-                            else:
-                                st.session_state.grafik_gorunur = hareket
-                with c_sil_hareket:
-                    if st.button(t["delete_exercise_day"], key=f"sil_hareket_btn_{hareket_silme_anahtari}", use_container_width=True):
-                        if st.session_state.silme_onay_hareket == hareket_silme_anahtari:
-                            st.session_state.silme_onay_hareket = None
-                        else:
-                            st.session_state.silme_onay_hareket = hareket_silme_anahtari
+                        if st.button(f"📈 {t['progress_chart']}", key=f"g_btn_{h_key}", use_container_width=True):
+                            st.session_state.grafik_gorunur = None if st.session_state.grafik_gorunur == hareket else hareket
+                with c_sil:
+                    if st.button(t["delete_exercise_day"], key=f"del_btn_{h_key}", use_container_width=True):
+                        st.session_state.silme_onay_hareket = None if st.session_state.silme_onay_hareket == h_key else h_key
 
-                if st.session_state.silme_onay_hareket == hareket_silme_anahtari:
+                if st.session_state.silme_onay_hareket == h_key:
                     st.warning(t["confirm_delete_exercise_day"].format(ex=hareket))
-                    c_onay, c_vazgec = st.columns(2)
-                    if c_onay.button(t["yes_delete"], key=f"onay_sil_{hareket_silme_anahtari}", type="primary", use_container_width=True):
-                        df_antrenmanlar = df_antrenmanlar.drop(hareket_setleri.index)
-                        conn.update(worksheet="Antrenmanlar", data=df_antrenmanlar)
+                    co1, co2 = st.columns(2)
+                    if co1.button(t["yes_delete"], key=f"y_del_{h_key}", type="primary", use_container_width=True):
+                        conn.update(worksheet="Antrenmanlar", data=df_antrenmanlar.drop(hareket_setleri.index))
                         st.cache_data.clear()
-                        st.session_state.silme_onay_hareket = None
-                        if st.session_state.grafik_gorunur == hareket:
-                            st.session_state.grafik_gorunur = None
-                        st.success(f"**{hareket}** {t['success_delete_exercise_day']}")
+                        st.session_state.silme_onay_hareket, st.session_state.grafik_gorunur = None, None
                         st.rerun()
-                    if c_vazgec.button(t["cancel"], key=f"vazgec_sil_{hareket_silme_anahtari}", use_container_width=True):
-                        st.session_state.silme_onay_hareket = None
+                    if co2.button(t["cancel"], key=f"c_del_{h_key}", use_container_width=True): st.session_state.silme_onay_hareket = None
 
-                if mekanik_kontrol != "Kardiyo" and st.session_state.grafik_gorunur == hareket:
+                if ilk['Mekanik'] != "Kardiyo" and st.session_state.grafik_gorunur == hareket:
                     grafik_ciz(hareket)
                     st.divider()
 
                 for idx, row in hareket_setleri.iterrows():
+                    cL, c1, c2, cS = st.columns([0.8, 1.5, 1.5, 0.6])
                     if row['Mekanik'] == 'Kardiyo':
-                        col_lbl, col_s, col_k, col_sil = st.columns([0.8, 1.5, 1.5, 0.6])
-                        col_lbl.markdown(f"<div style='margin-top: 8px;'>⏱️</div>", unsafe_allow_html=True)
-                        col_s.number_input(t["duration"], min_value=0, value=int(row['Süre (dk)']), step=1, key=f"live_s_{idx}", label_visibility="collapsed")
-                        col_k.number_input(t["calories"], min_value=0, value=int(row['Kalori']), step=10, key=f"live_k_{idx}", label_visibility="collapsed")
-                        if col_sil.button("❌", key=f"sil_btn_{idx}"):
-                            df_antrenmanlar = df_antrenmanlar.drop(idx)
-                            conn.update(worksheet="Antrenmanlar", data=df_antrenmanlar)
-                            st.cache_data.clear()
-                            st.rerun()
+                        cL.markdown("<div style='margin-top: 8px;'>⏱️</div>", unsafe_allow_html=True)
+                        c1.number_input(t["duration"], min_value=0, value=int(row['Süre (dk)']), step=1, key=f"ls_{idx}", label_visibility="collapsed")
+                        c2.number_input(t["calories"], min_value=0, value=int(row['Kalori']), step=10, key=f"lk_{idx}", label_visibility="collapsed")
                     else:
-                        col_lbl, col_w, col_r, col_sil = st.columns([0.8, 1.5, 1.5, 0.6])
-                        col_lbl.markdown(f"<div style='margin-top: 8px;'>{t['set']} {int(row['Set'])}</div>", unsafe_allow_html=True)
-                        col_w.number_input(t["weight"], min_value=0.0, value=float(row['Ağırlık']), step=2.5, key=f"live_w_{idx}", label_visibility="collapsed")
-                        col_r.number_input(t["reps"], min_value=0, value=int(row['Tekrar']), step=1, key=f"live_r_{idx}", label_visibility="collapsed")
-                        if col_sil.button("❌", key=f"sil_btn_{idx}"):
-                            df_antrenmanlar = df_antrenmanlar.drop(idx)
-                            conn.update(worksheet="Antrenmanlar", data=df_antrenmanlar)
-                            st.cache_data.clear()
-                            st.rerun()
+                        cL.markdown(f"<div style='margin-top: 8px;'>{t['set']} {int(row['Set'])}</div>", unsafe_allow_html=True)
+                        c1.number_input(t["weight"], min_value=0.0, value=float(row['Ağırlık']), step=2.5, key=f"lw_{idx}", label_visibility="collapsed")
+                        c2.number_input(t["reps"], min_value=0, value=int(row['Tekrar']), step=1, key=f"lr_{idx}", label_visibility="collapsed")
+                    if cS.button("❌", key=f"d_{idx}"):
+                        conn.update(worksheet="Antrenmanlar", data=df_antrenmanlar.drop(idx))
+                        st.cache_data.clear()
+                        st.rerun()
 
-                if st.button(t["save_all_changes"], key=f"save_all_{hareket}_{secili_tarih}", type="primary", use_container_width=True):
+                if st.button(t["save_all_changes"], key=f"s_all_{h_key}", type="primary", use_container_width=True):
                     for idx, row in hareket_setleri.iterrows():
                         if row['Mekanik'] == 'Kardiyo':
-                            df_antrenmanlar.at[idx, 'Süre (dk)'] = st.session_state[f"live_s_{idx}"]
-                            df_antrenmanlar.at[idx, 'Kalori'] = st.session_state[f"live_k_{idx}"]
+                            df_antrenmanlar.at[idx, 'Süre (dk)'] = st.session_state[f"ls_{idx}"]
+                            df_antrenmanlar.at[idx, 'Kalori'] = st.session_state[f"lk_{idx}"]
                         else:
-                            df_antrenmanlar.at[idx, 'Ağırlık'] = st.session_state[f"live_w_{idx}"]
-                            df_antrenmanlar.at[idx, 'Tekrar'] = st.session_state[f"live_r_{idx}"]
+                            df_antrenmanlar.at[idx, 'Ağırlık'] = st.session_state[f"lw_{idx}"]
+                            df_antrenmanlar.at[idx, 'Tekrar'] = st.session_state[f"lr_{idx}"]
                     conn.update(worksheet="Antrenmanlar", data=df_antrenmanlar)
                     st.cache_data.clear()
-                    st.success(f"**{hareket}** {t['success_save_all_changes']}")
                     st.rerun()
     else:
         st.info(t["no_workout"])
@@ -755,304 +656,199 @@ elif st.session_state.sayfa == 'kisi_sayfasi':
 
 # --- SAYFA 4: ANTRENMAN PROGRAMLARI ---
 elif st.session_state.sayfa == 'program_sayfasi':
+    render_top_nav()
+    st.markdown(f"<h2>📋 {st.session_state.secili_kisi} - {t['programs_title']}</h2>", unsafe_allow_html=True)
+
     df_programlar = veri_getir("Programlar", ["Kullanıcı", "Program Adı"])
     df_program_detay = veri_getir("ProgramDetay", ["Program Adı", "Kullanıcı", "Kas Grubu", "Hareket", "Set", "Ağırlık", "Tekrar", "Ekipman"])
     df_hareketler = veri_getir("Hareketler", ["Kas Grubu", "Hareket Tipi", "Mekanik", "Ekipman"])
 
-    st.title(f"📋 {st.session_state.secili_kisi} - {t['programs_title']}")
-
-    if st.button(t["back_to_person"]):
-        st.session_state.sayfa = 'kisi_sayfasi'
-        st.session_state.secili_program = None
-        st.rerun()
-
     kisi_programlari = df_programlar[df_programlar['Kullanıcı'] == st.session_state.secili_kisi]
 
     if st.session_state.secili_program is None:
-        st.subheader(t["existing_programs"])
-        if not kisi_programlari.empty:
-            for idx, row in kisi_programlari.iterrows():
-                if st.button(f"📁 {row['Program Adı']}", key=f"prog_sec_{idx}", use_container_width=True):
-                    st.session_state.secili_program = row['Program Adı']
-                    st.rerun()
-        else:
-            st.info(t["no_program"])
-
-        st.divider()
-        yeni_program_adi = st.text_input(t["new_program_name"])
-        if st.button(t["create_program"], type="primary"):
-            if yeni_program_adi:
-                if not kisi_programlari.empty and yeni_program_adi in kisi_programlari['Program Adı'].values:
-                    st.warning(t["program_exists"])
-                else:
-                    yeni_satir = pd.DataFrame([{"Kullanıcı": st.session_state.secili_kisi, "Program Adı": yeni_program_adi}])
-                    guncel_programlar = pd.concat([df_programlar, yeni_satir], ignore_index=True)
-                    conn.update(worksheet="Programlar", data=guncel_programlar)
+        with st.container(border=True):
+            st.markdown(f"<h3 style='font-size: 1.2rem; color: #888;'>{t['existing_programs']}</h3>", unsafe_allow_html=True)
+            if not kisi_programlari.empty:
+                for idx, row in kisi_programlari.iterrows():
+                    if st.button(f"📁 {row['Program Adı']}", key=f"p_{idx}", use_container_width=True):
+                        st.session_state.secili_program = row['Program Adı']
+                        st.rerun()
+            else:
+                st.info(t["no_program"])
+                
+        with st.container(border=True):
+            st.markdown(f"<h3 style='font-size: 1.2rem; color: #888;'>➕ {t['create_program']}</h3>", unsafe_allow_html=True)
+            yeni_prog = st.text_input(t["new_program_name"], label_visibility="collapsed")
+            if st.button(t["create_program"], type="primary", use_container_width=True):
+                if yeni_prog and yeni_prog not in kisi_programlari['Program Adı'].values:
+                    conn.update(worksheet="Programlar", data=pd.concat([df_programlar, pd.DataFrame([{"Kullanıcı": st.session_state.secili_kisi, "Program Adı": yeni_prog}])], ignore_index=True))
                     st.cache_data.clear()
-                    st.session_state.secili_program = yeni_program_adi
-                    st.success(f"{yeni_program_adi} {t['success_program']}")
+                    st.session_state.secili_program = yeni_prog
                     st.rerun()
+                elif yeni_prog: st.warning(t["program_exists"])
 
     else:
-        st.subheader(f"📁 {st.session_state.secili_program}")
-        if st.button(t["back_to_programs"]):
+        st.markdown(f"<h3>📁 {st.session_state.secili_program}</h3>", unsafe_allow_html=True)
+        if st.button(t["back_to_programs"], use_container_width=True):
             st.session_state.secili_program = None
-            st.session_state.program_duzenlenen_idx = None
-            st.session_state.program_silme_onay_hareket = None
             st.rerun()
 
-        program_icerik = df_program_detay[
-            (df_program_detay['Program Adı'] == st.session_state.secili_program) &
-            (df_program_detay['Kullanıcı'] == st.session_state.secili_kisi)
-        ]
+        program_icerik = df_program_detay[(df_program_detay['Program Adı'] == st.session_state.secili_program) & (df_program_detay['Kullanıcı'] == st.session_state.secili_kisi)]
 
         st.write(f"**{t['program_content']}**")
         if not program_icerik.empty:
-            program_hareketleri = program_icerik['Hareket'].unique()
-
-            for hareket_p in program_hareketleri:
-                hareket_setleri_p = program_icerik[program_icerik['Hareket'] == hareket_p].sort_values(by="Set")
-                toplam_set_p = len(hareket_setleri_p)
-                ilk_satir_p = hareket_setleri_p.iloc[0]
-                kas_p = ilk_satir_p['Kas Grubu']
-                ekip_p = ilk_satir_p['Ekipman'] if 'Ekipman' in ilk_satir_p else "-"
+            for hareket_p in program_icerik['Hareket'].unique():
+                h_set_p = program_icerik[program_icerik['Hareket'] == hareket_p].sort_values(by="Set")
+                ilk_p = h_set_p.iloc[0]
+                tam_adi = f"{ilk_p.get('Ekipman','-')} {ilk_p['Kas Grubu']} {hareket_p}".replace("- ", "").strip()
+                ozet = " | ".join([f"{r['Ağırlık']}x{r['Tekrar']}" for _, r in h_set_p.iterrows()])
                 
-                tam_hareket_adi_p = f"{ekip_p} {kas_p} {hareket_p}".replace("- ", "").strip()
-                
-                ozet_listesi_p = [f"{row['Ağırlık']}x{row['Tekrar']}" for _, row in hareket_setleri_p.iterrows()]
-                ozet_metni_p = " | ".join(ozet_listesi_p)
-                expander_baslik_p = f"💪 **{tam_hareket_adi_p}** ({toplam_set_p} {t['set']}) 👉 {ozet_metni_p}"
-
-                with st.expander(expander_baslik_p, key=f"exp_prog_{st.session_state.secili_program}_{hareket_p}"):
-                    hareket_silme_anahtari_p = f"{st.session_state.secili_program}_{hareket_p}"
-                    if st.button(t["delete_exercise_from_program"], key=f"p_sil_hareket_btn_{hareket_silme_anahtari_p}", use_container_width=True):
-                        if st.session_state.program_silme_onay_hareket == hareket_silme_anahtari_p:
-                            st.session_state.program_silme_onay_hareket = None
-                        else:
-                            st.session_state.program_silme_onay_hareket = hareket_silme_anahtari_p
-
-                    if st.session_state.program_silme_onay_hareket == hareket_silme_anahtari_p:
+                with st.expander(f"💪 **{tam_adi}** 👉 {ozet}", key=f"e_{hareket_p}"):
+                    p_key = f"{st.session_state.secili_program}_{hareket_p}"
+                    if st.button(t["delete_exercise_from_program"], key=f"d_p_{p_key}", use_container_width=True):
+                        st.session_state.program_silme_onay_hareket = None if st.session_state.program_silme_onay_hareket == p_key else p_key
+                    if st.session_state.program_silme_onay_hareket == p_key:
                         st.warning(t["confirm_delete_exercise_from_program"].format(ex=hareket_p))
-                        c_onay_p, c_vazgec_p = st.columns(2)
-                        if c_onay_p.button(t["yes_delete"], key=f"p_onay_sil_{hareket_silme_anahtari_p}", type="primary", use_container_width=True):
-                            df_program_detay = df_program_detay.drop(hareket_setleri_p.index)
-                            conn.update(worksheet="ProgramDetay", data=df_program_detay)
+                        c1, c2 = st.columns(2)
+                        if c1.button(t["yes_delete"], key=f"y_d_{p_key}", type="primary", use_container_width=True):
+                            conn.update(worksheet="ProgramDetay", data=df_program_detay.drop(h_set_p.index))
                             st.cache_data.clear()
                             st.session_state.program_silme_onay_hareket = None
-                            st.success(f"**{hareket_p}** {t['success_delete_exercise_from_program']}")
                             st.rerun()
-                        if c_vazgec_p.button(t["cancel"], key=f"p_vazgec_sil_{hareket_silme_anahtari_p}", use_container_width=True):
-                            st.session_state.program_silme_onay_hareket = None
+                        if c2.button(t["cancel"], key=f"c_d_{p_key}", use_container_width=True): st.session_state.program_silme_onay_hareket = None
 
                     st.divider()
-
-                    for idx, row in hareket_setleri_p.iterrows():
-                        col_lbl_p, col_w_p, col_r_p, col_sil_p = st.columns([0.8, 1.5, 1.5, 0.6])
-                        col_lbl_p.markdown(f"<div style='margin-top: 8px;'>{t['set']} {int(row['Set'])}</div>", unsafe_allow_html=True)
-                        col_w_p.number_input(t["weight"], min_value=0.0, value=float(row['Ağırlık']), step=2.5, key=f"pe_w_{idx}", label_visibility="collapsed")
-                        col_r_p.number_input(t["reps"], min_value=0, value=int(row['Tekrar']), step=1, key=f"pe_r_{idx}", label_visibility="collapsed")
-                        if col_sil_p.button("❌", key=f"pe_delbtn_{idx}"):
-                            df_program_detay = df_program_detay.drop(idx)
-                            conn.update(worksheet="ProgramDetay", data=df_program_detay)
+                    for idx, row in h_set_p.iterrows():
+                        cL, cW, cR, cS = st.columns([0.8, 1.5, 1.5, 0.6])
+                        cL.markdown(f"<div style='margin-top: 8px;'>{t['set']} {int(row['Set'])}</div>", unsafe_allow_html=True)
+                        cW.number_input(t["weight"], min_value=0.0, value=float(row['Ağırlık']), step=2.5, key=f"pw_{idx}", label_visibility="collapsed")
+                        cR.number_input(t["reps"], min_value=0, value=int(row['Tekrar']), step=1, key=f"pr_{idx}", label_visibility="collapsed")
+                        if cS.button("❌", key=f"pd_{idx}"):
+                            conn.update(worksheet="ProgramDetay", data=df_program_detay.drop(idx))
                             st.cache_data.clear()
                             st.rerun()
-
-                    if st.button(t["save_all_changes"], key=f"p_save_all_{st.session_state.secili_program}_{hareket_p}", type="primary", use_container_width=True):
-                        for idx, row in hareket_setleri_p.iterrows():
-                            df_program_detay.at[idx, 'Ağırlık'] = st.session_state[f"pe_w_{idx}"]
-                            df_program_detay.at[idx, 'Tekrar'] = st.session_state[f"pe_r_{idx}"]
+                    if st.button(t["save_all_changes"], key=f"psa_{p_key}", type="primary", use_container_width=True):
+                        for idx, row in h_set_p.iterrows():
+                            df_program_detay.at[idx, 'Ağırlık'] = st.session_state[f"pw_{idx}"]
+                            df_program_detay.at[idx, 'Tekrar'] = st.session_state[f"pr_{idx}"]
                         conn.update(worksheet="ProgramDetay", data=df_program_detay)
                         st.cache_data.clear()
-                        st.success(f"**{hareket_p}** {t['success_save_all_changes']}")
                         st.rerun()
         else:
             st.info(t["no_program_content"])
 
-        st.divider()
-        st.write(f"**{t['add_exercise_to_program']}**")
+        with st.container(border=True):
+            st.markdown(f"<h3 style='font-size: 1.2rem; color: #888;'>➕ {t['add_exercise_to_program']}</h3>", unsafe_allow_html=True)
+            pc1, pc2 = st.columns(2)
+            mevcut_kas = df_hareketler['Kas Grubu'].unique() if not df_hareketler.empty else ["Chest", "Back", "Legs"]
+            p_kas = pc1.selectbox(t["muscle_group"], mevcut_kas, key="pkas")
+            p_hareket_listesi = df_hareketler[df_hareketler['Kas Grubu'] == p_kas]['Hareket Tipi'].unique()
+            p_hareket = pc2.selectbox(t["exercise"], p_hareket_listesi, key="phar")
 
-        pc1, pc2 = st.columns(2)
-        mevcut_kas_gruplari_p = df_hareketler['Kas Grubu'].unique() if not df_hareketler.empty else ["Chest", "Back", "Shoulder", "Biceps", "Triceps", "Legs", "Glutes", "Calves", "Abs", "Forearm", "Neck"]
-        p_kas = pc1.selectbox(t["muscle_group"], mevcut_kas_gruplari_p, key="p_kas_sec")
-        p_filtrelenmis = df_hareketler[df_hareketler['Kas Grubu'] == p_kas]
-        p_hareket_listesi = p_filtrelenmis['Hareket Tipi'].unique() if not p_filtrelenmis.empty else []
-        p_hareket = pc2.selectbox(t["exercise"], p_hareket_listesi, key="p_hareket_sec")
+            if p_hareket:
+                p_ekip = df_hareketler[df_hareketler['Hareket Tipi'] == p_hareket]['Ekipman'].values[0] if 'Ekipman' in df_hareketler.columns else "Barbell"
+                p_secili_ekipman = st.selectbox(t["equipment"], EKIPMAN_LISTESI, index=EKIPMAN_LISTESI.index(p_ekip) if p_ekip in EKIPMAN_LISTESI else 0, key="pekip")
 
-        if p_hareket:
-            p_ekipman_degeri = p_filtrelenmis[p_filtrelenmis['Hareket Tipi'] == p_hareket]['Ekipman'].values[0] if 'Ekipman' in p_filtrelenmis.columns else "Barbell"
-            p_varsayilan_idx = EKIPMAN_LISTESI.index(p_ekipman_degeri) if p_ekipman_degeri in EKIPMAN_LISTESI else 0
-            p_secili_ekipman = st.selectbox(t["equipment"], EKIPMAN_LISTESI, index=p_varsayilan_idx, key="p_ekipman_sec")
-
-        if p_hareket and st.session_state.p_onceki_hareket != p_hareket:
-            st.session_state.p_onceki_hareket = p_hareket
-            st.session_state.p_sablon_w = 0.0
-            st.session_state.p_sablon_r = 10
-            for key in list(st.session_state.keys()):
-                if key.startswith("p_w_new_") or key.startswith("p_r_new_"):
-                    del st.session_state[key]
-
-        def p_sablon_guncelle():
-            yeni_w = st.session_state.p_sablon_w
-            yeni_r = st.session_state.p_sablon_r
-            for key in list(st.session_state.keys()):
-                if key.startswith("p_w_new_"):
-                    st.session_state[key] = yeni_w
-                elif key.startswith("p_r_new_"):
-                    st.session_state[key] = yeni_r
-
-        if p_hareket:
-            p_mekanik_kontrol = p_filtrelenmis[p_filtrelenmis['Hareket Tipi'] == p_hareket]['Mekanik'].values[0]
-
-            if p_mekanik_kontrol == "Kardiyo":
-                st.warning(t["cardio_not_supported_in_program"])
-            else:
-                st.write(t["template_title"])
-                p_set_sayisi = st.number_input(t["how_many_sets"], min_value=1, max_value=10, value=3, step=1, key="p_set_sayisi_input")
-
-                pt1, pt2 = st.columns(2)
-                pt1.number_input(t["template_w"], step=2.5, key="p_sablon_w", on_change=p_sablon_guncelle)
-                pt2.number_input(t["template_r"], step=1, key="p_sablon_r", on_change=p_sablon_guncelle)
-
-                st.write("---")
-                st.write(t["edit_sets"])
-
-                mevcut_program_setleri_bu_hareket = program_icerik[program_icerik['Hareket'] == p_hareket] if not program_icerik.empty else pd.DataFrame()
-                p_baslangic_seti = len(mevcut_program_setleri_bu_hareket) + 1
-                p_eklenecek_setler = []
-
-                for i in range(p_set_sayisi):
-                    p_guncel_set_no = p_baslangic_seti + i
-                    pc_label, pc_w, pc_r = st.columns([1, 2, 2])
-                    pc_label.markdown(f"<div style='margin-top: 25px;'>**{t['set']} {p_guncel_set_no}**</div>", unsafe_allow_html=True)
-
-                    p_w_key = f"p_w_new_{p_hareket}_{p_guncel_set_no}"
-                    p_r_key = f"p_r_new_{p_hareket}_{p_guncel_set_no}"
-
-                    if p_w_key not in st.session_state: st.session_state[p_w_key] = st.session_state.p_sablon_w
-                    if p_r_key not in st.session_state: st.session_state[p_r_key] = st.session_state.p_sablon_r
-
-                    p_w = pc_w.number_input(t["weight"], step=2.5, key=p_w_key)
-                    p_r = pc_r.number_input(t["reps"], step=1, key=p_r_key)
-
-                    p_eklenecek_setler.append({
-                        "Program Adı": st.session_state.secili_program,
-                        "Kullanıcı": st.session_state.secili_kisi,
-                        "Kas Grubu": p_kas,
-                        "Hareket": p_hareket,
-                        "Set": p_guncel_set_no,
-                        "Ağırlık": p_w,
-                        "Tekrar": p_r,
-                        "Ekipman": p_secili_ekipman
-                    })
-
-                if st.button(t["add_to_program"], type="primary", use_container_width=True):
-                    p_yeni_satirlar = pd.DataFrame(p_eklenecek_setler)
-                    guncel_program_detay = pd.concat([df_program_detay, p_yeni_satirlar], ignore_index=True)
-                    conn.update(worksheet="ProgramDetay", data=guncel_program_detay)
-                    st.cache_data.clear()
-
+                if st.session_state.p_onceki_hareket != p_hareket:
+                    st.session_state.p_onceki_hareket = p_hareket
+                    st.session_state.p_sablon_w, st.session_state.p_sablon_r = 0.0, 10
                     for key in list(st.session_state.keys()):
-                        if key.startswith("p_w_new_") or key.startswith("p_r_new_"):
-                            del st.session_state[key]
+                        if key.startswith("p_w_new_") or key.startswith("p_r_new_"): del st.session_state[key]
 
-                    st.success(f"{p_hareket}: {p_set_sayisi} {t['success_add_to_program']}")
-                    st.rerun()
+                def p_sablon_guncelle():
+                    for k in list(st.session_state.keys()):
+                        if k.startswith("p_w_new_"): st.session_state[k] = st.session_state.p_sablon_w
+                        elif k.startswith("p_r_new_"): st.session_state[k] = st.session_state.p_sablon_r
 
-        st.divider()
+                if df_hareketler[df_hareketler['Hareket Tipi'] == p_hareket]['Mekanik'].values[0] == "Kardiyo":
+                    st.warning(t["cardio_not_supported_in_program"])
+                else:
+                    p_set_sayisi = st.number_input(t["how_many_sets"], min_value=1, max_value=10, value=3, step=1, key="psets")
+                    pt1, pt2 = st.columns(2)
+                    pt1.number_input(t["template_w"], step=2.5, key="p_sablon_w", on_change=p_sablon_guncelle)
+                    pt2.number_input(t["template_r"], step=1, key="p_sablon_r", on_change=p_sablon_guncelle)
+                    
+                    st.divider()
+                    mevcut_prog_set_har = program_icerik[program_icerik['Hareket'] == p_hareket]
+                    p_bas_set = len(mevcut_prog_set_har) + 1
+                    p_ekle_set = []
+
+                    for i in range(p_set_sayisi):
+                        g_set = p_bas_set + i
+                        cl, cw, cr = st.columns([1, 2, 2])
+                        cl.markdown(f"<div style='margin-top: 25px;'>**{t['set']} {g_set}**</div>", unsafe_allow_html=True)
+                        kw, kr = f"p_w_new_{p_hareket}_{g_set}", f"p_r_new_{p_hareket}_{g_set}"
+                        if kw not in st.session_state: st.session_state[kw] = st.session_state.p_sablon_w
+                        if kr not in st.session_state: st.session_state[kr] = st.session_state.p_sablon_r
+                        p_w = cw.number_input(t["weight"], step=2.5, key=kw, label_visibility="collapsed")
+                        p_r = cr.number_input(t["reps"], step=1, key=kr, label_visibility="collapsed")
+                        p_ekle_set.append({"Program Adı": st.session_state.secili_program, "Kullanıcı": st.session_state.secili_kisi, "Kas Grubu": p_kas, "Hareket": p_hareket, "Set": g_set, "Ağırlık": p_w, "Tekrar": p_r, "Ekipman": p_secili_ekipman})
+
+                    if st.button(t["add_to_program"], type="primary", use_container_width=True):
+                        conn.update(worksheet="ProgramDetay", data=pd.concat([df_program_detay, pd.DataFrame(p_ekle_set)], ignore_index=True))
+                        st.cache_data.clear()
+                        for k in list(st.session_state.keys()):
+                            if k.startswith("p_w_new_") or k.startswith("p_r_new_"): del st.session_state[k]
+                        st.rerun()
+
         with st.expander(t["delete_program_panel"]):
             st.warning(t["delete_program_desc"])
-            if st.button(t["delete_program_btn"], type="primary"):
-                guncel_programlar = df_programlar[
-                    ~((df_programlar['Program Adı'] == st.session_state.secili_program) &
-                      (df_programlar['Kullanıcı'] == st.session_state.secili_kisi))
-                ]
-                guncel_program_detay_kalan = df_program_detay[
-                    ~((df_program_detay['Program Adı'] == st.session_state.secili_program) &
-                      (df_program_detay['Kullanıcı'] == st.session_state.secili_kisi))
-                ]
-                conn.update(worksheet="Programlar", data=guncel_programlar)
-                conn.update(worksheet="ProgramDetay", data=guncel_program_detay_kalan)
+            if st.button(t["delete_program_btn"], type="primary", use_container_width=True):
+                conn.update(worksheet="Programlar", data=df_programlar[~((df_programlar['Program Adı'] == st.session_state.secili_program) & (df_programlar['Kullanıcı'] == st.session_state.secili_kisi))])
+                conn.update(worksheet="ProgramDetay", data=df_program_detay[~((df_program_detay['Program Adı'] == st.session_state.secili_program) & (df_program_detay['Kullanıcı'] == st.session_state.secili_kisi))])
                 st.cache_data.clear()
-                silinen_program_adi = st.session_state.secili_program
                 st.session_state.secili_program = None
-                st.success(f"**{silinen_program_adi}** {t['success_delete_program']}")
                 st.rerun()
 
-
-# --- SAYFA 5: İSTATİSTİKLER (YENİ EKLENDİ VE GÜNCELLENDİ) ---
+# --- SAYFA 5: İSTATİSTİKLER ---
 elif st.session_state.sayfa == 'istatistik_sayfasi':
-    st.title(t["stats_title"])
+    render_top_nav()
+    st.markdown(f"<h2>{t['stats_title']}</h2>", unsafe_allow_html=True)
     
-    if st.button(t["back_to_person"]):
-        st.session_state.sayfa = 'kisi_sayfasi'
-        st.rerun()
-
     df_antrenmanlar = veri_getir("Antrenmanlar", ["Tarih", "Grup", "Kullanıcı", "Kas Grubu", "Hareket", "Set", "Ağırlık", "Tekrar", "Süre (dk)", "Kalori", "Mekanik", "Ekipman"])
     
-    # 1. KİŞİSEL ÖZET BÖLÜMÜ
-    st.subheader(t["personal_summary"])
-    kisi_gecmis = df_antrenmanlar[
-        (df_antrenmanlar['Grup'] == st.session_state.secili_grup) & 
-        (df_antrenmanlar['Kullanıcı'] == st.session_state.secili_kisi)
-    ]
+    with st.container(border=True):
+        st.markdown(f"<h3 style='font-size: 1.2rem; color: #888;'>{t['personal_summary']}</h3>", unsafe_allow_html=True)
+        kisi_gecmis = df_antrenmanlar[(df_antrenmanlar['Grup'] == st.session_state.secili_grup) & (df_antrenmanlar['Kullanıcı'] == st.session_state.secili_kisi)]
 
-    if kisi_gecmis.empty:
-        st.info(t["no_chart_data"])
-    else:
-        toplam_gun = kisi_gecmis['Tarih'].nunique()
-        en_cok_yapilan_hareket = kisi_gecmis['Hareket'].value_counts().idxmax()
-        toplam_kardiyo_dk = pd.to_numeric(kisi_gecmis['Süre (dk)'], errors='coerce').fillna(0).sum()
+        if kisi_gecmis.empty:
+            st.info(t["no_chart_data"])
+        else:
+            c1, c2, c3 = st.columns(3)
+            c1.metric(t["total_days"], f"{kisi_gecmis['Tarih'].nunique()} Gün")
+            c2.metric(t["most_frequent"], kisi_gecmis['Hareket'].value_counts().idxmax() if not kisi_gecmis.empty else "-")
+            c3.metric(t["total_cardio"], f"{int(pd.to_numeric(kisi_gecmis['Süre (dk)'], errors='coerce').fillna(0).sum())} dk")
+
+    with st.container(border=True):
+        st.markdown(f"<h3 style='font-size: 1.2rem; color: #888;'>{t['weight_history']}</h3>", unsafe_allow_html=True)
+        agirlik_h = kisi_gecmis[kisi_gecmis['Mekanik'] != 'Kardiyo']['Hareket'].unique() if not kisi_gecmis.empty else []
         
-        # Kişisel özet 3 kolona çıkarıldı ve kardiyo eklendi
-        col1, col2, col3 = st.columns(3)
-        col1.metric(t["total_days"], f"{toplam_gun} Gün")
-        col2.metric(t["most_frequent"], en_cok_yapilan_hareket)
-        col3.metric(t["total_cardio"], f"{int(toplam_kardiyo_dk)} dk")
-
-        st.divider()
-
-        # 2. HAREKET AĞIRLIK GRAFİĞİ BÖLÜMÜ
-        st.subheader(t["weight_history"])
-        kisi_agirlik_hareketleri = kisi_gecmis[kisi_gecmis['Mekanik'] != 'Kardiyo']['Hareket'].unique()
-        
-        if len(kisi_agirlik_hareketleri) > 0:
-            secili_stat_hareketi = st.selectbox(t["select_stat_ex"], kisi_agirlik_hareketleri)
-            
-            if secili_stat_hareketi:
-                hareket_gecmis_tum_setler = kisi_gecmis[kisi_gecmis['Hareket'] == secili_stat_hareketi].copy()
-                hareket_gecmis_tum_setler['Tarih'] = pd.to_datetime(hareket_gecmis_tum_setler['Tarih'])
-                
-                grafik_verisi = hareket_gecmis_tum_setler.groupby('Tarih')['Ağırlık'].max().reset_index()
-                grafik_verisi = grafik_verisi.sort_values(by='Tarih')
-                grafik_verisi['Tarih'] = grafik_verisi['Tarih'].dt.strftime('%d/%m/%Y')
-                grafik_verisi.set_index('Tarih', inplace=True)
-                grafik_verisi['Ağırlık'] = grafik_verisi['Ağırlık'].astype(float)
-                
-                st.line_chart(grafik_verisi['Ağırlık'])
+        if len(agirlik_h) > 0:
+            sec_stat = st.selectbox(t["select_stat_ex"], agirlik_h, label_visibility="collapsed")
+            if sec_stat:
+                graf = kisi_gecmis[kisi_gecmis['Hareket'] == sec_stat].copy()
+                graf['Tarih'] = pd.to_datetime(graf['Tarih'])
+                g = graf.groupby('Tarih')['Ağırlık'].max().reset_index().sort_values(by='Tarih')
+                g['Tarih'] = g['Tarih'].dt.strftime('%d/%m/%Y')
+                g.set_index('Tarih', inplace=True)
+                st.line_chart(g['Ağırlık'].astype(float))
         else:
             st.info(t["no_chart_data"])
             
-    st.divider()
+    with st.container(border=True):
+        st.markdown(f"<h3 style='font-size: 1.2rem; color: #888;'>{t['group_comparison']}</h3>", unsafe_allow_html=True)
+        grup_gecmisi = df_antrenmanlar[df_antrenmanlar['Grup'] == st.session_state.secili_grup].copy()
 
-    # 3. GRUP İÇİ KARŞILAŞTIRMA BÖLÜMÜ
-    st.subheader(t["group_comparison"])
-    grup_gecmisi = df_antrenmanlar[df_antrenmanlar['Grup'] == st.session_state.secili_grup].copy()
+        if not grup_gecmisi.empty:
+            st.markdown(f"**{t['comp_days']}**")
+            gun_s = grup_gecmisi.groupby('Kullanıcı')['Tarih'].nunique().reset_index()
+            gun_s.set_index('Kullanıcı', inplace=True)
+            st.bar_chart(gun_s['Tarih'])
 
-    if not grup_gecmisi.empty:
-        # Karşılaştırma 1: Antrenman Gün Sayısı
-        gun_siralamasi = grup_gecmisi.groupby('Kullanıcı')['Tarih'].nunique().reset_index()
-        gun_siralamasi.columns = ['Kullanıcı', 'Antrenman Günü']
-        gun_siralamasi.set_index('Kullanıcı', inplace=True)
-        
-        st.markdown(f"**{t['comp_days']}**")
-        st.bar_chart(gun_siralamasi['Antrenman Günü'])
-
-        # Karşılaştırma 2: Toplam Kardiyo Süresi (Hacim KG yerine)
-        grup_gecmisi['Süre (dk)'] = pd.to_numeric(grup_gecmisi['Süre (dk)'], errors='coerce').fillna(0)
-        kardiyo_siralamasi = grup_gecmisi.groupby('Kullanıcı')['Süre (dk)'].sum().reset_index()
-        kardiyo_siralamasi.set_index('Kullanıcı', inplace=True)
-        
-        st.markdown(f"**{t['comp_cardio']}**")
-        st.bar_chart(kardiyo_siralamasi['Süre (dk)'])
-    else:
-        st.info(t["no_chart_data"])
+            st.markdown(f"**{t['comp_cardio']}**")
+            grup_gecmisi['Süre (dk)'] = pd.to_numeric(grup_gecmisi['Süre (dk)'], errors='coerce').fillna(0)
+            kard_s = grup_gecmisi.groupby('Kullanıcı')['Süre (dk)'].sum().reset_index()
+            kard_s.set_index('Kullanıcı', inplace=True)
+            st.bar_chart(kard_s['Süre (dk)'])
+        else:
+            st.info(t["no_chart_data"])
