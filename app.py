@@ -5,7 +5,6 @@ from datetime import date
 
 # --- DİL (LANGUAGE) SÖZLÜĞÜ ---
 LANG = {
-    # (İngilizce kısmı uzunluk yapmaması adına aynı kalıyor, metinler Türkçe dahil tam ekli)
     "English": {
         "groups_title": "🏋️‍♂️ Workout Groups",
         "existing_groups": "Existing Groups",
@@ -230,12 +229,9 @@ st.set_page_config(page_title="Workout App", page_icon="💪", layout="centered"
 
 custom_css = """
 <style>
-    /* Default Streamlit Branding'i Gizle */
     #MainMenu {visibility: hidden;}
     header {visibility: hidden;}
     footer {visibility: hidden;}
-    
-    /* Mobil Uyumlu Modern Font ve Padding Ayarları */
     .block-container {
         padding-top: 1.5rem;
         padding-bottom: 2rem;
@@ -243,8 +239,6 @@ custom_css = """
         padding-right: 1rem;
         max-width: 800px;
     }
-    
-    /* Global Buton Tasarımı (Pill Shape & Hover Effect) */
     div[data-testid="stButton"] > button {
         border-radius: 20px;
         font-weight: 600;
@@ -260,8 +254,6 @@ custom_css = """
         transform: translateY(0);
         box-shadow: 0 1px 2px rgba(0,0,0,0.15);
     }
-
-    /* Metric (İstatistik Kartları) Tasarımı */
     div[data-testid="metric-container"] {
         background-color: rgba(255, 255, 255, 0.03);
         border-radius: 15px;
@@ -270,19 +262,13 @@ custom_css = """
         text-align: center;
         box-shadow: 0 2px 5px rgba(0,0,0,0.1);
     }
-    
-    /* Expander Tasarımı */
     .streamlit-expanderHeader {
         font-weight: 600 !important;
         font-size: 1.1rem !important;
     }
-    
-    /* Başlıkların Ortalanması */
     h1, h2, h3 {
         text-align: center;
     }
-    
-    /* Form inputlarına biraz daha dolgunluk */
     input, select {
         border-radius: 10px !important;
     }
@@ -293,7 +279,7 @@ st.markdown(custom_css, unsafe_allow_html=True)
 secilen_dil = st.sidebar.selectbox("🌐 Language / Dil", ["English", "Türkçe"], index=0)
 t = LANG[secilen_dil]
 
-# --- OTURUM DEĞİŞKENLERİ ---
+# --- OTURUM DEĞİŞKENLER ---
 if 'sayfa' not in st.session_state: st.session_state.sayfa = 'ana_sayfa'
 if 'secili_grup' not in st.session_state: st.session_state.secili_grup = None
 if 'secili_kisi' not in st.session_state: st.session_state.secili_kisi = None
@@ -328,7 +314,7 @@ def sablon_guncelle():
         if key.startswith("w_new_"): st.session_state[key] = yeni_w
         elif key.startswith("r_new_"): st.session_state[key] = yeni_r
 
-# Ortak Navigasyon Barı (Mobil Uyumlu Tab Görünümü)
+# Ortak Navigasyon Barı
 def render_top_nav():
     st.write("")
     n1, n2, n3, n4 = st.columns([1,1,1,1.5])
@@ -345,7 +331,7 @@ def render_top_nav():
             st.session_state.sayfa = 'program_sayfasi'
             st.rerun()
     with n4:
-        if st.button("📊 Stats", type="primary" if st.session_state.sayfa == 'istatistik_sayfasi' else "secondary", use_container_width=True):
+        if st.button("📊 İstat", type="primary" if st.session_state.sayfa == 'istatistik_sayfasi' else "secondary", use_container_width=True):
             st.session_state.sayfa = 'istatistik_sayfasi'
             st.rerun()
     st.divider()
@@ -355,7 +341,6 @@ if st.session_state.sayfa == 'ana_sayfa':
     df_gruplar = veri_getir("Gruplar", ["Grup Adı"])
     st.markdown(f"<h1>{t['groups_title']}</h1>", unsafe_allow_html=True)
     
-    # Grupları şık bir Container içinde göster
     with st.container(border=True):
         st.markdown(f"<h3 style='font-size: 1.2rem; color: #888;'>{t['existing_groups']}</h3>", unsafe_allow_html=True)
         if not df_gruplar.empty:
@@ -489,7 +474,6 @@ elif st.session_state.sayfa == 'kisi_sayfasi':
                         st.success(f"{secili_program_yukle} {t['success_load_program']}")
                         st.rerun()
 
-    # YENİ HAREKET GİRİŞ KARTI
     with st.container(border=True):
         st.markdown(f"<h3 style='font-size: 1.2rem; color: #888;'>➕ {t['add_new_set']}</h3>", unsafe_allow_html=True)
         col1, col2 = st.columns(2)
@@ -800,7 +784,7 @@ elif st.session_state.sayfa == 'program_sayfasi':
                 st.session_state.secili_program = None
                 st.rerun()
 
-# --- SAYFA 5: İSTATİSTİKLER ---
+# --- SAYFA 5: İSTATİSTİKLER (GÜNCELLENDİ) ---
 elif st.session_state.sayfa == 'istatistik_sayfasi':
     render_top_nav()
     st.markdown(f"<h2>{t['stats_title']}</h2>", unsafe_allow_html=True)
@@ -809,24 +793,32 @@ elif st.session_state.sayfa == 'istatistik_sayfasi':
     
     with st.container(border=True):
         st.markdown(f"<h3 style='font-size: 1.2rem; color: #888;'>{t['personal_summary']}</h3>", unsafe_allow_html=True)
-        kisi_gecmis = df_antrenmanlar[(df_antrenmanlar['Grup'] == st.session_state.secili_grup) & (df_antrenmanlar['Kullanıcı'] == st.session_state.secili_kisi)]
+        # copy() ile dataframe kopyası oluşturuyoruz, böylece yeni kolon eklerken hata (warning) almayız.
+        kisi_gecmis = df_antrenmanlar[(df_antrenmanlar['Grup'] == st.session_state.secili_grup) & (df_antrenmanlar['Kullanıcı'] == st.session_state.secili_kisi)].copy()
 
         if kisi_gecmis.empty:
             st.info(t["no_chart_data"])
         else:
+            # Tüm istatistikler için "Tam Hareket" ismini tek seferde oluşturuyoruz
+            kisi_gecmis['Tam Hareket'] = kisi_gecmis.apply(
+                lambda row: f"{row.get('Ekipman','-')} {row.get('Kas Grubu','')} {row.get('Hareket','')}".replace("- ", "").strip(), 
+                axis=1
+            )
+            
             c1, c2, c3 = st.columns(3)
             c1.metric(t["total_days"], f"{kisi_gecmis['Tarih'].nunique()} Gün")
-            c2.metric(t["most_frequent"], kisi_gecmis['Hareket'].value_counts().idxmax() if not kisi_gecmis.empty else "-")
+            c2.metric(t["most_frequent"], kisi_gecmis['Tam Hareket'].value_counts().idxmax() if not kisi_gecmis.empty else "-")
             c3.metric(t["total_cardio"], f"{int(pd.to_numeric(kisi_gecmis['Süre (dk)'], errors='coerce').fillna(0).sum())} dk")
 
     with st.container(border=True):
         st.markdown(f"<h3 style='font-size: 1.2rem; color: #888;'>{t['weight_history']}</h3>", unsafe_allow_html=True)
-        agirlik_h = kisi_gecmis[kisi_gecmis['Mekanik'] != 'Kardiyo']['Hareket'].unique() if not kisi_gecmis.empty else []
+        # Sadece ağırlık geçmişi olan hareketlerin "Tam İsimlerini" çekiyoruz
+        agirlik_h = kisi_gecmis[kisi_gecmis['Mekanik'] != 'Kardiyo']['Tam Hareket'].unique() if not kisi_gecmis.empty else []
         
         if len(agirlik_h) > 0:
             sec_stat = st.selectbox(t["select_stat_ex"], agirlik_h, label_visibility="collapsed")
             if sec_stat:
-                graf = kisi_gecmis[kisi_gecmis['Hareket'] == sec_stat].copy()
+                graf = kisi_gecmis[kisi_gecmis['Tam Hareket'] == sec_stat].copy()
                 graf['Tarih'] = pd.to_datetime(graf['Tarih'])
                 g = graf.groupby('Tarih')['Ağırlık'].max().reset_index().sort_values(by='Tarih')
                 g['Tarih'] = g['Tarih'].dt.strftime('%d/%m/%Y')
