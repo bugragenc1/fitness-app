@@ -331,7 +331,7 @@ def render_top_nav():
             st.session_state.sayfa = 'program_sayfasi'
             st.rerun()
     with n4:
-        if st.button("📊 İstat", type="primary" if st.session_state.sayfa == 'istatistik_sayfasi' else "secondary", use_container_width=True):
+        if st.button("📊 Stats", type="primary" if st.session_state.sayfa == 'istatistik_sayfasi' else "secondary", use_container_width=True):
             st.session_state.sayfa = 'istatistik_sayfasi'
             st.rerun()
     st.divider()
