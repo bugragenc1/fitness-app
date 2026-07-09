@@ -98,7 +98,17 @@ LANG = {
         "save_all_changes": "💾 Save All Changes",
         "success_save_all_changes": "All changes saved!",
         "equipment_type": "Equipment Type",
-        "equipment": "Equipment"
+        "equipment": "Equipment",
+        "go_to_stats": "📊 Statistics",
+        "stats_title": "📊 Personal & Group Statistics",
+        "personal_summary": "👤 Personal Summary",
+        "total_days": "Total Workout Days",
+        "most_frequent": "Most Performed Exercise",
+        "weight_history": "📈 Exercise Weight History",
+        "select_stat_ex": "Select an exercise to view weight progress",
+        "group_comparison": "🏆 Group Comparison",
+        "comp_days": "Workout Days by Member",
+        "comp_volume": "Total Volume (kg) by Member"
     },
     "Türkçe": {
         "groups_title": "🏋️‍♂️ Antrenman Grupları",
@@ -193,7 +203,17 @@ LANG = {
         "save_all_changes": "💾 Tüm Değişiklikleri Kaydet",
         "success_save_all_changes": "Tüm değişiklikler kaydedildi!",
         "equipment_type": "Ekipman Tipi",
-        "equipment": "Ekipman"
+        "equipment": "Ekipman",
+        "go_to_stats": "📊 İstatistikler",
+        "stats_title": "📊 Kişisel ve Grup İstatistikleri",
+        "personal_summary": "👤 Kişisel Özet",
+        "total_days": "Toplam Antrenman Günü",
+        "most_frequent": "En Çok Yapılan Hareket",
+        "weight_history": "📈 Hareket Ağırlık Grafiği",
+        "select_stat_ex": "Gelişimini görmek istediğin hareketi seç",
+        "group_comparison": "🏆 Grup İçi Karşılaştırma",
+        "comp_days": "Üyelere Göre Antrenman Günleri",
+        "comp_volume": "Üyelere Göre Toplam Hacim (kg)"
     }
 }
 
@@ -317,9 +337,16 @@ elif st.session_state.sayfa == 'kisi_sayfasi':
         st.session_state.sayfa = 'grup_sayfasi'
         st.rerun()
 
-    if st.button(t["go_to_programs"], use_container_width=True):
-        st.session_state.sayfa = 'program_sayfasi'
-        st.rerun()
+    # --- BUTONLAR İÇİN KOLON YAPISI EKLENDİ ---
+    btn_col1, btn_col2 = st.columns(2)
+    with btn_col1:
+        if st.button(t["go_to_programs"], use_container_width=True):
+            st.session_state.sayfa = 'program_sayfasi'
+            st.rerun()
+    with btn_col2:
+        if st.button(t["go_to_stats"], use_container_width=True):
+            st.session_state.sayfa = 'istatistik_sayfasi'
+            st.rerun()
 
     def grafik_ciz(hareket_adi):
         gecmis_tum_setler = df_antrenmanlar[
@@ -367,7 +394,6 @@ elif st.session_state.sayfa == 'kisi_sayfasi':
                     kas_grubu_l = hareket_setleri_l.iloc[0]['Kas Grubu']
                     ekipman_l = hareket_setleri_l.iloc[0]['Ekipman'] if 'Ekipman' in hareket_setleri_l.columns else "-"
                     
-                    # TAM İSİM OLUŞTURMA (Örn: Dumbbell Chest Bench Press)
                     tam_isim_l = f"{ekipman_l} {kas_grubu_l} {hareket_l}".replace("- ", "").strip()
                     st.markdown(f"💪 **{tam_isim_l}**")
 
@@ -636,7 +662,6 @@ elif st.session_state.sayfa == 'kisi_sayfasi':
             kas_g = ilk_satir['Kas Grubu']
             ekip_g = ilk_satir['Ekipman'] if 'Ekipman' in ilk_satir else "-"
             
-            # TAM İSİM OLUŞTURMA İÇİN TEMİZLEME
             tam_hareket_adi = f"{ekip_g} {kas_g} {hareket}".replace("- ", "").strip()
             
             if mekanik_kontrol == "Kardiyo":
@@ -726,6 +751,7 @@ elif st.session_state.sayfa == 'kisi_sayfasi':
     else:
         st.info(t["no_workout"])
 
+
 # --- SAYFA 4: ANTRENMAN PROGRAMLARI ---
 elif st.session_state.sayfa == 'program_sayfasi':
     df_programlar = veri_getir("Programlar", ["Kullanıcı", "Program Adı"])
@@ -790,7 +816,6 @@ elif st.session_state.sayfa == 'program_sayfasi':
                 kas_p = ilk_satir_p['Kas Grubu']
                 ekip_p = ilk_satir_p['Ekipman'] if 'Ekipman' in ilk_satir_p else "-"
                 
-                # TAM İSİM OLUŞTURMA PROGRAM İÇERİĞİ İÇİN
                 tam_hareket_adi_p = f"{ekip_p} {kas_p} {hareket_p}".replace("- ", "").strip()
                 
                 ozet_listesi_p = [f"{row['Ağırlık']}x{row['Tekrar']}" for _, row in hareket_setleri_p.iterrows()]
@@ -951,3 +976,84 @@ elif st.session_state.sayfa == 'program_sayfasi':
                 st.session_state.secili_program = None
                 st.success(f"**{silinen_program_adi}** {t['success_delete_program']}")
                 st.rerun()
+
+
+# --- SAYFA 5: İSTATİSTİKLER (YENİ EKLENDİ) ---
+elif st.session_state.sayfa == 'istatistik_sayfasi':
+    st.title(t["stats_title"])
+    
+    if st.button(t["back_to_person"]):
+        st.session_state.sayfa = 'kisi_sayfasi'
+        st.rerun()
+
+    df_antrenmanlar = veri_getir("Antrenmanlar", ["Tarih", "Grup", "Kullanıcı", "Kas Grubu", "Hareket", "Set", "Ağırlık", "Tekrar", "Süre (dk)", "Kalori", "Mekanik", "Ekipman"])
+    
+    # 1. KİŞİSEL ÖZET BÖLÜMÜ
+    st.subheader(t["personal_summary"])
+    kisi_gecmis = df_antrenmanlar[
+        (df_antrenmanlar['Grup'] == st.session_state.secili_grup) & 
+        (df_antrenmanlar['Kullanıcı'] == st.session_state.secili_kisi)
+    ]
+
+    if kisi_gecmis.empty:
+        st.info(t["no_chart_data"])
+    else:
+        toplam_gun = kisi_gecmis['Tarih'].nunique()
+        en_cok_yapilan_hareket = kisi_gecmis['Hareket'].value_counts().idxmax()
+        
+        col1, col2 = st.columns(2)
+        col1.metric(t["total_days"], f"{toplam_gun} Gün")
+        col2.metric(t["most_frequent"], en_cok_yapilan_hareket)
+
+        st.divider()
+
+        # 2. HAREKET AĞIRLIK GRAFİĞİ BÖLÜMÜ
+        st.subheader(t["weight_history"])
+        kisi_agirlik_hareketleri = kisi_gecmis[kisi_gecmis['Mekanik'] != 'Kardiyo']['Hareket'].unique()
+        
+        if len(kisi_agirlik_hareketleri) > 0:
+            secili_stat_hareketi = st.selectbox(t["select_stat_ex"], kisi_agirlik_hareketleri)
+            
+            if secili_stat_hareketi:
+                hareket_gecmis_tum_setler = kisi_gecmis[kisi_gecmis['Hareket'] == secili_stat_hareketi].copy()
+                hareket_gecmis_tum_setler['Tarih'] = pd.to_datetime(hareket_gecmis_tum_setler['Tarih'])
+                
+                # Her gün için kaldırılan en yüksek ağırlığı buluyoruz
+                grafik_verisi = hareket_gecmis_tum_setler.groupby('Tarih')['Ağırlık'].max().reset_index()
+                grafik_verisi = grafik_verisi.sort_values(by='Tarih')
+                grafik_verisi['Tarih'] = grafik_verisi['Tarih'].dt.strftime('%d/%m/%Y')
+                grafik_verisi.set_index('Tarih', inplace=True)
+                grafik_verisi['Ağırlık'] = grafik_verisi['Ağırlık'].astype(float)
+                
+                st.line_chart(grafik_verisi['Ağırlık'])
+        else:
+            st.info(t["no_chart_data"])
+            
+    st.divider()
+
+    # 3. GRUP İÇİ KARŞILAŞTIRMA BÖLÜMÜ
+    st.subheader(t["group_comparison"])
+    grup_gecmisi = df_antrenmanlar[df_antrenmanlar['Grup'] == st.session_state.secili_grup].copy()
+
+    if not grup_gecmisi.empty:
+        # Karşılaştırma 1: Antrenman Gün Sayısı
+        gun_siralamasi = grup_gecmisi.groupby('Kullanıcı')['Tarih'].nunique().reset_index()
+        gun_siralamasi.columns = ['Kullanıcı', 'Antrenman Günü']
+        gun_siralamasi.set_index('Kullanıcı', inplace=True)
+        
+        st.markdown(f"**{t['comp_days']}**")
+        st.bar_chart(gun_siralamasi['Antrenman Günü'])
+
+        # Karşılaştırma 2: Toplam Hacim (Ağırlık x Tekrar)
+        # Hacim hesabı için ağırlık ve tekrar sayısal olmalı
+        grup_gecmisi['Ağırlık'] = pd.to_numeric(grup_gecmisi['Ağırlık'], errors='coerce').fillna(0)
+        grup_gecmisi['Tekrar'] = pd.to_numeric(grup_gecmisi['Tekrar'], errors='coerce').fillna(0)
+        grup_gecmisi['Hacim'] = grup_gecmisi['Ağırlık'] * grup_gecmisi['Tekrar']
+        
+        hacim_siralamasi = grup_gecmisi.groupby('Kullanıcı')['Hacim'].sum().reset_index()
+        hacim_siralamasi.set_index('Kullanıcı', inplace=True)
+        
+        st.markdown(f"**{t['comp_volume']}**")
+        st.bar_chart(hacim_siralamasi['Hacim'])
+    else:
+        st.info(t["no_chart_data"])
