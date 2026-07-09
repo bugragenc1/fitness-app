@@ -276,7 +276,11 @@ custom_css = """
 """
 st.markdown(custom_css, unsafe_allow_html=True)
 
-secilen_dil = st.sidebar.selectbox("🌐 Language / Dil", ["English", "Türkçe"], index=0)
+# Dil seçeneğini ana ekranın en üstüne, küçük bir buton gibi ekliyoruz
+dil_kolonu, bos_kolon = st.columns([1, 2])
+with dil_kolonu:
+    # Varsayılan dil Türkçe (index=0) yapıldı
+    secilen_dil = st.selectbox("🌐 Dil", ["Türkçe", "English"], index=0, label_visibility="collapsed")
 t = LANG[secilen_dil]
 
 # --- OTURUM DEĞİŞKENLER ---
