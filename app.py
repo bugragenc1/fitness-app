@@ -643,7 +643,7 @@ elif st.session_state.sayfa == 'kisi_sayfasi':
                 ozet_metni = " | ".join(ozet_listesi)
                 expander_baslik = f"💪 **{hareket}** ({toplam_set} {t['set']}) 👉 {ozet_metni}"
             
-            with st.expander(expander_baslik):
+            with st.expander(expander_baslik, key=f"exp_gunluk_{hareket}_{secili_tarih}"):
 
                 # --- YENİ: Grafik göster/gizle ve hareketi komple silme butonları ---
                 hareket_silme_anahtari = f"{hareket}_{secili_tarih}"
@@ -691,52 +691,41 @@ elif st.session_state.sayfa == 'kisi_sayfasi':
                     grafik_ciz(hareket)
                     st.divider()
 
+                # --- YENİ: Setler artık doğrudan düzenlenebilir kutularla gösteriliyor (ayrı "düzenle" moduna gerek yok) ---
                 for idx, row in hareket_setleri.iterrows():
-                    
-                    if st.session_state.duzenlenen_idx == idx:
-                        st.write(f"**{t['editing']}**")
-                        d1, d2, d3, d4 = st.columns(4)
-                        
-                        if row['Mekanik'] == 'Kardiyo':
-                            yeni_sure = d1.number_input(t["duration"], value=int(row['Süre (dk)']), step=1, key=f"edit_s_{idx}")
-                            yeni_kalori = d2.number_input(t["calories"], value=int(row['Kalori']), step=10, key=f"edit_k_{idx}")
-                        else:
-                            yeni_agirlik = d1.number_input(t["weight"], value=float(row['Ağırlık']), step=2.5, key=f"edit_w_{idx}")
-                            yeni_tekrar = d2.number_input(t["reps"], value=int(row['Tekrar']), step=1, key=f"edit_r_{idx}")
-                        
-                        if d3.button(t["save"], key=f"save_{idx}"):
-                            if row['Mekanik'] == 'Kardiyo':
-                                df_antrenmanlar.at[idx, 'Süre (dk)'] = yeni_sure
-                                df_antrenmanlar.at[idx, 'Kalori'] = yeni_kalori
-                            else:
-                                df_antrenmanlar.at[idx, 'Ağırlık'] = yeni_agirlik
-                                df_antrenmanlar.at[idx, 'Tekrar'] = yeni_tekrar
-                                
+
+                    if row['Mekanik'] == 'Kardiyo':
+                        col_lbl, col_s, col_k, col_kaydet, col_sil = st.columns([0.8, 1.3, 1.3, 0.6, 0.6])
+                        col_lbl.markdown(f"<div style='margin-top: 8px;'>⏱️</div>", unsafe_allow_html=True)
+                        yeni_sure = col_s.number_input(t["duration"], min_value=0, value=int(row['Süre (dk)']), step=1, key=f"live_s_{idx}", label_visibility="collapsed")
+                        yeni_kalori = col_k.number_input(t["calories"], min_value=0, value=int(row['Kalori']), step=10, key=f"live_k_{idx}", label_visibility="collapsed")
+                        if col_kaydet.button("💾", key=f"live_save_{idx}"):
+                            df_antrenmanlar.at[idx, 'Süre (dk)'] = yeni_sure
+                            df_antrenmanlar.at[idx, 'Kalori'] = yeni_kalori
                             conn.update(worksheet="Antrenmanlar", data=df_antrenmanlar)
-                            st.session_state.duzenlenen_idx = None
                             st.cache_data.clear()
                             st.rerun()
-                            
-                        if d4.button(t["cancel"], key=f"cancel_{idx}"):
-                            st.session_state.duzenlenen_idx = None
+                        if col_sil.button("❌", key=f"sil_btn_{idx}"):
+                            df_antrenmanlar = df_antrenmanlar.drop(idx)
+                            conn.update(worksheet="Antrenmanlar", data=df_antrenmanlar)
+                            st.cache_data.clear()
                             st.rerun()
                     else:
-                        col_metin, col_edit, col_sil = st.columns([5, 1, 1])
-                        with col_metin:
-                            if row['Mekanik'] == 'Kardiyo':
-                                st.write(f"⏱️ **{row['Süre (dk)']} dk** | 🔥 {row['Kalori']} kcal")
-                            else:
-                                st.write(f"{t['set']} {row['Set']}: **{row['Ağırlık']}kg** x {row['Tekrar']}")
-                        with col_edit:
-                            if st.button("✏️", key=f"edit_btn_{idx}"):
-                                st.session_state.duzenlenen_idx = idx
-                                st.rerun()
-                        with col_sil:
-                            if st.button("❌", key=f"sil_btn_{idx}"):
-                                df_antrenmanlar = df_antrenmanlar.drop(idx)
-                                conn.update(worksheet="Antrenmanlar", data=df_antrenmanlar)
-                                st.cache_data.clear()
-                                st.rerun()
+                        col_lbl, col_w, col_r, col_kaydet, col_sil = st.columns([0.8, 1.3, 1.3, 0.6, 0.6])
+                        col_lbl.markdown(f"<div style='margin-top: 8px;'>{t['set']} {int(row['Set'])}</div>", unsafe_allow_html=True)
+                        yeni_agirlik = col_w.number_input(t["weight"], min_value=0.0, value=float(row['Ağırlık']), step=2.5, key=f"live_w_{idx}", label_visibility="collapsed")
+                        yeni_tekrar = col_r.number_input(t["reps"], min_value=0, value=int(row['Tekrar']), step=1, key=f"live_r_{idx}", label_visibility="collapsed")
+                        if col_kaydet.button("💾", key=f"live_save_{idx}"):
+                            df_antrenmanlar.at[idx, 'Ağırlık'] = yeni_agirlik
+                            df_antrenmanlar.at[idx, 'Tekrar'] = yeni_tekrar
+                            conn.update(worksheet="Antrenmanlar", data=df_antrenmanlar)
+                            st.cache_data.clear()
+                            st.rerun()
+                        if col_sil.button("❌", key=f"sil_btn_{idx}"):
+                            df_antrenmanlar = df_antrenmanlar.drop(idx)
+                            conn.update(worksheet="Antrenmanlar", data=df_antrenmanlar)
+                            st.cache_data.clear()
+                            st.rerun()
     else:
         st.info(t["no_workout"])
 
@@ -806,7 +795,7 @@ elif st.session_state.sayfa == 'program_sayfasi':
                 ozet_metni_p = " | ".join(ozet_listesi_p)
                 expander_baslik_p = f"💪 **{hareket_p}** ({toplam_set_p} {t['set']}) 👉 {ozet_metni_p}"
 
-                with st.expander(expander_baslik_p):
+                with st.expander(expander_baslik_p, key=f"exp_prog_{st.session_state.secili_program}_{hareket_p}"):
                     # --- Hareketi programdan komple silme (onaylı) ---
                     hareket_silme_anahtari_p = f"{st.session_state.secili_program}_{hareket_p}"
                     if st.button(t["delete_exercise_from_program"], key=f"p_sil_hareket_btn_{hareket_silme_anahtari_p}", use_container_width=True):
@@ -830,36 +819,23 @@ elif st.session_state.sayfa == 'program_sayfasi':
 
                     st.divider()
 
-                    # --- Her seti ayrı ayrı göster / düzenle / sil (günlük listedeki gibi) ---
+                    # --- YENİ: Setler artık doğrudan düzenlenebilir kutularla gösteriliyor ---
                     for idx, row in hareket_setleri_p.iterrows():
-                        if st.session_state.program_duzenlenen_idx == idx:
-                            d1, d2, d3, d4 = st.columns(4)
-                            yeni_agirlik = d1.number_input(t["weight"], min_value=0.0, value=float(row['Ağırlık']), step=2.5, key=f"pe_w_{idx}")
-                            yeni_tekrar = d2.number_input(t["reps"], min_value=0, value=int(row['Tekrar']), step=1, key=f"pe_r_{idx}")
-                            if d3.button(t["save"], key=f"pe_save_{idx}"):
-                                df_program_detay.at[idx, 'Ağırlık'] = yeni_agirlik
-                                df_program_detay.at[idx, 'Tekrar'] = yeni_tekrar
-                                conn.update(worksheet="ProgramDetay", data=df_program_detay)
-                                st.cache_data.clear()
-                                st.session_state.program_duzenlenen_idx = None
-                                st.rerun()
-                            if d4.button(t["cancel"], key=f"pe_cancel_{idx}"):
-                                st.session_state.program_duzenlenen_idx = None
-                                st.rerun()
-                        else:
-                            col_metin_p, col_edit_p, col_sil_p = st.columns([5, 1, 1])
-                            with col_metin_p:
-                                st.write(f"{t['set']} {int(row['Set'])}: **{row['Ağırlık']}kg** x {int(row['Tekrar'])}")
-                            with col_edit_p:
-                                if st.button("✏️", key=f"pe_editbtn_{idx}"):
-                                    st.session_state.program_duzenlenen_idx = idx
-                                    st.rerun()
-                            with col_sil_p:
-                                if st.button("❌", key=f"pe_delbtn_{idx}"):
-                                    df_program_detay = df_program_detay.drop(idx)
-                                    conn.update(worksheet="ProgramDetay", data=df_program_detay)
-                                    st.cache_data.clear()
-                                    st.rerun()
+                        col_lbl_p, col_w_p, col_r_p, col_kaydet_p, col_sil_p = st.columns([0.8, 1.3, 1.3, 0.6, 0.6])
+                        col_lbl_p.markdown(f"<div style='margin-top: 8px;'>{t['set']} {int(row['Set'])}</div>", unsafe_allow_html=True)
+                        yeni_agirlik = col_w_p.number_input(t["weight"], min_value=0.0, value=float(row['Ağırlık']), step=2.5, key=f"pe_w_{idx}", label_visibility="collapsed")
+                        yeni_tekrar = col_r_p.number_input(t["reps"], min_value=0, value=int(row['Tekrar']), step=1, key=f"pe_r_{idx}", label_visibility="collapsed")
+                        if col_kaydet_p.button("💾", key=f"pe_save_{idx}"):
+                            df_program_detay.at[idx, 'Ağırlık'] = yeni_agirlik
+                            df_program_detay.at[idx, 'Tekrar'] = yeni_tekrar
+                            conn.update(worksheet="ProgramDetay", data=df_program_detay)
+                            st.cache_data.clear()
+                            st.rerun()
+                        if col_sil_p.button("❌", key=f"pe_delbtn_{idx}"):
+                            df_program_detay = df_program_detay.drop(idx)
+                            conn.update(worksheet="ProgramDetay", data=df_program_detay)
+                            st.cache_data.clear()
+                            st.rerun()
         else:
             st.info(t["no_program_content"])
 
