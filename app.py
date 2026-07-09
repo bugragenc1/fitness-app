@@ -104,11 +104,12 @@ LANG = {
         "personal_summary": "👤 Personal Summary",
         "total_days": "Total Workout Days",
         "most_frequent": "Most Performed Exercise",
+        "total_cardio": "Total Cardio Duration",
         "weight_history": "📈 Exercise Weight History",
         "select_stat_ex": "Select an exercise to view weight progress",
         "group_comparison": "🏆 Group Comparison",
         "comp_days": "Workout Days by Member",
-        "comp_volume": "Total Volume (kg) by Member"
+        "comp_cardio": "Total Cardio Duration (min) by Member"
     },
     "Türkçe": {
         "groups_title": "🏋️‍♂️ Antrenman Grupları",
@@ -209,11 +210,12 @@ LANG = {
         "personal_summary": "👤 Kişisel Özet",
         "total_days": "Toplam Antrenman Günü",
         "most_frequent": "En Çok Yapılan Hareket",
+        "total_cardio": "Toplam Kardiyo Süresi",
         "weight_history": "📈 Hareket Ağırlık Grafiği",
         "select_stat_ex": "Gelişimini görmek istediğin hareketi seç",
         "group_comparison": "🏆 Grup İçi Karşılaştırma",
         "comp_days": "Üyelere Göre Antrenman Günleri",
-        "comp_volume": "Üyelere Göre Toplam Hacim (kg)"
+        "comp_cardio": "Üyelere Göre Toplam Kardiyo Süresi (dk)"
     }
 }
 
@@ -337,7 +339,6 @@ elif st.session_state.sayfa == 'kisi_sayfasi':
         st.session_state.sayfa = 'grup_sayfasi'
         st.rerun()
 
-    # --- BUTONLAR İÇİN KOLON YAPISI EKLENDİ ---
     btn_col1, btn_col2 = st.columns(2)
     with btn_col1:
         if st.button(t["go_to_programs"], use_container_width=True):
@@ -978,7 +979,7 @@ elif st.session_state.sayfa == 'program_sayfasi':
                 st.rerun()
 
 
-# --- SAYFA 5: İSTATİSTİKLER (YENİ EKLENDİ) ---
+# --- SAYFA 5: İSTATİSTİKLER (YENİ EKLENDİ VE GÜNCELLENDİ) ---
 elif st.session_state.sayfa == 'istatistik_sayfasi':
     st.title(t["stats_title"])
     
@@ -1000,10 +1001,13 @@ elif st.session_state.sayfa == 'istatistik_sayfasi':
     else:
         toplam_gun = kisi_gecmis['Tarih'].nunique()
         en_cok_yapilan_hareket = kisi_gecmis['Hareket'].value_counts().idxmax()
+        toplam_kardiyo_dk = pd.to_numeric(kisi_gecmis['Süre (dk)'], errors='coerce').fillna(0).sum()
         
-        col1, col2 = st.columns(2)
+        # Kişisel özet 3 kolona çıkarıldı ve kardiyo eklendi
+        col1, col2, col3 = st.columns(3)
         col1.metric(t["total_days"], f"{toplam_gun} Gün")
         col2.metric(t["most_frequent"], en_cok_yapilan_hareket)
+        col3.metric(t["total_cardio"], f"{int(toplam_kardiyo_dk)} dk")
 
         st.divider()
 
@@ -1018,7 +1022,6 @@ elif st.session_state.sayfa == 'istatistik_sayfasi':
                 hareket_gecmis_tum_setler = kisi_gecmis[kisi_gecmis['Hareket'] == secili_stat_hareketi].copy()
                 hareket_gecmis_tum_setler['Tarih'] = pd.to_datetime(hareket_gecmis_tum_setler['Tarih'])
                 
-                # Her gün için kaldırılan en yüksek ağırlığı buluyoruz
                 grafik_verisi = hareket_gecmis_tum_setler.groupby('Tarih')['Ağırlık'].max().reset_index()
                 grafik_verisi = grafik_verisi.sort_values(by='Tarih')
                 grafik_verisi['Tarih'] = grafik_verisi['Tarih'].dt.strftime('%d/%m/%Y')
@@ -1044,16 +1047,12 @@ elif st.session_state.sayfa == 'istatistik_sayfasi':
         st.markdown(f"**{t['comp_days']}**")
         st.bar_chart(gun_siralamasi['Antrenman Günü'])
 
-        # Karşılaştırma 2: Toplam Hacim (Ağırlık x Tekrar)
-        # Hacim hesabı için ağırlık ve tekrar sayısal olmalı
-        grup_gecmisi['Ağırlık'] = pd.to_numeric(grup_gecmisi['Ağırlık'], errors='coerce').fillna(0)
-        grup_gecmisi['Tekrar'] = pd.to_numeric(grup_gecmisi['Tekrar'], errors='coerce').fillna(0)
-        grup_gecmisi['Hacim'] = grup_gecmisi['Ağırlık'] * grup_gecmisi['Tekrar']
+        # Karşılaştırma 2: Toplam Kardiyo Süresi (Hacim KG yerine)
+        grup_gecmisi['Süre (dk)'] = pd.to_numeric(grup_gecmisi['Süre (dk)'], errors='coerce').fillna(0)
+        kardiyo_siralamasi = grup_gecmisi.groupby('Kullanıcı')['Süre (dk)'].sum().reset_index()
+        kardiyo_siralamasi.set_index('Kullanıcı', inplace=True)
         
-        hacim_siralamasi = grup_gecmisi.groupby('Kullanıcı')['Hacim'].sum().reset_index()
-        hacim_siralamasi.set_index('Kullanıcı', inplace=True)
-        
-        st.markdown(f"**{t['comp_volume']}**")
-        st.bar_chart(hacim_siralamasi['Hacim'])
+        st.markdown(f"**{t['comp_cardio']}**")
+        st.bar_chart(kardiyo_siralamasi['Süre (dk)'])
     else:
         st.info(t["no_chart_data"])
