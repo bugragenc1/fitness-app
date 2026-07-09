@@ -94,7 +94,9 @@ LANG = {
         "cardio_not_supported_in_program": "Cardio exercises aren't supported in programs — only weight-based exercises can be added.",
         "delete_exercise_from_program": "🗑️ Delete This Exercise from Program",
         "confirm_delete_exercise_from_program": "Are you sure you want to delete ALL sets of **{ex}** from this program? This cannot be undone.",
-        "success_delete_exercise_from_program": "removed from the program."
+        "success_delete_exercise_from_program": "removed from the program.",
+        "save_all_changes": "💾 Save All Changes",
+        "success_save_all_changes": "All changes saved!"
     },
     "Türkçe": {
         "groups_title": "🏋️‍♂️ Antrenman Grupları",
@@ -185,7 +187,9 @@ LANG = {
         "cardio_not_supported_in_program": "Kardiyo hareketler programlarda desteklenmiyor — sadece ağırlık hareketleri eklenebilir.",
         "delete_exercise_from_program": "🗑️ Bu Hareketi Programdan Sil",
         "confirm_delete_exercise_from_program": "Bu programdaki **{ex}** hareketinin TÜM setlerini silmek istediğinize emin misiniz? Bu işlem geri alınamaz.",
-        "success_delete_exercise_from_program": "programdan kaldırıldı."
+        "success_delete_exercise_from_program": "programdan kaldırıldı.",
+        "save_all_changes": "💾 Tüm Değişiklikleri Kaydet",
+        "success_save_all_changes": "Tüm değişiklikler kaydedildi!"
     }
 }
 
@@ -691,41 +695,43 @@ elif st.session_state.sayfa == 'kisi_sayfasi':
                     grafik_ciz(hareket)
                     st.divider()
 
-                # --- YENİ: Setler artık doğrudan düzenlenebilir kutularla gösteriliyor (ayrı "düzenle" moduna gerek yok) ---
+                # --- YENİ: Setler doğrudan düzenlenebilir kutularla gösteriliyor; kaydetme tek butonla toplu yapılıyor ---
                 for idx, row in hareket_setleri.iterrows():
 
                     if row['Mekanik'] == 'Kardiyo':
-                        col_lbl, col_s, col_k, col_kaydet, col_sil = st.columns([0.8, 1.3, 1.3, 0.6, 0.6])
+                        col_lbl, col_s, col_k, col_sil = st.columns([0.8, 1.5, 1.5, 0.6])
                         col_lbl.markdown(f"<div style='margin-top: 8px;'>⏱️</div>", unsafe_allow_html=True)
-                        yeni_sure = col_s.number_input(t["duration"], min_value=0, value=int(row['Süre (dk)']), step=1, key=f"live_s_{idx}", label_visibility="collapsed")
-                        yeni_kalori = col_k.number_input(t["calories"], min_value=0, value=int(row['Kalori']), step=10, key=f"live_k_{idx}", label_visibility="collapsed")
-                        if col_kaydet.button("💾", key=f"live_save_{idx}"):
-                            df_antrenmanlar.at[idx, 'Süre (dk)'] = yeni_sure
-                            df_antrenmanlar.at[idx, 'Kalori'] = yeni_kalori
-                            conn.update(worksheet="Antrenmanlar", data=df_antrenmanlar)
-                            st.cache_data.clear()
-                            st.rerun()
+                        col_s.number_input(t["duration"], min_value=0, value=int(row['Süre (dk)']), step=1, key=f"live_s_{idx}", label_visibility="collapsed")
+                        col_k.number_input(t["calories"], min_value=0, value=int(row['Kalori']), step=10, key=f"live_k_{idx}", label_visibility="collapsed")
                         if col_sil.button("❌", key=f"sil_btn_{idx}"):
                             df_antrenmanlar = df_antrenmanlar.drop(idx)
                             conn.update(worksheet="Antrenmanlar", data=df_antrenmanlar)
                             st.cache_data.clear()
                             st.rerun()
                     else:
-                        col_lbl, col_w, col_r, col_kaydet, col_sil = st.columns([0.8, 1.3, 1.3, 0.6, 0.6])
+                        col_lbl, col_w, col_r, col_sil = st.columns([0.8, 1.5, 1.5, 0.6])
                         col_lbl.markdown(f"<div style='margin-top: 8px;'>{t['set']} {int(row['Set'])}</div>", unsafe_allow_html=True)
-                        yeni_agirlik = col_w.number_input(t["weight"], min_value=0.0, value=float(row['Ağırlık']), step=2.5, key=f"live_w_{idx}", label_visibility="collapsed")
-                        yeni_tekrar = col_r.number_input(t["reps"], min_value=0, value=int(row['Tekrar']), step=1, key=f"live_r_{idx}", label_visibility="collapsed")
-                        if col_kaydet.button("💾", key=f"live_save_{idx}"):
-                            df_antrenmanlar.at[idx, 'Ağırlık'] = yeni_agirlik
-                            df_antrenmanlar.at[idx, 'Tekrar'] = yeni_tekrar
-                            conn.update(worksheet="Antrenmanlar", data=df_antrenmanlar)
-                            st.cache_data.clear()
-                            st.rerun()
+                        col_w.number_input(t["weight"], min_value=0.0, value=float(row['Ağırlık']), step=2.5, key=f"live_w_{idx}", label_visibility="collapsed")
+                        col_r.number_input(t["reps"], min_value=0, value=int(row['Tekrar']), step=1, key=f"live_r_{idx}", label_visibility="collapsed")
                         if col_sil.button("❌", key=f"sil_btn_{idx}"):
                             df_antrenmanlar = df_antrenmanlar.drop(idx)
                             conn.update(worksheet="Antrenmanlar", data=df_antrenmanlar)
                             st.cache_data.clear()
                             st.rerun()
+
+                # --- YENİ: Tüm setleri tek seferde kaydeden toplu buton ---
+                if st.button(t["save_all_changes"], key=f"save_all_{hareket}_{secili_tarih}", type="primary", use_container_width=True):
+                    for idx, row in hareket_setleri.iterrows():
+                        if row['Mekanik'] == 'Kardiyo':
+                            df_antrenmanlar.at[idx, 'Süre (dk)'] = st.session_state[f"live_s_{idx}"]
+                            df_antrenmanlar.at[idx, 'Kalori'] = st.session_state[f"live_k_{idx}"]
+                        else:
+                            df_antrenmanlar.at[idx, 'Ağırlık'] = st.session_state[f"live_w_{idx}"]
+                            df_antrenmanlar.at[idx, 'Tekrar'] = st.session_state[f"live_r_{idx}"]
+                    conn.update(worksheet="Antrenmanlar", data=df_antrenmanlar)
+                    st.cache_data.clear()
+                    st.success(f"**{hareket}** {t['success_save_all_changes']}")
+                    st.rerun()
     else:
         st.info(t["no_workout"])
 
@@ -819,23 +825,27 @@ elif st.session_state.sayfa == 'program_sayfasi':
 
                     st.divider()
 
-                    # --- YENİ: Setler artık doğrudan düzenlenebilir kutularla gösteriliyor ---
+                    # --- YENİ: Setler doğrudan düzenlenebilir kutularla gösteriliyor; kaydetme tek butonla toplu yapılıyor ---
                     for idx, row in hareket_setleri_p.iterrows():
-                        col_lbl_p, col_w_p, col_r_p, col_kaydet_p, col_sil_p = st.columns([0.8, 1.3, 1.3, 0.6, 0.6])
+                        col_lbl_p, col_w_p, col_r_p, col_sil_p = st.columns([0.8, 1.5, 1.5, 0.6])
                         col_lbl_p.markdown(f"<div style='margin-top: 8px;'>{t['set']} {int(row['Set'])}</div>", unsafe_allow_html=True)
-                        yeni_agirlik = col_w_p.number_input(t["weight"], min_value=0.0, value=float(row['Ağırlık']), step=2.5, key=f"pe_w_{idx}", label_visibility="collapsed")
-                        yeni_tekrar = col_r_p.number_input(t["reps"], min_value=0, value=int(row['Tekrar']), step=1, key=f"pe_r_{idx}", label_visibility="collapsed")
-                        if col_kaydet_p.button("💾", key=f"pe_save_{idx}"):
-                            df_program_detay.at[idx, 'Ağırlık'] = yeni_agirlik
-                            df_program_detay.at[idx, 'Tekrar'] = yeni_tekrar
-                            conn.update(worksheet="ProgramDetay", data=df_program_detay)
-                            st.cache_data.clear()
-                            st.rerun()
+                        col_w_p.number_input(t["weight"], min_value=0.0, value=float(row['Ağırlık']), step=2.5, key=f"pe_w_{idx}", label_visibility="collapsed")
+                        col_r_p.number_input(t["reps"], min_value=0, value=int(row['Tekrar']), step=1, key=f"pe_r_{idx}", label_visibility="collapsed")
                         if col_sil_p.button("❌", key=f"pe_delbtn_{idx}"):
                             df_program_detay = df_program_detay.drop(idx)
                             conn.update(worksheet="ProgramDetay", data=df_program_detay)
                             st.cache_data.clear()
                             st.rerun()
+
+                    # --- YENİ: Tüm setleri tek seferde kaydeden toplu buton ---
+                    if st.button(t["save_all_changes"], key=f"p_save_all_{st.session_state.secili_program}_{hareket_p}", type="primary", use_container_width=True):
+                        for idx, row in hareket_setleri_p.iterrows():
+                            df_program_detay.at[idx, 'Ağırlık'] = st.session_state[f"pe_w_{idx}"]
+                            df_program_detay.at[idx, 'Tekrar'] = st.session_state[f"pe_r_{idx}"]
+                        conn.update(worksheet="ProgramDetay", data=df_program_detay)
+                        st.cache_data.clear()
+                        st.success(f"**{hareket_p}** {t['success_save_all_changes']}")
+                        st.rerun()
         else:
             st.info(t["no_program_content"])
 
