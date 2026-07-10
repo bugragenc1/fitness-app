@@ -1,6 +1,7 @@
 import streamlit as st
 from streamlit_gsheets import GSheetsConnection
 import pandas as pd
+import calendar as cal_module
 from datetime import date
 
 # --- DİL (LANGUAGE) SÖZLÜĞÜ ---
@@ -110,7 +111,8 @@ LANG = {
         "group_comparison": "🏆 Group Comparison",
         "comp_days": "Workout Days by Member",
         "comp_cardio": "Total Cardio Duration (min) by Member",
-        "nav_daily": "📝 Daily Log"
+        "nav_daily": "📝 Daily Log",
+        "calendar_legend": "🟢 Workout day · 🔵 Selected day"
     },
     "Türkçe": {
         "groups_title": "🏋️‍♂️ Antrenman Grupları",
@@ -217,7 +219,8 @@ LANG = {
         "group_comparison": "🏆 Grup İçi Karşılaştırma",
         "comp_days": "Üyelere Göre Antrenman Günleri",
         "comp_cardio": "Üyelere Göre Toplam Kardiyo (dk)",
-        "nav_daily": "📝 Günlük"
+        "nav_daily": "📝 Günlük",
+        "calendar_legend": "🟢 Antrenman yapılan gün · 🔵 Seçili gün"
     }
 }
 
@@ -297,6 +300,9 @@ if 'program_silme_onay_hareket' not in st.session_state: st.session_state.progra
 if 'p_onceki_hareket' not in st.session_state: st.session_state.p_onceki_hareket = ""
 if 'p_sablon_w' not in st.session_state: st.session_state.p_sablon_w = 0.0
 if 'p_sablon_r' not in st.session_state: st.session_state.p_sablon_r = 10
+if 'secili_tarih_widget' not in st.session_state: st.session_state.secili_tarih_widget = date.today()
+if 'takvim_yil' not in st.session_state: st.session_state.takvim_yil = date.today().year
+if 'takvim_ay' not in st.session_state: st.session_state.takvim_ay = date.today().month
 
 # --- GOOGLE SHEETS BAĞLANTISI ---
 conn = st.connection("gsheets", type=GSheetsConnection)
@@ -339,6 +345,72 @@ def render_top_nav():
             st.session_state.sayfa = 'istatistik_sayfasi'
             st.rerun()
     st.divider()
+
+# Antrenman Günlerini İşaretleyen Takvim Widget'ı
+# Bu fonksiyon hem tarih seçici görevi görür hem de antrenman yapılan
+# günleri 🟢 ile işaretler. Seçili gün 🔵 ile vurgulanır.
+def antrenman_takvimi_ciz(df_antrenmanlar, kullanici, grup):
+    kisi_df = df_antrenmanlar[(df_antrenmanlar['Kullanıcı'] == kullanici) & (df_antrenmanlar['Grup'] == grup)].copy()
+    kisi_df['Tarih'] = pd.to_datetime(kisi_df['Tarih'], errors='coerce')
+    antrenman_gunleri = set(kisi_df['Tarih'].dt.date.dropna())
+
+    secili = st.session_state["secili_tarih_widget"]
+
+    c_geri, c_baslik, c_ileri = st.columns([1, 3, 1])
+    with c_geri:
+        if st.button("◀️", use_container_width=True, key="takvim_geri"):
+            st.session_state.takvim_ay -= 1
+            if st.session_state.takvim_ay < 1:
+                st.session_state.takvim_ay = 12
+                st.session_state.takvim_yil -= 1
+            st.rerun()
+    with c_ileri:
+        if st.button("▶️", use_container_width=True, key="takvim_ileri"):
+            st.session_state.takvim_ay += 1
+            if st.session_state.takvim_ay > 12:
+                st.session_state.takvim_ay = 1
+                st.session_state.takvim_yil += 1
+            st.rerun()
+
+    ay_isimleri_tr = ["Ocak", "Şubat", "Mart", "Nisan", "Mayıs", "Haziran", "Temmuz", "Ağustos", "Eylül", "Ekim", "Kasım", "Aralık"]
+    ay_adi = ay_isimleri_tr[st.session_state.takvim_ay - 1] if secilen_dil == "Türkçe" else cal_module.month_name[st.session_state.takvim_ay]
+    with c_baslik:
+        st.markdown(f"<h4 style='text-align:center; margin-top:5px;'>{ay_adi} {st.session_state.takvim_yil}</h4>", unsafe_allow_html=True)
+
+    gun_basliklari = ["Pt", "Sa", "Ça", "Pe", "Cu", "Ct", "Pz"] if secilen_dil == "Türkçe" else ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"]
+    baslik_cols = st.columns(7)
+    for i, g in enumerate(gun_basliklari):
+        baslik_cols[i].markdown(f"<div style='text-align:center; color:#888; font-size:0.8rem;'>{g}</div>", unsafe_allow_html=True)
+
+    takvim_matrisi = cal_module.monthcalendar(st.session_state.takvim_yil, st.session_state.takvim_ay)
+
+    for h_idx, hafta in enumerate(takvim_matrisi):
+        cols = st.columns(7)
+        for i, gun in enumerate(hafta):
+            with cols[i]:
+                if gun == 0:
+                    st.write("")
+                else:
+                    gun_tarihi = date(st.session_state.takvim_yil, st.session_state.takvim_ay, gun)
+                    antrenman_var = gun_tarihi in antrenman_gunleri
+                    secili_mi = gun_tarihi == secili
+
+                    if secili_mi:
+                        etiket = f"🔵{gun}"
+                        buton_tipi = "primary"
+                    elif antrenman_var:
+                        etiket = f"🟢{gun}"
+                        buton_tipi = "secondary"
+                    else:
+                        etiket = f"{gun}"
+                        buton_tipi = "secondary"
+
+                    if st.button(etiket, key=f"tkv_{h_idx}_{i}_{gun}", type=buton_tipi, use_container_width=True):
+                        st.session_state["secili_tarih_widget"] = gun_tarihi
+                        st.rerun()
+
+    st.caption(t["calendar_legend"])
+    return secili
 
 # --- SAYFA 1: ANA SAYFA (GRUPLAR) ---
 if st.session_state.sayfa == 'ana_sayfa':
@@ -427,33 +499,9 @@ elif st.session_state.sayfa == 'kisi_sayfasi':
         else:
             st.info(t["no_chart_data"])
 
-    st.subheader(t["add_new_set"])
-    secili_tarih = st.date_input(t["date"], value=date.today(), format="DD/MM/YYYY")
-
-    # --- YENİ EKLENEN KISIM: AYLIK ANTRENMAN GÜNLERİ GÖSTERGESİ ---
-    if not df_antrenmanlar.empty:
-        gecmis_tarihler = df_antrenmanlar[
-            (df_antrenmanlar['Grup'] == st.session_state.secili_grup) & 
-            (df_antrenmanlar['Kullanıcı'] == st.session_state.secili_kisi)
-        ].copy()
-        
-        if not gecmis_tarihler.empty:
-            gecmis_tarihler['Tarih'] = pd.to_datetime(gecmis_tarihler['Tarih'])
-            bu_ayin_kayitlari = gecmis_tarihler[
-                (gecmis_tarihler['Tarih'].dt.year == secili_tarih.year) & 
-                (gecmis_tarihler['Tarih'].dt.month == secili_tarih.month)
-            ]
-            
-            yapilan_gunler = sorted(list(set(bu_ayin_kayitlari['Tarih'].dt.day)))
-            
-            if yapilan_gunler:
-                gunler_html = "".join([f"<span style='display:inline-block; background-color:#4CAF50; color:white; border-radius:50%; width:24px; height:24px; text-align:center; line-height:24px; margin-right:5px; font-size:0.8rem; box-shadow: 0 1px 3px rgba(0,0,0,0.2);'>{g}</span>" for g in yapilan_gunler])
-                
-                # HATA VEREN KISIM DÜZELTİLDİ: secilen_dil kullanılıyor
-                bilgi_metni = "Bu ay çalışılan günler:" if secilen_dil == "Türkçe" else "Workout days this month:"
-                
-                st.markdown(f"<div style='margin-top:5px; margin-bottom:15px; font-size:0.85rem; color:#aaa;'>{bilgi_metni}<br><div style='margin-top:8px;'>{gunler_html}</div></div>", unsafe_allow_html=True)
-    # --------------------------------------------------------------
+    with st.container(border=True):
+        st.markdown(f"<h3 style='font-size: 1.2rem; color: #888;'>📅 {t['date']}</h3>", unsafe_allow_html=True)
+        secili_tarih = antrenman_takvimi_ciz(df_antrenmanlar, st.session_state.secili_kisi, st.session_state.secili_grup)
         
         with st.expander(t["load_program_panel"]):
             kisi_programlari_yukle = df_programlar[df_programlar['Kullanıcı'] == st.session_state.secili_kisi]
