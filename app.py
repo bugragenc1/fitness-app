@@ -500,9 +500,11 @@ elif st.session_state.sayfa == 'kisi_sayfasi':
             st.info(t["no_chart_data"])
 
     with st.container(border=True):
-        st.markdown(f"<h3 style='font-size: 1.2rem; color: #888;'>📅 {t['date']}</h3>", unsafe_allow_html=True)
-        secili_tarih = antrenman_takvimi_ciz(df_antrenmanlar, st.session_state.secili_kisi, st.session_state.secili_grup)
-        
+        secili_tarih_gorunen = st.session_state["secili_tarih_widget"].strftime('%d/%m/%Y')
+        with st.expander(f"📅 {t['date']}: **{secili_tarih_gorunen}**", expanded=False):
+            antrenman_takvimi_ciz(df_antrenmanlar, st.session_state.secili_kisi, st.session_state.secili_grup)
+        secili_tarih = st.session_state["secili_tarih_widget"]
+
         with st.expander(t["load_program_panel"]):
             kisi_programlari_yukle = df_programlar[df_programlar['Kullanıcı'] == st.session_state.secili_kisi]
             if kisi_programlari_yukle.empty:
