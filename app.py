@@ -427,10 +427,9 @@ elif st.session_state.sayfa == 'kisi_sayfasi':
         else:
             st.info(t["no_chart_data"])
 
-with st.container(border=True):
+    with st.container(border=True):
         st.markdown(f"<h3 style='font-size: 1.2rem; color: #888;'>📅 {t['date']}</h3>", unsafe_allow_html=True)
         secili_tarih = st.date_input("Tarih", value=date.today(), format="DD/MM/YYYY", label_visibility="collapsed")
-    
         
         with st.expander(t["load_program_panel"]):
             kisi_programlari_yukle = df_programlar[df_programlar['Kullanıcı'] == st.session_state.secili_kisi]
