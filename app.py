@@ -427,32 +427,33 @@ elif st.session_state.sayfa == 'kisi_sayfasi':
         else:
             st.info(t["no_chart_data"])
 
-    with st.container(border=True):
-        st.markdown(f"<h3 style='font-size: 1.2rem; color: #888;'>📅 {t['date']}</h3>", unsafe_allow_html=True)
-        secili_tarih = st.date_input("Tarih", value=date.today(), format="DD/MM/YYYY", label_visibility="collapsed")
+    st.subheader(t["add_new_set"])
+    secili_tarih = st.date_input(t["date"], value=date.today(), format="DD/MM/YYYY")
+
+    # --- YENİ EKLENEN KISIM: AYLIK ANTRENMAN GÜNLERİ GÖSTERGESİ ---
+    if not df_antrenmanlar.empty:
+        gecmis_tarihler = df_antrenmanlar[
+            (df_antrenmanlar['Grup'] == st.session_state.secili_grup) & 
+            (df_antrenmanlar['Kullanıcı'] == st.session_state.secili_kisi)
+        ].copy()
         
-        # --- YENİ EKLENEN KISIM: AYLIK ANTRENMAN GÜNLERİ GÖSTERGESİ ---
-        if not df_antrenmanlar.empty:
-            gecmis_tarihler = df_antrenmanlar[
-                (df_antrenmanlar['Grup'] == st.session_state.secili_grup) & 
-                (df_antrenmanlar['Kullanıcı'] == st.session_state.secili_kisi)
-            ].copy()
+        if not gecmis_tarihler.empty:
+            gecmis_tarihler['Tarih'] = pd.to_datetime(gecmis_tarihler['Tarih'])
+            bu_ayin_kayitlari = gecmis_tarihler[
+                (gecmis_tarihler['Tarih'].dt.year == secili_tarih.year) & 
+                (gecmis_tarihler['Tarih'].dt.month == secili_tarih.month)
+            ]
             
-            if not gecmis_tarihler.empty:
-                gecmis_tarihler['Tarih'] = pd.to_datetime(gecmis_tarihler['Tarih'])
-                # Seçilen yıl ve aya göre filtrele
-                bu_ayin_kayitlari = gecmis_tarihler[
-                    (gecmis_tarihler['Tarih'].dt.year == secili_tarih.year) & 
-                    (gecmis_tarihler['Tarih'].dt.month == secili_tarih.month)
-                ]
+            yapilan_gunler = sorted(list(set(bu_ayin_kayitlari['Tarih'].dt.day)))
+            
+            if yapilan_gunler:
+                gunler_html = "".join([f"<span style='display:inline-block; background-color:#4CAF50; color:white; border-radius:50%; width:24px; height:24px; text-align:center; line-height:24px; margin-right:5px; font-size:0.8rem; box-shadow: 0 1px 3px rgba(0,0,0,0.2);'>{g}</span>" for g in yapilan_gunler])
                 
-                yapilan_gunler = sorted(list(set(bu_ayin_kayitlari['Tarih'].dt.day)))
+                # HATA VEREN KISIM DÜZELTİLDİ: secilen_dil kullanılıyor
+                bilgi_metni = "Bu ay çalışılan günler:" if secilen_dil == "Türkçe" else "Workout days this month:"
                 
-                if yapilan_gunler:
-                    gunler_html = "".join([f"<span style='display:inline-block; background-color:#4CAF50; color:white; border-radius:50%; width:24px; height:24px; text-align:center; line-height:24px; margin-right:5px; font-size:0.8rem; box-shadow: 0 1px 3px rgba(0,0,0,0.2);'>{g}</span>" for g in yapilan_gunler])
-                    bilgi_metni = "Bu ay çalışılan günler:" if st.session_state.dil == "Türkçe" else "Workout days this month:"
-                    st.markdown(f"<div style='margin-top:10px; padding-top:10px; border-top:1px dashed rgba(255,255,255,0.1); font-size:0.85rem; color:#aaa;'>{bilgi_metni}<br><div style='margin-top:8px;'>{gunler_html}</div></div>", unsafe_allow_html=True)
-        # --------------------------------------------------------------
+                st.markdown(f"<div style='margin-top:5px; margin-bottom:15px; font-size:0.85rem; color:#aaa;'>{bilgi_metni}<br><div style='margin-top:8px;'>{gunler_html}</div></div>", unsafe_allow_html=True)
+    # --------------------------------------------------------------
         
         with st.expander(t["load_program_panel"]):
             kisi_programlari_yukle = df_programlar[df_programlar['Kullanıcı'] == st.session_state.secili_kisi]
