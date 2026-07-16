@@ -225,7 +225,7 @@ LANG = {
 }
 
 # --- KÜRESEL DEĞİŞKENLER ---
-EKIPMAN_LISTESI = ["Barbell", "Dumbbell", "Machine", "Cable", "Bodyweight", "Band", "Smith Machine", "Kettlebell", "Other", "-"]
+EKIPMAN_LISTESI = ["Barbell", "Dumbbell", "Machine","Plate-Loaded Machine", "Cable", "Bodyweight", "Band", "Smith Machine", "Kettlebell", "Other", "-"]
 
 # --- SAYFA YAPILANDIRMASI & ÖZEL MOBİL CSS ---
 st.set_page_config(page_title="Workout App", page_icon="💪", layout="centered", initial_sidebar_state="collapsed")
