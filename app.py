@@ -723,7 +723,7 @@ elif st.session_state.sayfa == 'kisi_sayfasi':
                     st.cache_data.clear()
                     st.rerun()
                 else: st.warning(t["warn_name"])
-         with st.expander(t["legacy_add_panel"]):
+        with st.expander(t["legacy_add_panel"]):
             st.caption(t["legacy_add_desc"])
             if df_legacy.empty:
                 st.info(t["legacy_empty"])
@@ -774,7 +774,7 @@ elif st.session_state.sayfa == 'kisi_sayfasi':
                     conn.update(worksheet="LegacyHareketler", data=df_legacy[df_legacy['Hareket Tipi'] != lc_sil_secim])
                     st.cache_data.clear()
                     st.success(f"{lc_sil_secim} {t['legacy_delete_success']}")
-                    st.rerun()
+                    st.rerun()         
 
     st.divider()
     st.markdown(f"<h2 style='font-size: 1.5rem;'>📋 {secili_tarih.strftime('%d/%m/%Y')} {t['workout_of'] if secilen_dil == 'English' else 'Tarihli ' + t['workout_of']}</h2>", unsafe_allow_html=True)
