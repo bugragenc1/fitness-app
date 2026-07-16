@@ -723,7 +723,7 @@ elif st.session_state.sayfa == 'kisi_sayfasi':
                     st.cache_data.clear()
                     st.rerun()
                 else: st.warning(t["warn_name"])
-                    with st.expander(t["legacy_add_panel"]):
+         with st.expander(t["legacy_add_panel"]):
             st.caption(t["legacy_add_desc"])
             if df_legacy.empty:
                 st.info(t["legacy_empty"])
