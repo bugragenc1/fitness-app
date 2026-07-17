@@ -34,24 +34,6 @@ LANG = {
         "add_to_db": "Add to Database",
         "success_db": "successfully added to the database!",
         "warn_name": "Please enter an exercise name.",
-        "legacy_add_panel": "📚 Add from Legacy Exercises",
-        "legacy_add_desc": "Pick from a curated list of common exercises for each muscle group and add them to your database.",
-        "legacy_select_group": "Muscle Group",
-        "legacy_select_exercises": "Select exercises to add",
-        "legacy_add_btn": "➕ Add Selected to My Exercises",
-        "legacy_add_success": "exercise(s) added to your database!",
-        "legacy_none_left": "All legacy exercises for this muscle group are already in your database.",
-        "legacy_empty": "Legacy exercise list is empty. Load the defaults below.",
-        "legacy_seed_btn": "🌱 Load Default Legacy Exercises",
-        "legacy_seed_success": "Default legacy exercises loaded!",
-        "legacy_manage_panel": "🛠️ Manage Legacy Exercise List",
-        "legacy_manage_desc": "Add or remove exercises from the shared legacy list used by the panel above.",
-        "legacy_new_name": "New Legacy Exercise Name",
-        "legacy_add_to_list": "Add to Legacy List",
-        "legacy_add_to_list_success": "added to the legacy list!",
-        "legacy_delete_select": "Select Legacy Exercise to Delete",
-        "legacy_delete_btn": "Delete from Legacy List",
-        "legacy_delete_success": "deleted from the legacy list!",
         "delete_exercise_panel": "🗑️ Delete Selected Exercise",
         "delete_exercise_desc": "Warning: This will permanently remove the exercise from the list.",
         "delete_from_db": "Delete Exercise",
@@ -130,7 +112,11 @@ LANG = {
         "comp_days": "Workout Days by Member",
         "comp_cardio": "Total Cardio Duration (min) by Member",
         "nav_daily": "📝 Daily Log",
-        "calendar_legend": "🟢 Workout day · 🔵 Selected day"
+        "calendar_legend": "🟢 Workout day · 🔵 Selected day",
+        "legacy_add_panel": "📚 Add From Legacy List To Today",
+        "legacy_add_desc": "Pick a common exercise from the curated legacy list and log it directly to today's workout. This does NOT add it to your personal exercise database.",
+        "legacy_select_group": "Muscle Group",
+        "legacy_empty": "Legacy exercise list is empty. Add exercises to the 'LegacyHareketler' sheet in Google Sheets first.",
     },
     "Türkçe": {
         "groups_title": "🏋️‍♂️ Antrenman Grupları",
@@ -160,24 +146,6 @@ LANG = {
         "add_to_db": "Veritabanına Ekle",
         "success_db": "başarıyla veritabanına eklendi!",
         "warn_name": "Lütfen hareket adını girin.",
-        "legacy_add_panel": "📚 Temel Hareketlerden Ekle",
-        "legacy_add_desc": "Her kas grubu için hazır temel hareketlerden seçip kendi veritabanınıza ekleyebilirsiniz.",
-        "legacy_select_group": "Kas Grubu",
-        "legacy_select_exercises": "Eklenecek hareketleri seçin",
-        "legacy_add_btn": "➕ Seçilenleri Hareketlerime Ekle",
-        "legacy_add_success": "hareket veritabanınıza eklendi!",
-        "legacy_none_left": "Bu kas grubundaki tüm temel hareketler zaten veritabanınızda.",
-        "legacy_empty": "Temel hareket listesi boş. Aşağıdan varsayılanları yükleyebilirsiniz.",
-        "legacy_seed_btn": "🌱 Varsayılan Temel Hareketleri Yükle",
-        "legacy_seed_success": "Varsayılan temel hareketler yüklendi!",
-        "legacy_manage_panel": "🛠️ Temel Hareket Listesini Yönet",
-        "legacy_manage_desc": "Yukarıdaki panelde kullanılan ortak temel hareket listesine ekleme/çıkarma yapabilirsiniz.",
-        "legacy_new_name": "Yeni Temel Hareketin Adı",
-        "legacy_add_to_list": "Listeye Ekle",
-        "legacy_add_to_list_success": "temel hareket listesine eklendi!",
-        "legacy_delete_select": "Silinecek Temel Hareketi Seçin",
-        "legacy_delete_btn": "Listeden Sil",
-        "legacy_delete_success": "temel hareket listesinden silindi!",
         "delete_exercise_panel": "🗑️ Seçili Hareketi Veritabanından Sil",
         "delete_exercise_desc": "Uyarı: Bu işlem hareketi listeden tamamen kaldırır. Geçmiş kayıtlar silinmez.",
         "delete_from_db": "Seçili Hareketi Sil",
@@ -256,47 +224,16 @@ LANG = {
         "comp_days": "Üyelere Göre Antrenman Günleri",
         "comp_cardio": "Üyelere Göre Toplam Kardiyo (dk)",
         "nav_daily": "📝 Günlük",
-        "calendar_legend": "🟢 Antrenman yapılan gün · 🔵 Seçili gün"
+        "calendar_legend": "🟢 Antrenman yapılan gün · 🔵 Seçili gün",
+        "legacy_add_panel": "📚 Temel Hareketten Bugüne Ekle",
+        "legacy_add_desc": "Hazır temel hareket listesinden seçip doğrudan bugünün antrenmanına ekleyin. Bu işlem hareketi kişisel veritabanınıza (Hareketler) EKLEMEZ.",
+        "legacy_select_group": "Kas Grubu",
+        "legacy_empty": "Temel hareket listesi boş. Önce Google Sheets'teki 'LegacyHareketler' sekmesine hareket ekleyin.",
     }
 }
 
 # --- KÜRESEL DEĞİŞKENLER ---
-EKIPMAN_LISTESI = ["Barbell", "Dumbbell", "Machine","Plate-Loaded Machine", "Cable", "Bodyweight", "Band", "Smith Machine", "Kettlebell", "Other", "-"]
-
-VARSAYILAN_LEGACY_HAREKETLER = [
-    {"Kas Grubu": "Chest", "Hareket Tipi": "Bench Press", "Mekanik": "Compound", "Ekipman": "Barbell"},
-    {"Kas Grubu": "Chest", "Hareket Tipi": "Incline Bench Press", "Mekanik": "Compound", "Ekipman": "Barbell"},
-    {"Kas Grubu": "Chest", "Hareket Tipi": "Chest Press", "Mekanik": "Compound", "Ekipman": "Machine"},
-    {"Kas Grubu": "Chest", "Hareket Tipi": "Chest Fly", "Mekanik": "Izole", "Ekipman": "Cable"},
-    {"Kas Grubu": "Chest", "Hareket Tipi": "Push-up", "Mekanik": "Compound", "Ekipman": "Bodyweight"},
-    {"Kas Grubu": "Back", "Hareket Tipi": "Lat Pulldown", "Mekanik": "Compound", "Ekipman": "Cable"},
-    {"Kas Grubu": "Back", "Hareket Tipi": "Pull-up", "Mekanik": "Compound", "Ekipman": "Bodyweight"},
-    {"Kas Grubu": "Back", "Hareket Tipi": "Barbell Row", "Mekanik": "Compound", "Ekipman": "Barbell"},
-    {"Kas Grubu": "Back", "Hareket Tipi": "Seated Cable Row", "Mekanik": "Compound", "Ekipman": "Cable"},
-    {"Kas Grubu": "Back", "Hareket Tipi": "Deadlift", "Mekanik": "Compound", "Ekipman": "Barbell"},
-    {"Kas Grubu": "Shoulder", "Hareket Tipi": "Overhead Press", "Mekanik": "Compound", "Ekipman": "Barbell"},
-    {"Kas Grubu": "Shoulder", "Hareket Tipi": "Lateral Raise", "Mekanik": "Izole", "Ekipman": "Dumbbell"},
-    {"Kas Grubu": "Shoulder", "Hareket Tipi": "Rear Delt Fly", "Mekanik": "Izole", "Ekipman": "Dumbbell"},
-    {"Kas Grubu": "Shoulder", "Hareket Tipi": "Face Pull", "Mekanik": "Izole", "Ekipman": "Cable"},
-    {"Kas Grubu": "Biceps", "Hareket Tipi": "Barbell Curl", "Mekanik": "Izole", "Ekipman": "Barbell"},
-    {"Kas Grubu": "Biceps", "Hareket Tipi": "Dumbbell Curl", "Mekanik": "Izole", "Ekipman": "Dumbbell"},
-    {"Kas Grubu": "Biceps", "Hareket Tipi": "Hammer Curl", "Mekanik": "Izole", "Ekipman": "Dumbbell"},
-    {"Kas Grubu": "Biceps", "Hareket Tipi": "Cable Curl", "Mekanik": "Izole", "Ekipman": "Cable"},
-    {"Kas Grubu": "Triceps", "Hareket Tipi": "Triceps Pushdown", "Mekanik": "Izole", "Ekipman": "Cable"},
-    {"Kas Grubu": "Triceps", "Hareket Tipi": "Skull Crusher", "Mekanik": "Izole", "Ekipman": "Barbell"},
-    {"Kas Grubu": "Triceps", "Hareket Tipi": "Overhead Triceps Extension", "Mekanik": "Izole", "Ekipman": "Dumbbell"},
-    {"Kas Grubu": "Triceps", "Hareket Tipi": "Dips", "Mekanik": "Compound", "Ekipman": "Bodyweight"},
-    {"Kas Grubu": "Legs", "Hareket Tipi": "Squat", "Mekanik": "Compound", "Ekipman": "Barbell"},
-    {"Kas Grubu": "Legs", "Hareket Tipi": "Leg Press", "Mekanik": "Compound", "Ekipman": "Machine"},
-    {"Kas Grubu": "Legs", "Hareket Tipi": "Romanian Deadlift", "Mekanik": "Compound", "Ekipman": "Barbell"},
-    {"Kas Grubu": "Legs", "Hareket Tipi": "Leg Extension", "Mekanik": "Izole", "Ekipman": "Machine"},
-    {"Kas Grubu": "Legs", "Hareket Tipi": "Leg Curl", "Mekanik": "Izole", "Ekipman": "Machine"},
-    {"Kas Grubu": "Legs", "Hareket Tipi": "Calf Raise", "Mekanik": "Izole", "Ekipman": "Machine"},
-    {"Kas Grubu": "Cardio", "Hareket Tipi": "Treadmill", "Mekanik": "Kardiyo", "Ekipman": "Machine"},
-    {"Kas Grubu": "Cardio", "Hareket Tipi": "Stationary Bike", "Mekanik": "Kardiyo", "Ekipman": "Machine"},
-    {"Kas Grubu": "Cardio", "Hareket Tipi": "Rowing Machine", "Mekanik": "Kardiyo", "Ekipman": "Machine"},
-    {"Kas Grubu": "Cardio", "Hareket Tipi": "Elliptical", "Mekanik": "Kardiyo", "Ekipman": "Machine"},
-]
+EKIPMAN_LISTESI = ["Barbell", "Dumbbell", "Machine", "Cable", "Bodyweight", "Band", "Smith Machine", "Kettlebell", "Other", "-"]
 
 # --- SAYFA YAPILANDIRMASI & ÖZEL MOBİL CSS ---
 st.set_page_config(page_title="Workout App", page_icon="💪", layout="centered", initial_sidebar_state="collapsed")
@@ -373,6 +310,9 @@ if 'p_sablon_r' not in st.session_state: st.session_state.p_sablon_r = 10
 if 'secili_tarih_widget' not in st.session_state: st.session_state.secili_tarih_widget = date.today()
 if 'takvim_yil' not in st.session_state: st.session_state.takvim_yil = date.today().year
 if 'takvim_ay' not in st.session_state: st.session_state.takvim_ay = date.today().month
+if 'leg_onceki_hareket' not in st.session_state: st.session_state.leg_onceki_hareket = ""
+if 'leg_sablon_w' not in st.session_state: st.session_state.leg_sablon_w = 0.0
+if 'leg_sablon_r' not in st.session_state: st.session_state.leg_sablon_r = 10
 
 # --- GOOGLE SHEETS BAĞLANTISI ---
 conn = st.connection("gsheets", type=GSheetsConnection)
@@ -393,6 +333,13 @@ def sablon_guncelle():
     for key in list(st.session_state.keys()):
         if key.startswith("w_new_"): st.session_state[key] = yeni_w
         elif key.startswith("r_new_"): st.session_state[key] = yeni_r
+
+def leg_sablon_guncelle():
+    yeni_w = st.session_state.leg_sablon_w
+    yeni_r = st.session_state.leg_sablon_r
+    for key in list(st.session_state.keys()):
+        if key.startswith("leg_w_new_"): st.session_state[key] = yeni_w
+        elif key.startswith("leg_r_new_"): st.session_state[key] = yeni_r
 
 # Ortak Navigasyon Barı
 def render_top_nav():
@@ -551,7 +498,6 @@ elif st.session_state.sayfa == 'kisi_sayfasi':
     df_hareketler = veri_getir("Hareketler", ["Kas Grubu", "Hareket Tipi", "Mekanik", "Ekipman"])
     df_programlar = veri_getir("Programlar", ["Kullanıcı", "Program Adı"])
     df_program_detay = veri_getir("ProgramDetay", ["Program Adı", "Kullanıcı", "Kas Grubu", "Hareket", "Set", "Ağırlık", "Tekrar", "Ekipman"])
-
     df_legacy = veri_getir("LegacyHareketler", ["Kas Grubu", "Hareket Tipi", "Mekanik", "Ekipman"])
     
     # NOT: Aynı hareket ismi farklı ekipmanlarla ayrı kayıtlar olarak değerlendirilsin diye
@@ -632,6 +578,82 @@ elif st.session_state.sayfa == 'kisi_sayfasi':
                             if key.startswith("load_w_") or key.startswith("load_r_"): del st.session_state[key]
                         st.success(f"{secili_program_yukle} {t['success_load_program']}")
                         st.rerun()
+
+        # --- LEGACY HAREKETTEN BUGÜNE DİREKT EKLE ---
+        with st.expander(t["legacy_add_panel"]):
+            st.caption(t["legacy_add_desc"])
+            if df_legacy.empty:
+                st.info(t["legacy_empty"])
+            else:
+                leg_kas = st.selectbox(t["legacy_select_group"], df_legacy['Kas Grubu'].unique(), key="leg_kas_sec")
+                leg_liste = df_legacy[df_legacy['Kas Grubu'] == leg_kas]['Hareket Tipi'].unique()
+                leg_hareket = st.selectbox(t["exercise"], leg_liste, key="leg_hareket_sec")
+
+                if leg_hareket:
+                    leg_row = df_legacy[(df_legacy['Kas Grubu'] == leg_kas) & (df_legacy['Hareket Tipi'] == leg_hareket)].iloc[0]
+                    leg_mekanik = leg_row['Mekanik']
+                    st.caption(f"{t['mechanic']}: **{leg_mekanik}**")
+
+                    leg_varsayilan_ekip = leg_row['Ekipman'] if 'Ekipman' in leg_row else "Barbell"
+                    leg_ekipman = st.selectbox(t["equipment"], EKIPMAN_LISTESI, index=EKIPMAN_LISTESI.index(leg_varsayilan_ekip) if leg_varsayilan_ekip in EKIPMAN_LISTESI else 0, key="leg_ekip_sec")
+
+                    # Şablon/önceki ağırlık takibi Hareket+Ekipman ikilisine göre tetikleniyor
+                    leg_onceki_anahtar = f"{leg_hareket}||{leg_ekipman}"
+                    if st.session_state.leg_onceki_hareket != leg_onceki_anahtar:
+                        st.session_state.leg_onceki_hareket = leg_onceki_anahtar
+                        leg_gecmis = df_antrenmanlar[(df_antrenmanlar['Kullanıcı'] == st.session_state.secili_kisi) & (df_antrenmanlar['Hareket'] == leg_hareket) & (df_antrenmanlar['Ekipman'] == leg_ekipman) & (df_antrenmanlar['Mekanik'] != 'Kardiyo')]
+                        st.session_state.leg_sablon_w = float(leg_gecmis.sort_values(by="Tarih", ascending=False).iloc[0]['Ağırlık']) if not leg_gecmis.empty else 0.0
+                        st.session_state.leg_sablon_r = 10
+                        for key in list(st.session_state.keys()):
+                            if key.startswith("leg_w_new_") or key.startswith("leg_r_new_"): del st.session_state[key]
+
+                    st.divider()
+
+                    if leg_mekanik == "Kardiyo":
+                        st.write(f"**{t['cardio_details']}**")
+                        def leg_kalori_hesapla(): st.session_state.leg_kardiyo_kalori = int(st.session_state.leg_kardiyo_sure * 10)
+                        if 'leg_kardiyo_sure' not in st.session_state: st.session_state.leg_kardiyo_sure = 30
+                        if 'leg_kardiyo_kalori' not in st.session_state: st.session_state.leg_kardiyo_kalori = 300
+                        lc_sure, lc_kalori = st.columns(2)
+                        leg_kardiyo_sure = lc_sure.number_input(t["duration"], min_value=1, value=st.session_state.leg_kardiyo_sure, key="leg_kardiyo_sure", step=1, on_change=leg_kalori_hesapla)
+                        leg_kardiyo_kalori = lc_kalori.number_input(t["calories"], min_value=1, value=st.session_state.leg_kardiyo_kalori, key="leg_kardiyo_kalori", step=10)
+
+                        if st.button(t["save_cardio"], type="primary", use_container_width=True, key="leg_save_cardio_btn"):
+                            leg_yeni_satir = pd.DataFrame([{"Tarih": secili_tarih.strftime("%Y-%m-%d"), "Grup": st.session_state.secili_grup, "Kullanıcı": st.session_state.secili_kisi, "Kas Grubu": leg_kas, "Hareket": leg_hareket, "Set": 1, "Ağırlık": 0, "Tekrar": 0, "Süre (dk)": leg_kardiyo_sure, "Kalori": leg_kardiyo_kalori, "Mekanik": leg_mekanik, "Ekipman": leg_ekipman}])
+                            conn.update(worksheet="Antrenmanlar", data=pd.concat([df_antrenmanlar, leg_yeni_satir], ignore_index=True))
+                            st.cache_data.clear()
+                            st.success(f"{leg_hareket} {t['success_cardio']}")
+                            st.rerun()
+                    else:
+                        st.write(f"**{t['template_title']}**")
+                        leg_set_sayisi = st.number_input(t["how_many_sets"], min_value=1, max_value=10, value=3, step=1, key="leg_set_sayisi")
+                        lc_hedef1, lc_hedef2 = st.columns(2)
+                        lc_hedef1.number_input(t["template_w"], step=2.5, key="leg_sablon_w", on_change=leg_sablon_guncelle)
+                        lc_hedef2.number_input(t["template_r"], step=1, key="leg_sablon_r", on_change=leg_sablon_guncelle)
+
+                        st.write(f"**{t['edit_sets']}**")
+                        leg_bugunku_setler = df_antrenmanlar[(df_antrenmanlar['Tarih'] == secili_tarih.strftime("%Y-%m-%d")) & (df_antrenmanlar['Kullanıcı'] == st.session_state.secili_kisi) & (df_antrenmanlar['Hareket'] == leg_hareket) & (df_antrenmanlar['Ekipman'] == leg_ekipman)]
+                        leg_baslangic_seti = len(leg_bugunku_setler) + 1
+                        leg_eklenecek_setler = []
+
+                        for i in range(leg_set_sayisi):
+                            leg_guncel_set_no = leg_baslangic_seti + i
+                            lc_label, lc_w, lc_r = st.columns([1, 2, 2])
+                            lc_label.markdown(f"<div style='margin-top: 25px;'>**{t['set']} {leg_guncel_set_no}**</div>", unsafe_allow_html=True)
+                            leg_w_key, leg_r_key = f"leg_w_new_{leg_hareket}_{leg_ekipman}_{leg_guncel_set_no}", f"leg_r_new_{leg_hareket}_{leg_ekipman}_{leg_guncel_set_no}"
+                            if leg_w_key not in st.session_state: st.session_state[leg_w_key] = st.session_state.leg_sablon_w
+                            if leg_r_key not in st.session_state: st.session_state[leg_r_key] = st.session_state.leg_sablon_r
+                            leg_w = lc_w.number_input(t["weight"], step=2.5, key=leg_w_key, label_visibility="collapsed")
+                            leg_r = lc_r.number_input(t["reps"], step=1, key=leg_r_key, label_visibility="collapsed")
+                            leg_eklenecek_setler.append({"Tarih": secili_tarih.strftime("%Y-%m-%d"), "Grup": st.session_state.secili_grup, "Kullanıcı": st.session_state.secili_kisi, "Kas Grubu": leg_kas, "Hareket": leg_hareket, "Set": leg_guncel_set_no, "Ağırlık": leg_w, "Tekrar": leg_r, "Süre (dk)": 0, "Kalori": 0, "Mekanik": leg_mekanik, "Ekipman": leg_ekipman})
+
+                        if st.button(t["save_all"], type="primary", use_container_width=True, key="leg_save_all_btn"):
+                            conn.update(worksheet="Antrenmanlar", data=pd.concat([df_antrenmanlar, pd.DataFrame(leg_eklenecek_setler)], ignore_index=True))
+                            st.cache_data.clear()
+                            for key in list(st.session_state.keys()):
+                                if key.startswith("leg_w_new_") or key.startswith("leg_r_new_"): del st.session_state[key]
+                            st.success(f"{leg_hareket}: {leg_set_sayisi} {t['success_sets']}")
+                            st.rerun()
 
     with st.container(border=True):
         st.markdown(f"<h3 style='font-size: 1.2rem; color: #888;'>➕ {t['add_new_set']}</h3>", unsafe_allow_html=True)
@@ -723,58 +745,6 @@ elif st.session_state.sayfa == 'kisi_sayfasi':
                     st.cache_data.clear()
                     st.rerun()
                 else: st.warning(t["warn_name"])
-        with st.expander(t["legacy_add_panel"]):
-            st.caption(t["legacy_add_desc"])
-            if df_legacy.empty:
-                st.info(t["legacy_empty"])
-                if st.button(t["legacy_seed_btn"], use_container_width=True):
-                    conn.update(worksheet="LegacyHareketler", data=pd.DataFrame(VARSAYILAN_LEGACY_HAREKETLER))
-                    st.cache_data.clear()
-                    st.success(t["legacy_seed_success"])
-                    st.rerun()
-            else:
-                legacy_kas_secim = st.selectbox(t["legacy_select_group"], df_legacy['Kas Grubu'].unique(), key="legacy_kas_sec")
-                legacy_grup_hareketleri = df_legacy[df_legacy['Kas Grubu'] == legacy_kas_secim]
-
-                mevcut_ciftler = set(zip(df_hareketler['Kas Grubu'], df_hareketler['Hareket Tipi'])) if not df_hareketler.empty else set()
-                eklenebilir = legacy_grup_hareketleri[~legacy_grup_hareketleri.apply(lambda r: (r['Kas Grubu'], r['Hareket Tipi']) in mevcut_ciftler, axis=1)]
-
-                if eklenebilir.empty:
-                    st.info(t["legacy_none_left"])
-                else:
-                    secilen_legacy = st.multiselect(t["legacy_select_exercises"], eklenebilir['Hareket Tipi'].tolist(), key="legacy_secim_ms")
-                    if st.button(t["legacy_add_btn"], type="primary", use_container_width=True):
-                        if secilen_legacy:
-                            eklenecek_satirlar = eklenebilir[eklenebilir['Hareket Tipi'].isin(secilen_legacy)][["Kas Grubu", "Hareket Tipi", "Mekanik", "Ekipman"]]
-                            conn.update(worksheet="Hareketler", data=pd.concat([df_hareketler, eklenecek_satirlar], ignore_index=True))
-                            st.cache_data.clear()
-                            st.success(f"{len(secilen_legacy)} {t['legacy_add_success']}")
-                            st.rerun()
-
-        with st.expander(t["legacy_manage_panel"]):
-            st.caption(t["legacy_manage_desc"])
-            lc_kas, lc_har, lc_mek, lc_ekip = st.columns(4)
-            lc_yeni_kas = lc_kas.selectbox(t["which_muscle"], mevcut_kas_gruplari, key="legacy_new_muscle")
-            lc_yeni_har = lc_har.text_input(t["legacy_new_name"], key="legacy_new_name_input")
-            lc_yeni_mek = lc_mek.selectbox(t["mechanic_type"], ["Compound", "Izole", "Kardiyo"], key="legacy_new_mek")
-            lc_yeni_ekip = lc_ekip.selectbox(t["equipment_type"], EKIPMAN_LISTESI, key="legacy_new_ekip")
-            if st.button(t["legacy_add_to_list"], type="secondary", use_container_width=True, key="legacy_add_btn_manage"):
-                if lc_yeni_har:
-                    conn.update(worksheet="LegacyHareketler", data=pd.concat([df_legacy, pd.DataFrame([{"Kas Grubu": lc_yeni_kas, "Hareket Tipi": lc_yeni_har, "Mekanik": lc_yeni_mek, "Ekipman": lc_yeni_ekip}])], ignore_index=True))
-                    st.cache_data.clear()
-                    st.success(f"{lc_yeni_har} {t['legacy_add_to_list_success']}")
-                    st.rerun()
-                else:
-                    st.warning(t["warn_name"])
-
-            if not df_legacy.empty:
-                st.divider()
-                lc_sil_secim = st.selectbox(t["legacy_delete_select"], df_legacy['Hareket Tipi'].unique(), key="legacy_sil_sec")
-                if st.button(t["legacy_delete_btn"], type="secondary", use_container_width=True, key="legacy_del_btn"):
-                    conn.update(worksheet="LegacyHareketler", data=df_legacy[df_legacy['Hareket Tipi'] != lc_sil_secim])
-                    st.cache_data.clear()
-                    st.success(f"{lc_sil_secim} {t['legacy_delete_success']}")
-                    st.rerun()         
 
     st.divider()
     st.markdown(f"<h2 style='font-size: 1.5rem;'>📋 {secili_tarih.strftime('%d/%m/%Y')} {t['workout_of'] if secilen_dil == 'English' else 'Tarihli ' + t['workout_of']}</h2>", unsafe_allow_html=True)
