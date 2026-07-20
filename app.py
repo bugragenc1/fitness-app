@@ -119,6 +119,14 @@ LANG = {
         "legacy_empty": "Legacy exercise list is empty. Add exercises to the 'LegacyHareketler' sheet in Google Sheets first.",
         "legacy_add_program_panel": "📚 Add From Legacy List To This Program",
         "legacy_add_program_desc": "Pick a common exercise from the curated legacy list and add it directly to this program. This does NOT add it to your personal exercise database.",
+        "legacy_manage_panel": "🛠️ Add / Remove Legacy Exercises",
+        "legacy_manage_desc": "Manage the shared legacy exercise list used by the panels above.",
+        "legacy_new_name": "New Legacy Exercise Name",
+        "legacy_add_to_list": "Add to Legacy List",
+        "legacy_add_to_list_success": "added to the legacy list!",
+        "legacy_delete_select": "Select Legacy Exercise to Delete",
+        "legacy_delete_btn": "Delete from Legacy List",
+        "legacy_delete_success": "deleted from the legacy list!",
     },
     "Türkçe": {
         "groups_title": "🏋️‍♂️ Antrenman Grupları",
@@ -233,6 +241,14 @@ LANG = {
         "legacy_empty": "Temel hareket listesi boş. Önce Google Sheets'teki 'LegacyHareketler' sekmesine hareket ekleyin.",
         "legacy_add_program_panel": "📚 Temel Hareketten Programa Ekle",
         "legacy_add_program_desc": "Hazır temel hareket listesinden seçip doğrudan bu programa ekleyin. Bu işlem hareketi kişisel veritabanınıza (Hareketler) EKLEMEZ.",
+        "legacy_manage_panel": "🛠️ Temel Hareket Ekle / Sil",
+        "legacy_manage_desc": "Yukarıdaki panellerde kullanılan ortak temel hareket listesine ekleme/çıkarma yapabilirsiniz.",
+        "legacy_new_name": "Yeni Temel Hareketin Adı",
+        "legacy_add_to_list": "Listeye Ekle",
+        "legacy_add_to_list_success": "temel hareket listesine eklendi!",
+        "legacy_delete_select": "Silinecek Temel Hareketi Seçin",
+        "legacy_delete_btn": "Listeden Sil",
+        "legacy_delete_success": "temel hareket listesinden silindi!",
     }
 }
 
@@ -668,6 +684,33 @@ elif st.session_state.sayfa == 'kisi_sayfasi':
                                 if key.startswith("leg_w_new_") or key.startswith("leg_r_new_"): del st.session_state[key]
                             st.success(f"{leg_hareket}: {leg_set_sayisi} {t['success_sets']}")
                             st.rerun()
+
+        # --- TEMEL HAREKET LİSTESİNİ YÖNET (EKLE/SİL) ---
+        with st.expander(t["legacy_manage_panel"]):
+            st.caption(t["legacy_manage_desc"])
+            mevcut_kas_gruplari_legacy = df_hareketler['Kas Grubu'].unique() if not df_hareketler.empty else ["Chest", "Back", "Shoulder", "Biceps", "Triceps", "Legs", "Cardio"]
+            lc_kas, lc_har, lc_mek, lc_ekip = st.columns(4)
+            lc_yeni_kas = lc_kas.selectbox(t["which_muscle"], mevcut_kas_gruplari_legacy, key="legacy_new_muscle")
+            lc_yeni_har = lc_har.text_input(t["legacy_new_name"], key="legacy_new_name_input")
+            lc_yeni_mek = lc_mek.selectbox(t["mechanic_type"], ["Compound", "Izole", "Kardiyo"], key="legacy_new_mek")
+            lc_yeni_ekip = lc_ekip.selectbox(t["equipment_type"], EKIPMAN_LISTESI, key="legacy_new_ekip")
+            if st.button(t["legacy_add_to_list"], type="secondary", use_container_width=True, key="legacy_add_list_btn"):
+                if lc_yeni_har:
+                    conn.update(worksheet="LegacyHareketler", data=pd.concat([df_legacy, pd.DataFrame([{"Kas Grubu": lc_yeni_kas, "Hareket Tipi": lc_yeni_har, "Mekanik": lc_yeni_mek, "Ekipman": lc_yeni_ekip}])], ignore_index=True))
+                    st.cache_data.clear()
+                    st.success(f"{lc_yeni_har} {t['legacy_add_to_list_success']}")
+                    st.rerun()
+                else:
+                    st.warning(t["warn_name"])
+
+            if not df_legacy.empty:
+                st.divider()
+                lc_sil_secim = st.selectbox(t["legacy_delete_select"], df_legacy['Hareket Tipi'].unique(), key="legacy_sil_sec")
+                if st.button(t["legacy_delete_btn"], type="secondary", use_container_width=True, key="legacy_del_btn"):
+                    conn.update(worksheet="LegacyHareketler", data=df_legacy[df_legacy['Hareket Tipi'] != lc_sil_secim])
+                    st.cache_data.clear()
+                    st.success(f"{lc_sil_secim} {t['legacy_delete_success']}")
+                    st.rerun()
 
     with st.container(border=True):
         st.markdown(f"<h3 style='font-size: 1.2rem; color: #888;'>➕ {t['add_new_set']}</h3>", unsafe_allow_html=True)
