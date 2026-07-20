@@ -319,6 +319,19 @@ custom_css = """
         padding-right: 0.25rem !important;
         font-size: 0.85rem !important;
     }
+    /* Üstteki navigasyon barını (Günlük / Prog / Stats) mobilde daha kompakt
+       göstermek için: küçük font, düşük yükseklik, dar aralık. */
+    .st-key-ust_nav div[data-testid="stHorizontalBlock"] {
+        gap: 0.3rem !important;
+    }
+    .st-key-ust_nav div[data-testid="stButton"] > button {
+        font-size: 0.72rem !important;
+        padding: 0.3rem 0.15rem !important;
+        min-height: 2.1rem !important;
+        height: 2.1rem !important;
+        line-height: 1.1 !important;
+        border-radius: 10px !important;
+    }
 </style>
 """
 st.markdown(custom_css, unsafe_allow_html=True)
@@ -388,23 +401,24 @@ def pleg_sablon_guncelle():
 # Ortak Navigasyon Barı
 def render_top_nav():
     st.write("")
-    n1, n2, n3, n4 = st.columns([1,1,1,1.5])
-    with n1:
-        if st.button("👥 " + t["back_to_groups"].split(" ")[-1], use_container_width=True):
-            st.session_state.sayfa = 'grup_sayfasi'
-            st.rerun()
-    with n2:
-        if st.button(t["nav_daily"], type="primary" if st.session_state.sayfa == 'kisi_sayfasi' else "secondary", use_container_width=True):
-            st.session_state.sayfa = 'kisi_sayfasi'
-            st.rerun()
-    with n3:
-        if st.button("📋 Prog", type="primary" if st.session_state.sayfa == 'program_sayfasi' else "secondary", use_container_width=True):
-            st.session_state.sayfa = 'program_sayfasi'
-            st.rerun()
-    with n4:
-        if st.button("📊 Stats", type="primary" if st.session_state.sayfa == 'istatistik_sayfasi' else "secondary", use_container_width=True):
-            st.session_state.sayfa = 'istatistik_sayfasi'
-            st.rerun()
+    with st.container(key="ust_nav"):
+        n1, n2, n3, n4 = st.columns([1,1,1,1.5])
+        with n1:
+            if st.button("👥 " + t["back_to_groups"].split(" ")[-1], use_container_width=True):
+                st.session_state.sayfa = 'grup_sayfasi'
+                st.rerun()
+        with n2:
+            if st.button(t["nav_daily"], type="primary" if st.session_state.sayfa == 'kisi_sayfasi' else "secondary", use_container_width=True):
+                st.session_state.sayfa = 'kisi_sayfasi'
+                st.rerun()
+        with n3:
+            if st.button("📋 Prog", type="primary" if st.session_state.sayfa == 'program_sayfasi' else "secondary", use_container_width=True):
+                st.session_state.sayfa = 'program_sayfasi'
+                st.rerun()
+        with n4:
+            if st.button("📊 Stats", type="primary" if st.session_state.sayfa == 'istatistik_sayfasi' else "secondary", use_container_width=True):
+                st.session_state.sayfa = 'istatistik_sayfasi'
+                st.rerun()
     st.divider()
 
 # Antrenman Günlerini İşaretleyen Takvim Widget'ı
