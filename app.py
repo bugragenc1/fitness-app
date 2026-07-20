@@ -319,6 +319,28 @@ custom_css = """
         padding-right: 0.25rem !important;
         font-size: 0.85rem !important;
     }
+    /* Takvim widget'ını kompakt, mobile-uygun bir popup gibi göstermek için özel stil */
+    .st-key-takvim_kutusu {
+        max-width: 340px;
+        margin: 0 auto;
+    }
+    .st-key-takvim_kutusu div[data-testid="stHorizontalBlock"] {
+        gap: 0.2rem !important;
+    }
+    .st-key-takvim_kutusu div[data-testid="column"] {
+        padding: 0 !important;
+        min-width: 0 !important;
+    }
+    .st-key-takvim_kutusu div[data-testid="stButton"] > button {
+        min-height: 2.1rem !important;
+        height: 2.1rem !important;
+        width: 100% !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        font-size: 0.72rem !important;
+        line-height: 1 !important;
+        border-radius: 8px !important;
+    }
 </style>
 """
 st.markdown(custom_css, unsafe_allow_html=True)
@@ -417,60 +439,61 @@ def antrenman_takvimi_ciz(df_antrenmanlar, kullanici, grup):
 
     secili = st.session_state["secili_tarih_widget"]
 
-    c_geri, c_baslik, c_ileri = st.columns([1, 3, 1])
-    with c_geri:
-        if st.button("◀️", use_container_width=True, key="takvim_geri"):
-            st.session_state.takvim_ay -= 1
-            if st.session_state.takvim_ay < 1:
-                st.session_state.takvim_ay = 12
-                st.session_state.takvim_yil -= 1
-            st.rerun()
-    with c_ileri:
-        if st.button("▶️", use_container_width=True, key="takvim_ileri"):
-            st.session_state.takvim_ay += 1
-            if st.session_state.takvim_ay > 12:
-                st.session_state.takvim_ay = 1
-                st.session_state.takvim_yil += 1
-            st.rerun()
+    with st.container(key="takvim_kutusu"):
+        c_geri, c_baslik, c_ileri = st.columns([1, 3, 1])
+        with c_geri:
+            if st.button("◀️", use_container_width=True, key="takvim_geri"):
+                st.session_state.takvim_ay -= 1
+                if st.session_state.takvim_ay < 1:
+                    st.session_state.takvim_ay = 12
+                    st.session_state.takvim_yil -= 1
+                st.rerun()
+        with c_ileri:
+            if st.button("▶️", use_container_width=True, key="takvim_ileri"):
+                st.session_state.takvim_ay += 1
+                if st.session_state.takvim_ay > 12:
+                    st.session_state.takvim_ay = 1
+                    st.session_state.takvim_yil += 1
+                st.rerun()
 
-    ay_isimleri_tr = ["Ocak", "Şubat", "Mart", "Nisan", "Mayıs", "Haziran", "Temmuz", "Ağustos", "Eylül", "Ekim", "Kasım", "Aralık"]
-    ay_adi = ay_isimleri_tr[st.session_state.takvim_ay - 1] if secilen_dil == "Türkçe" else cal_module.month_name[st.session_state.takvim_ay]
-    with c_baslik:
-        st.markdown(f"<h4 style='text-align:center; margin-top:5px;'>{ay_adi} {st.session_state.takvim_yil}</h4>", unsafe_allow_html=True)
+        ay_isimleri_tr = ["Ocak", "Şubat", "Mart", "Nisan", "Mayıs", "Haziran", "Temmuz", "Ağustos", "Eylül", "Ekim", "Kasım", "Aralık"]
+        ay_adi = ay_isimleri_tr[st.session_state.takvim_ay - 1] if secilen_dil == "Türkçe" else cal_module.month_name[st.session_state.takvim_ay]
+        with c_baslik:
+            st.markdown(f"<div style='text-align:center; font-weight:600; margin-top:6px; font-size:0.95rem;'>{ay_adi} {st.session_state.takvim_yil}</div>", unsafe_allow_html=True)
 
-    gun_basliklari = ["Pt", "Sa", "Ça", "Pe", "Cu", "Ct", "Pz"] if secilen_dil == "Türkçe" else ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"]
-    baslik_cols = st.columns(7)
-    for i, g in enumerate(gun_basliklari):
-        baslik_cols[i].markdown(f"<div style='text-align:center; color:#888; font-size:0.8rem;'>{g}</div>", unsafe_allow_html=True)
+        gun_basliklari = ["Pt", "Sa", "Ça", "Pe", "Cu", "Ct", "Pz"] if secilen_dil == "Türkçe" else ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"]
+        baslik_cols = st.columns(7)
+        for i, g in enumerate(gun_basliklari):
+            baslik_cols[i].markdown(f"<div style='text-align:center; color:#888; font-size:0.7rem;'>{g}</div>", unsafe_allow_html=True)
 
-    takvim_matrisi = cal_module.monthcalendar(st.session_state.takvim_yil, st.session_state.takvim_ay)
+        takvim_matrisi = cal_module.monthcalendar(st.session_state.takvim_yil, st.session_state.takvim_ay)
 
-    for h_idx, hafta in enumerate(takvim_matrisi):
-        cols = st.columns(7)
-        for i, gun in enumerate(hafta):
-            with cols[i]:
-                if gun == 0:
-                    st.write("")
-                else:
-                    gun_tarihi = date(st.session_state.takvim_yil, st.session_state.takvim_ay, gun)
-                    antrenman_var = gun_tarihi in antrenman_gunleri
-                    secili_mi = gun_tarihi == secili
-
-                    if secili_mi:
-                        etiket = f"🔵{gun}"
-                        buton_tipi = "primary"
-                    elif antrenman_var:
-                        etiket = f"🟢{gun}"
-                        buton_tipi = "secondary"
+        for h_idx, hafta in enumerate(takvim_matrisi):
+            cols = st.columns(7)
+            for i, gun in enumerate(hafta):
+                with cols[i]:
+                    if gun == 0:
+                        st.write("")
                     else:
-                        etiket = f"{gun}"
-                        buton_tipi = "secondary"
+                        gun_tarihi = date(st.session_state.takvim_yil, st.session_state.takvim_ay, gun)
+                        antrenman_var = gun_tarihi in antrenman_gunleri
+                        secili_mi = gun_tarihi == secili
 
-                    if st.button(etiket, key=f"tkv_{h_idx}_{i}_{gun}", type=buton_tipi, use_container_width=True):
-                        st.session_state["secili_tarih_widget"] = gun_tarihi
-                        st.rerun()
+                        if secili_mi:
+                            etiket = f"🔵{gun}"
+                            buton_tipi = "primary"
+                        elif antrenman_var:
+                            etiket = f"🟢{gun}"
+                            buton_tipi = "secondary"
+                        else:
+                            etiket = f"{gun}"
+                            buton_tipi = "secondary"
 
-    st.caption(t["calendar_legend"])
+                        if st.button(etiket, key=f"tkv_{h_idx}_{i}_{gun}", type=buton_tipi, use_container_width=True):
+                            st.session_state["secili_tarih_widget"] = gun_tarihi
+                            st.rerun()
+
+        st.caption(t["calendar_legend"])
     return secili
 
 # --- SAYFA 1: ANA SAYFA (GRUPLAR) ---
