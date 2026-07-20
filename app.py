@@ -303,6 +303,22 @@ custom_css = """
     input, select {
         border-radius: 10px !important;
     }
+    /* Mobilde st.columns bileşenlerinin alt alta yığılmasını (dikey uzamayı) önler.
+       Özellikle takvim ızgarası (7 sütun) bu sayede telefonlarda da yatay kalır. */
+    div[data-testid="stHorizontalBlock"] {
+        flex-wrap: nowrap !important;
+        gap: 0.25rem !important;
+    }
+    div[data-testid="stHorizontalBlock"] > div[data-testid="column"] {
+        min-width: 0 !important;
+        width: 100% !important;
+        flex: 1 1 0 !important;
+    }
+    div[data-testid="stHorizontalBlock"] div[data-testid="stButton"] > button {
+        padding-left: 0.25rem !important;
+        padding-right: 0.25rem !important;
+        font-size: 0.85rem !important;
+    }
 </style>
 """
 st.markdown(custom_css, unsafe_allow_html=True)
@@ -712,8 +728,7 @@ elif st.session_state.sayfa == 'kisi_sayfasi':
                     st.success(f"{lc_sil_secim} {t['legacy_delete_success']}")
                     st.rerun()
 
-    with st.container(border=True):
-        st.markdown(f"<h3 style='font-size: 1.2rem; color: #888;'>➕ {t['add_new_set']}</h3>", unsafe_allow_html=True)
+    with st.expander(f"➕ {t['add_new_set']}", expanded=False):
         col1, col2 = st.columns(2)
         mevcut_kas_gruplari = df_hareketler['Kas Grubu'].unique() if not df_hareketler.empty else ["Chest", "Back", "Shoulder", "Biceps", "Triceps", "Legs", "Cardio"]
         with col1: secili_kas = st.selectbox(t["muscle_group"], mevcut_kas_gruplari)
@@ -789,19 +804,26 @@ elif st.session_state.sayfa == 'kisi_sayfasi':
                     st.success(f"{secili_hareket}: {set_sayisi} {t['success_sets']}")
                     st.rerun()
 
-        with st.expander(t["new_exercise_panel"]):
-            st.caption(t["new_exercise_desc"])
-            c_kas, c_har, c_mek, c_ekip = st.columns(4)
-            yeni_kas = c_kas.selectbox(t["which_muscle"], mevcut_kas_gruplari, key="new_muscle")
-            yeni_har = c_har.text_input(t["new_exercise_name"])
-            yeni_mek = c_mek.selectbox(t["mechanic_type"], ["Compound", "Izole", "Kardiyo"])
-            yeni_ekip = c_ekip.selectbox(t["equipment_type"], EKIPMAN_LISTESI) 
-            if st.button(t["add_to_db"], type="secondary", use_container_width=True):
-                if yeni_har:
-                    conn.update(worksheet="Hareketler", data=pd.concat([df_hareketler, pd.DataFrame([{"Kas Grubu": yeni_kas, "Hareket Tipi": yeni_har, "Mekanik": yeni_mek, "Ekipman": yeni_ekip}])], ignore_index=True))
-                    st.cache_data.clear()
-                    st.rerun()
-                else: st.warning(t["warn_name"])
+        if 'yeni_hareket_panel_acik' not in st.session_state: st.session_state.yeni_hareket_panel_acik = False
+        with st.container(border=True):
+            hcol1, hcol2 = st.columns([5, 1])
+            hcol1.markdown(f"**{t['new_exercise_panel']}**")
+            if hcol2.button("🔽" if not st.session_state.yeni_hareket_panel_acik else "🔼", key="toggle_yeni_hareket", use_container_width=True):
+                st.session_state.yeni_hareket_panel_acik = not st.session_state.yeni_hareket_panel_acik
+                st.rerun()
+            if st.session_state.yeni_hareket_panel_acik:
+                st.caption(t["new_exercise_desc"])
+                c_kas, c_har, c_mek, c_ekip = st.columns(4)
+                yeni_kas = c_kas.selectbox(t["which_muscle"], mevcut_kas_gruplari, key="new_muscle")
+                yeni_har = c_har.text_input(t["new_exercise_name"])
+                yeni_mek = c_mek.selectbox(t["mechanic_type"], ["Compound", "Izole", "Kardiyo"])
+                yeni_ekip = c_ekip.selectbox(t["equipment_type"], EKIPMAN_LISTESI) 
+                if st.button(t["add_to_db"], type="secondary", use_container_width=True):
+                    if yeni_har:
+                        conn.update(worksheet="Hareketler", data=pd.concat([df_hareketler, pd.DataFrame([{"Kas Grubu": yeni_kas, "Hareket Tipi": yeni_har, "Mekanik": yeni_mek, "Ekipman": yeni_ekip}])], ignore_index=True))
+                        st.cache_data.clear()
+                        st.rerun()
+                    else: st.warning(t["warn_name"])
 
     st.divider()
     st.markdown(f"<h2 style='font-size: 1.5rem;'>📋 {secili_tarih.strftime('%d/%m/%Y')} {t['workout_of'] if secilen_dil == 'English' else 'Tarihli ' + t['workout_of']}</h2>", unsafe_allow_html=True)
