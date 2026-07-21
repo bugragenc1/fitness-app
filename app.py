@@ -117,6 +117,16 @@ LANG = {
         "legacy_add_desc": "Pick a common exercise from the curated legacy list and log it directly to today's workout. This does NOT add it to your personal exercise database.",
         "legacy_select_group": "Muscle Group",
         "legacy_empty": "Legacy exercise list is empty. Add exercises to the 'LegacyHareketler' sheet in Google Sheets first.",
+        "legacy_add_program_panel": "📚 Add From Legacy List To This Program",
+        "legacy_add_program_desc": "Pick a common exercise from the curated legacy list and add it directly to this program. This does NOT add it to your personal exercise database.",
+        "legacy_manage_panel": "🛠️ Add / Remove Legacy Exercises",
+        "legacy_manage_desc": "Manage the shared legacy exercise list used by the panels above.",
+        "legacy_new_name": "New Legacy Exercise Name",
+        "legacy_add_to_list": "Add to Legacy List",
+        "legacy_add_to_list_success": "added to the legacy list!",
+        "legacy_delete_select": "Select Legacy Exercise to Delete",
+        "legacy_delete_btn": "Delete from Legacy List",
+        "legacy_delete_success": "deleted from the legacy list!",
     },
     "Türkçe": {
         "groups_title": "🏋️‍♂️ Antrenman Grupları",
@@ -229,11 +239,21 @@ LANG = {
         "legacy_add_desc": "Hazır temel hareket listesinden seçip doğrudan bugünün antrenmanına ekleyin. Bu işlem hareketi kişisel veritabanınıza (Hareketler) EKLEMEZ.",
         "legacy_select_group": "Kas Grubu",
         "legacy_empty": "Temel hareket listesi boş. Önce Google Sheets'teki 'LegacyHareketler' sekmesine hareket ekleyin.",
+        "legacy_add_program_panel": "📚 Temel Hareketten Programa Ekle",
+        "legacy_add_program_desc": "Hazır temel hareket listesinden seçip doğrudan bu programa ekleyin. Bu işlem hareketi kişisel veritabanınıza (Hareketler) EKLEMEZ.",
+        "legacy_manage_panel": "🛠️ Temel Hareket Ekle / Sil",
+        "legacy_manage_desc": "Yukarıdaki panellerde kullanılan ortak temel hareket listesine ekleme/çıkarma yapabilirsiniz.",
+        "legacy_new_name": "Yeni Temel Hareketin Adı",
+        "legacy_add_to_list": "Listeye Ekle",
+        "legacy_add_to_list_success": "temel hareket listesine eklendi!",
+        "legacy_delete_select": "Silinecek Temel Hareketi Seçin",
+        "legacy_delete_btn": "Listeden Sil",
+        "legacy_delete_success": "temel hareket listesinden silindi!",
     }
 }
 
 # --- KÜRESEL DEĞİŞKENLER ---
-EKIPMAN_LISTESI = ["Barbell", "Dumbbell", "Machine", "Cable", "Bodyweight", "Band", "Smith Machine", "Kettlebell", "Other", "-"]
+EKIPMAN_LISTESI = ["Barbell", "Dumbbell", "Machine", "Cable", "Bodyweight", "Band", "Smith Machine", "Kettlebell", "Plate Loaded", "Other", "-"]
 
 # --- SAYFA YAPILANDIRMASI & ÖZEL MOBİL CSS ---
 st.set_page_config(page_title="Workout App", page_icon="💪", layout="centered", initial_sidebar_state="collapsed")
@@ -283,6 +303,45 @@ custom_css = """
     input, select {
         border-radius: 10px !important;
     }
+    /* Mobilde st.columns bileşenlerinin alt alta yığılmasını (dikey uzamayı) önler. */
+    div[data-testid="stHorizontalBlock"] {
+        flex-wrap: nowrap !important;
+        gap: 0.25rem !important;
+    }
+    div[data-testid="stHorizontalBlock"] > div[data-testid="column"] {
+        min-width: 0 !important;
+        flex: 1 1 0 !important;
+    }
+    div[data-testid="stHorizontalBlock"] div[data-testid="stButton"] > button {
+        padding-left: 0.25rem !important;
+        padding-right: 0.25rem !important;
+        font-size: 0.85rem !important;
+        width: 100% !important;
+        white-space: nowrap !important;
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
+    }
+    /* Sayfanın kendisinde yatay kaydırma/taşma olmasın diye güvenlik önlemi */
+    html, body, .block-container {
+        overflow-x: hidden !important;
+    }
+    /* Üstteki navigasyon barını (Günlük / Prog / Stats) mobilde daha kompakt
+       göstermek için: küçük font, düşük yükseklik, dar aralık. */
+    .st-key-ust_nav div[data-testid="stHorizontalBlock"] {
+        gap: 0.25rem !important;
+    }
+    .st-key-ust_nav div[data-testid="stButton"] > button {
+        font-size: 0.68rem !important;
+        padding: 0.3rem 0.1rem !important;
+        min-height: 2.1rem !important;
+        height: 2.1rem !important;
+        line-height: 1.1 !important;
+        border-radius: 10px !important;
+    }
+    .st-key-ust_nav div[data-testid="stButton"] > button p {
+        font-size: 0.68rem !important;
+        margin: 0 !important;
+    }
 </style>
 """
 st.markdown(custom_css, unsafe_allow_html=True)
@@ -308,11 +367,12 @@ if 'p_onceki_hareket' not in st.session_state: st.session_state.p_onceki_hareket
 if 'p_sablon_w' not in st.session_state: st.session_state.p_sablon_w = 0.0
 if 'p_sablon_r' not in st.session_state: st.session_state.p_sablon_r = 10
 if 'secili_tarih_widget' not in st.session_state: st.session_state.secili_tarih_widget = date.today()
-if 'takvim_yil' not in st.session_state: st.session_state.takvim_yil = date.today().year
-if 'takvim_ay' not in st.session_state: st.session_state.takvim_ay = date.today().month
 if 'leg_onceki_hareket' not in st.session_state: st.session_state.leg_onceki_hareket = ""
 if 'leg_sablon_w' not in st.session_state: st.session_state.leg_sablon_w = 0.0
 if 'leg_sablon_r' not in st.session_state: st.session_state.leg_sablon_r = 10
+if 'pleg_onceki_hareket' not in st.session_state: st.session_state.pleg_onceki_hareket = ""
+if 'pleg_sablon_w' not in st.session_state: st.session_state.pleg_sablon_w = 0.0
+if 'pleg_sablon_r' not in st.session_state: st.session_state.pleg_sablon_r = 10
 
 # --- GOOGLE SHEETS BAĞLANTISI ---
 conn = st.connection("gsheets", type=GSheetsConnection)
@@ -341,29 +401,41 @@ def leg_sablon_guncelle():
         if key.startswith("leg_w_new_"): st.session_state[key] = yeni_w
         elif key.startswith("leg_r_new_"): st.session_state[key] = yeni_r
 
+def pleg_sablon_guncelle():
+    yeni_w = st.session_state.pleg_sablon_w
+    yeni_r = st.session_state.pleg_sablon_r
+    for key in list(st.session_state.keys()):
+        if key.startswith("pleg_w_new_"): st.session_state[key] = yeni_w
+        elif key.startswith("pleg_r_new_"): st.session_state[key] = yeni_r
+
 # Ortak Navigasyon Barı
 def render_top_nav():
     st.write("")
-    n1, n2, n3, n4 = st.columns([1,1,1,1.5])
-    with n1:
-        if st.button("👥 " + t["back_to_groups"].split(" ")[-1], use_container_width=True):
-            st.session_state.sayfa = 'grup_sayfasi'
-            st.rerun()
-    with n2:
-        if st.button(t["nav_daily"], type="primary" if st.session_state.sayfa == 'kisi_sayfasi' else "secondary", use_container_width=True):
-            st.session_state.sayfa = 'kisi_sayfasi'
-            st.rerun()
-    with n3:
-        if st.button("📋 Prog", type="primary" if st.session_state.sayfa == 'program_sayfasi' else "secondary", use_container_width=True):
-            st.session_state.sayfa = 'program_sayfasi'
-            st.rerun()
-    with n4:
-        if st.button("📊 Stats", type="primary" if st.session_state.sayfa == 'istatistik_sayfasi' else "secondary", use_container_width=True):
-            st.session_state.sayfa = 'istatistik_sayfasi'
-            st.rerun()
+    with st.container(key="ust_nav"):
+        n1, n2, n3, n4 = st.columns([1,1,1,1.5])
+        with n1:
+            if st.button("👥 " + t["back_to_groups"].split(" ")[-1], use_container_width=True):
+                st.session_state.sayfa = 'grup_sayfasi'
+                st.rerun()
+        with n2:
+            if st.button(t["nav_daily"], type="primary" if st.session_state.sayfa == 'kisi_sayfasi' else "secondary", use_container_width=True):
+                st.session_state.sayfa = 'kisi_sayfasi'
+                st.rerun()
+        with n3:
+            if st.button("📋 Prog", type="primary" if st.session_state.sayfa == 'program_sayfasi' else "secondary", use_container_width=True):
+                st.session_state.sayfa = 'program_sayfasi'
+                st.rerun()
+        with n4:
+            if st.button("📊 Stats", type="primary" if st.session_state.sayfa == 'istatistik_sayfasi' else "secondary", use_container_width=True):
+                st.session_state.sayfa = 'istatistik_sayfasi'
+                st.rerun()
     st.divider()
 
 # Antrenman Günlerini İşaretleyen Takvim Widget'ı
+# NOT: Özel buton-grid takvimi mobilde bazı cihaz/tarayıcılarda hâlâ büyük/dikey
+# görünebiliyordu. Bunun yerine tarayıcının kendi native date picker'ını (st.date_input)
+# kullanıyoruz — bu, mobilde garanti şekilde kompakt bir popup olarak açılır.
+# Antrenman yapılan günler ise altında küçük bir etiket listesi halinde gösteriliyor.
 def antrenman_takvimi_ciz(df_antrenmanlar, kullanici, grup):
     kisi_df = df_antrenmanlar[(df_antrenmanlar['Kullanıcı'] == kullanici) & (df_antrenmanlar['Grup'] == grup)].copy()
     kisi_df['Tarih'] = pd.to_datetime(kisi_df['Tarih'], errors='coerce')
@@ -371,61 +443,31 @@ def antrenman_takvimi_ciz(df_antrenmanlar, kullanici, grup):
 
     secili = st.session_state["secili_tarih_widget"]
 
-    c_geri, c_baslik, c_ileri = st.columns([1, 3, 1])
-    with c_geri:
-        if st.button("◀️", use_container_width=True, key="takvim_geri"):
-            st.session_state.takvim_ay -= 1
-            if st.session_state.takvim_ay < 1:
-                st.session_state.takvim_ay = 12
-                st.session_state.takvim_yil -= 1
-            st.rerun()
-    with c_ileri:
-        if st.button("▶️", use_container_width=True, key="takvim_ileri"):
-            st.session_state.takvim_ay += 1
-            if st.session_state.takvim_ay > 12:
-                st.session_state.takvim_ay = 1
-                st.session_state.takvim_yil += 1
-            st.rerun()
+    yeni_tarih = st.date_input(
+        t["date"],
+        value=secili,
+        format="DD/MM/YYYY",
+        key="takvim_date_input",
+        label_visibility="collapsed",
+    )
+    if yeni_tarih != secili:
+        st.session_state["secili_tarih_widget"] = yeni_tarih
+        st.rerun()
 
     ay_isimleri_tr = ["Ocak", "Şubat", "Mart", "Nisan", "Mayıs", "Haziran", "Temmuz", "Ağustos", "Eylül", "Ekim", "Kasım", "Aralık"]
-    ay_adi = ay_isimleri_tr[st.session_state.takvim_ay - 1] if secilen_dil == "Türkçe" else cal_module.month_name[st.session_state.takvim_ay]
-    with c_baslik:
-        st.markdown(f"<h4 style='text-align:center; margin-top:5px;'>{ay_adi} {st.session_state.takvim_yil}</h4>", unsafe_allow_html=True)
+    ay_adi = ay_isimleri_tr[yeni_tarih.month - 1] if secilen_dil == "Türkçe" else cal_module.month_name[yeni_tarih.month]
 
-    gun_basliklari = ["Pt", "Sa", "Ça", "Pe", "Cu", "Ct", "Pz"] if secilen_dil == "Türkçe" else ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"]
-    baslik_cols = st.columns(7)
-    for i, g in enumerate(gun_basliklari):
-        baslik_cols[i].markdown(f"<div style='text-align:center; color:#888; font-size:0.8rem;'>{g}</div>", unsafe_allow_html=True)
+    ay_gunleri = sorted(g.day for g in antrenman_gunleri if g.year == yeni_tarih.year and g.month == yeni_tarih.month)
+    if ay_gunleri:
+        gun_etiketleri = " ".join(
+            f"<span style='display:inline-block; padding:2px 8px; margin:2px; border-radius:10px; background:rgba(46,204,113,0.18); color:#2ecc71; font-size:0.8rem; font-weight:600;'>{'🟢' if g != yeni_tarih.day else '🔵'} {g}</span>"
+            for g in ay_gunleri
+        )
+        st.markdown(f"<div style='margin-top:4px;'>{gun_etiketleri}</div>", unsafe_allow_html=True)
+    st.caption(f"{ay_adi} {yeni_tarih.year} · {t['calendar_legend']}")
 
-    takvim_matrisi = cal_module.monthcalendar(st.session_state.takvim_yil, st.session_state.takvim_ay)
+    return yeni_tarih
 
-    for h_idx, hafta in enumerate(takvim_matrisi):
-        cols = st.columns(7)
-        for i, gun in enumerate(hafta):
-            with cols[i]:
-                if gun == 0:
-                    st.write("")
-                else:
-                    gun_tarihi = date(st.session_state.takvim_yil, st.session_state.takvim_ay, gun)
-                    antrenman_var = gun_tarihi in antrenman_gunleri
-                    secili_mi = gun_tarihi == secili
-
-                    if secili_mi:
-                        etiket = f"🔵{gun}"
-                        buton_tipi = "primary"
-                    elif antrenman_var:
-                        etiket = f"🟢{gun}"
-                        buton_tipi = "secondary"
-                    else:
-                        etiket = f"{gun}"
-                        buton_tipi = "secondary"
-
-                    if st.button(etiket, key=f"tkv_{h_idx}_{i}_{gun}", type=buton_tipi, use_container_width=True):
-                        st.session_state["secili_tarih_widget"] = gun_tarihi
-                        st.rerun()
-
-    st.caption(t["calendar_legend"])
-    return secili
 
 # --- SAYFA 1: ANA SAYFA (GRUPLAR) ---
 if st.session_state.sayfa == 'ana_sayfa':
@@ -655,8 +697,34 @@ elif st.session_state.sayfa == 'kisi_sayfasi':
                             st.success(f"{leg_hareket}: {leg_set_sayisi} {t['success_sets']}")
                             st.rerun()
 
-    with st.container(border=True):
-        st.markdown(f"<h3 style='font-size: 1.2rem; color: #888;'>➕ {t['add_new_set']}</h3>", unsafe_allow_html=True)
+        # --- TEMEL HAREKET LİSTESİNİ YÖNET (EKLE/SİL) ---
+        with st.expander(t["legacy_manage_panel"]):
+            st.caption(t["legacy_manage_desc"])
+            mevcut_kas_gruplari_legacy = df_hareketler['Kas Grubu'].unique() if not df_hareketler.empty else ["Chest", "Back", "Shoulder", "Biceps", "Triceps", "Legs", "Cardio"]
+            lc_kas, lc_har, lc_mek, lc_ekip = st.columns(4)
+            lc_yeni_kas = lc_kas.selectbox(t["which_muscle"], mevcut_kas_gruplari_legacy, key="legacy_new_muscle")
+            lc_yeni_har = lc_har.text_input(t["legacy_new_name"], key="legacy_new_name_input")
+            lc_yeni_mek = lc_mek.selectbox(t["mechanic_type"], ["Compound", "Izole", "Kardiyo"], key="legacy_new_mek")
+            lc_yeni_ekip = lc_ekip.selectbox(t["equipment_type"], EKIPMAN_LISTESI, key="legacy_new_ekip")
+            if st.button(t["legacy_add_to_list"], type="secondary", use_container_width=True, key="legacy_add_list_btn"):
+                if lc_yeni_har:
+                    conn.update(worksheet="LegacyHareketler", data=pd.concat([df_legacy, pd.DataFrame([{"Kas Grubu": lc_yeni_kas, "Hareket Tipi": lc_yeni_har, "Mekanik": lc_yeni_mek, "Ekipman": lc_yeni_ekip}])], ignore_index=True))
+                    st.cache_data.clear()
+                    st.success(f"{lc_yeni_har} {t['legacy_add_to_list_success']}")
+                    st.rerun()
+                else:
+                    st.warning(t["warn_name"])
+
+            if not df_legacy.empty:
+                st.divider()
+                lc_sil_secim = st.selectbox(t["legacy_delete_select"], df_legacy['Hareket Tipi'].unique(), key="legacy_sil_sec")
+                if st.button(t["legacy_delete_btn"], type="secondary", use_container_width=True, key="legacy_del_btn"):
+                    conn.update(worksheet="LegacyHareketler", data=df_legacy[df_legacy['Hareket Tipi'] != lc_sil_secim])
+                    st.cache_data.clear()
+                    st.success(f"{lc_sil_secim} {t['legacy_delete_success']}")
+                    st.rerun()
+
+    with st.expander(f"➕ {t['add_new_set']}", expanded=False):
         col1, col2 = st.columns(2)
         mevcut_kas_gruplari = df_hareketler['Kas Grubu'].unique() if not df_hareketler.empty else ["Chest", "Back", "Shoulder", "Biceps", "Triceps", "Legs", "Cardio"]
         with col1: secili_kas = st.selectbox(t["muscle_group"], mevcut_kas_gruplari)
@@ -732,19 +800,26 @@ elif st.session_state.sayfa == 'kisi_sayfasi':
                     st.success(f"{secili_hareket}: {set_sayisi} {t['success_sets']}")
                     st.rerun()
 
-        with st.expander(t["new_exercise_panel"]):
-            st.caption(t["new_exercise_desc"])
-            c_kas, c_har, c_mek, c_ekip = st.columns(4)
-            yeni_kas = c_kas.selectbox(t["which_muscle"], mevcut_kas_gruplari, key="new_muscle")
-            yeni_har = c_har.text_input(t["new_exercise_name"])
-            yeni_mek = c_mek.selectbox(t["mechanic_type"], ["Compound", "Izole", "Kardiyo"])
-            yeni_ekip = c_ekip.selectbox(t["equipment_type"], EKIPMAN_LISTESI) 
-            if st.button(t["add_to_db"], type="secondary", use_container_width=True):
-                if yeni_har:
-                    conn.update(worksheet="Hareketler", data=pd.concat([df_hareketler, pd.DataFrame([{"Kas Grubu": yeni_kas, "Hareket Tipi": yeni_har, "Mekanik": yeni_mek, "Ekipman": yeni_ekip}])], ignore_index=True))
-                    st.cache_data.clear()
-                    st.rerun()
-                else: st.warning(t["warn_name"])
+        if 'yeni_hareket_panel_acik' not in st.session_state: st.session_state.yeni_hareket_panel_acik = False
+        with st.container(border=True):
+            hcol1, hcol2 = st.columns([5, 1])
+            hcol1.markdown(f"**{t['new_exercise_panel']}**")
+            if hcol2.button("🔽" if not st.session_state.yeni_hareket_panel_acik else "🔼", key="toggle_yeni_hareket", use_container_width=True):
+                st.session_state.yeni_hareket_panel_acik = not st.session_state.yeni_hareket_panel_acik
+                st.rerun()
+            if st.session_state.yeni_hareket_panel_acik:
+                st.caption(t["new_exercise_desc"])
+                c_kas, c_har, c_mek, c_ekip = st.columns(4)
+                yeni_kas = c_kas.selectbox(t["which_muscle"], mevcut_kas_gruplari, key="new_muscle")
+                yeni_har = c_har.text_input(t["new_exercise_name"])
+                yeni_mek = c_mek.selectbox(t["mechanic_type"], ["Compound", "Izole", "Kardiyo"])
+                yeni_ekip = c_ekip.selectbox(t["equipment_type"], EKIPMAN_LISTESI) 
+                if st.button(t["add_to_db"], type="secondary", use_container_width=True):
+                    if yeni_har:
+                        conn.update(worksheet="Hareketler", data=pd.concat([df_hareketler, pd.DataFrame([{"Kas Grubu": yeni_kas, "Hareket Tipi": yeni_har, "Mekanik": yeni_mek, "Ekipman": yeni_ekip}])], ignore_index=True))
+                        st.cache_data.clear()
+                        st.rerun()
+                    else: st.warning(t["warn_name"])
 
     st.divider()
     st.markdown(f"<h2 style='font-size: 1.5rem;'>📋 {secili_tarih.strftime('%d/%m/%Y')} {t['workout_of'] if secilen_dil == 'English' else 'Tarihli ' + t['workout_of']}</h2>", unsafe_allow_html=True)
@@ -837,6 +912,7 @@ elif st.session_state.sayfa == 'program_sayfasi':
     df_programlar = veri_getir("Programlar", ["Kullanıcı", "Program Adı"])
     df_program_detay = veri_getir("ProgramDetay", ["Program Adı", "Kullanıcı", "Kas Grubu", "Hareket", "Set", "Ağırlık", "Tekrar", "Ekipman"])
     df_hareketler = veri_getir("Hareketler", ["Kas Grubu", "Hareket Tipi", "Mekanik", "Ekipman"])
+    df_legacy_prog = veri_getir("LegacyHareketler", ["Kas Grubu", "Hareket Tipi", "Mekanik", "Ekipman"])
 
     kisi_programlari = df_programlar[df_programlar['Kullanıcı'] == st.session_state.secili_kisi]
 
@@ -972,6 +1048,64 @@ elif st.session_state.sayfa == 'program_sayfasi':
                         for k in list(st.session_state.keys()):
                             if k.startswith("p_w_new_") or k.startswith("p_r_new_"): del st.session_state[k]
                         st.rerun()
+
+        # --- LEGACY HAREKETTEN PROGRAMA DİREKT EKLE ---
+        with st.expander(t["legacy_add_program_panel"]):
+            st.caption(t["legacy_add_program_desc"])
+            if df_legacy_prog.empty:
+                st.info(t["legacy_empty"])
+            else:
+                pleg_kas = st.selectbox(t["legacy_select_group"], df_legacy_prog['Kas Grubu'].unique(), key="pleg_kas_sec")
+                pleg_liste = df_legacy_prog[df_legacy_prog['Kas Grubu'] == pleg_kas]['Hareket Tipi'].unique()
+                pleg_hareket = st.selectbox(t["exercise"], pleg_liste, key="pleg_hareket_sec")
+
+                if pleg_hareket:
+                    pleg_row = df_legacy_prog[(df_legacy_prog['Kas Grubu'] == pleg_kas) & (df_legacy_prog['Hareket Tipi'] == pleg_hareket)].iloc[0]
+                    pleg_mekanik = pleg_row['Mekanik']
+                    st.caption(f"{t['mechanic']}: **{pleg_mekanik}**")
+
+                    if pleg_mekanik == "Kardiyo":
+                        st.warning(t["cardio_not_supported_in_program"])
+                    else:
+                        pleg_varsayilan_ekip = pleg_row['Ekipman'] if 'Ekipman' in pleg_row else "Barbell"
+                        pleg_ekipman = st.selectbox(t["equipment"], EKIPMAN_LISTESI, index=EKIPMAN_LISTESI.index(pleg_varsayilan_ekip) if pleg_varsayilan_ekip in EKIPMAN_LISTESI else 0, key="pleg_ekip_sec")
+
+                        # Şablon takibi Hareket+Ekipman ikilisine göre tetikleniyor
+                        pleg_onceki_anahtar = f"{pleg_hareket}||{pleg_ekipman}"
+                        if st.session_state.pleg_onceki_hareket != pleg_onceki_anahtar:
+                            st.session_state.pleg_onceki_hareket = pleg_onceki_anahtar
+                            st.session_state.pleg_sablon_w, st.session_state.pleg_sablon_r = 0.0, 10
+                            for key in list(st.session_state.keys()):
+                                if key.startswith("pleg_w_new_") or key.startswith("pleg_r_new_"): del st.session_state[key]
+
+                        pleg_set_sayisi = st.number_input(t["how_many_sets"], min_value=1, max_value=10, value=3, step=1, key="pleg_set_sayisi")
+                        plc1, plc2 = st.columns(2)
+                        plc1.number_input(t["template_w"], step=2.5, key="pleg_sablon_w", on_change=pleg_sablon_guncelle)
+                        plc2.number_input(t["template_r"], step=1, key="pleg_sablon_r", on_change=pleg_sablon_guncelle)
+
+                        st.divider()
+                        pleg_mevcut_setler = program_icerik[(program_icerik['Hareket'] == pleg_hareket) & (program_icerik['Ekipman'] == pleg_ekipman)]
+                        pleg_bas_set = len(pleg_mevcut_setler) + 1
+                        pleg_ekle_set = []
+
+                        for i in range(pleg_set_sayisi):
+                            pleg_g_set = pleg_bas_set + i
+                            plcl, plcw, plcr = st.columns([1, 2, 2])
+                            plcl.markdown(f"<div style='margin-top: 25px;'>**{t['set']} {pleg_g_set}**</div>", unsafe_allow_html=True)
+                            pleg_w_key, pleg_r_key = f"pleg_w_new_{pleg_hareket}_{pleg_ekipman}_{pleg_g_set}", f"pleg_r_new_{pleg_hareket}_{pleg_ekipman}_{pleg_g_set}"
+                            if pleg_w_key not in st.session_state: st.session_state[pleg_w_key] = st.session_state.pleg_sablon_w
+                            if pleg_r_key not in st.session_state: st.session_state[pleg_r_key] = st.session_state.pleg_sablon_r
+                            pleg_w = plcw.number_input(t["weight"], step=2.5, key=pleg_w_key, label_visibility="collapsed")
+                            pleg_r = plcr.number_input(t["reps"], step=1, key=pleg_r_key, label_visibility="collapsed")
+                            pleg_ekle_set.append({"Program Adı": st.session_state.secili_program, "Kullanıcı": st.session_state.secili_kisi, "Kas Grubu": pleg_kas, "Hareket": pleg_hareket, "Set": pleg_g_set, "Ağırlık": pleg_w, "Tekrar": pleg_r, "Ekipman": pleg_ekipman})
+
+                        if st.button(t["add_to_program"], type="primary", use_container_width=True, key="pleg_add_btn"):
+                            conn.update(worksheet="ProgramDetay", data=pd.concat([df_program_detay, pd.DataFrame(pleg_ekle_set)], ignore_index=True))
+                            st.cache_data.clear()
+                            for key in list(st.session_state.keys()):
+                                if key.startswith("pleg_w_new_") or key.startswith("pleg_r_new_"): del st.session_state[key]
+                            st.success(f"{pleg_hareket} {t['success_add_to_program']}")
+                            st.rerun()
 
         with st.expander(t["delete_program_panel"]):
             st.warning(t["delete_program_desc"])
