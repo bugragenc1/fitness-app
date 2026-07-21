@@ -303,45 +303,6 @@ custom_css = """
     input, select {
         border-radius: 10px !important;
     }
-    /* Mobilde st.columns bileşenlerinin alt alta yığılmasını (dikey uzamayı) önler. */
-    div[data-testid="stHorizontalBlock"] {
-        flex-wrap: nowrap !important;
-        gap: 0.25rem !important;
-    }
-    div[data-testid="stHorizontalBlock"] > div[data-testid="column"] {
-        min-width: 0 !important;
-        flex: 1 1 0 !important;
-    }
-    div[data-testid="stHorizontalBlock"] div[data-testid="stButton"] > button {
-        padding-left: 0.25rem !important;
-        padding-right: 0.25rem !important;
-        font-size: 0.85rem !important;
-        width: 100% !important;
-        white-space: nowrap !important;
-        overflow: hidden !important;
-        text-overflow: ellipsis !important;
-    }
-    /* Sayfanın kendisinde yatay kaydırma/taşma olmasın diye güvenlik önlemi */
-    html, body, .block-container {
-        overflow-x: hidden !important;
-    }
-    /* Üstteki navigasyon barını (Günlük / Prog / Stats) mobilde daha kompakt
-       göstermek için: küçük font, düşük yükseklik, dar aralık. */
-    .st-key-ust_nav div[data-testid="stHorizontalBlock"] {
-        gap: 0.25rem !important;
-    }
-    .st-key-ust_nav div[data-testid="stButton"] > button {
-        font-size: 0.68rem !important;
-        padding: 0.3rem 0.1rem !important;
-        min-height: 2.1rem !important;
-        height: 2.1rem !important;
-        line-height: 1.1 !important;
-        border-radius: 10px !important;
-    }
-    .st-key-ust_nav div[data-testid="stButton"] > button p {
-        font-size: 0.68rem !important;
-        margin: 0 !important;
-    }
 </style>
 """
 st.markdown(custom_css, unsafe_allow_html=True)
@@ -411,24 +372,23 @@ def pleg_sablon_guncelle():
 # Ortak Navigasyon Barı
 def render_top_nav():
     st.write("")
-    with st.container(key="ust_nav"):
-        n1, n2, n3, n4 = st.columns([1,1,1,1.5])
-        with n1:
-            if st.button("👥 " + t["back_to_groups"].split(" ")[-1], use_container_width=True):
-                st.session_state.sayfa = 'grup_sayfasi'
-                st.rerun()
-        with n2:
-            if st.button(t["nav_daily"], type="primary" if st.session_state.sayfa == 'kisi_sayfasi' else "secondary", use_container_width=True):
-                st.session_state.sayfa = 'kisi_sayfasi'
-                st.rerun()
-        with n3:
-            if st.button("📋 Prog", type="primary" if st.session_state.sayfa == 'program_sayfasi' else "secondary", use_container_width=True):
-                st.session_state.sayfa = 'program_sayfasi'
-                st.rerun()
-        with n4:
-            if st.button("📊 Stats", type="primary" if st.session_state.sayfa == 'istatistik_sayfasi' else "secondary", use_container_width=True):
-                st.session_state.sayfa = 'istatistik_sayfasi'
-                st.rerun()
+    n1, n2, n3, n4 = st.columns([1,1,1,1.5])
+    with n1:
+        if st.button("👥 " + t["back_to_groups"].split(" ")[-1], use_container_width=True):
+            st.session_state.sayfa = 'grup_sayfasi'
+            st.rerun()
+    with n2:
+        if st.button(t["nav_daily"], type="primary" if st.session_state.sayfa == 'kisi_sayfasi' else "secondary", use_container_width=True):
+            st.session_state.sayfa = 'kisi_sayfasi'
+            st.rerun()
+    with n3:
+        if st.button("📋 Prog", type="primary" if st.session_state.sayfa == 'program_sayfasi' else "secondary", use_container_width=True):
+            st.session_state.sayfa = 'program_sayfasi'
+            st.rerun()
+    with n4:
+        if st.button("📊 Stats", type="primary" if st.session_state.sayfa == 'istatistik_sayfasi' else "secondary", use_container_width=True):
+            st.session_state.sayfa = 'istatistik_sayfasi'
+            st.rerun()
     st.divider()
 
 # Antrenman Günlerini İşaretleyen Takvim Widget'ı
