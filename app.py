@@ -65,6 +65,7 @@ LANG = {
         "yes_delete": "✅ Yes, Delete",
         "success_delete_exercise_day": "and all its sets for this date were deleted.",
         "export_csv": "⬇️ Export This Day as CSV",
+        "export_all_csv": "📥 Export All Workouts as CSV",
         "go_to_programs": "📋 Programs",
         "programs_title": "Workout Programs",
         "back_to_person": "⬅️ Back",
@@ -187,6 +188,7 @@ LANG = {
         "yes_delete": "✅ Evet, Sil",
         "success_delete_exercise_day": "hareketinin bu tarihteki tüm setleri silindi.",
         "export_csv": "⬇️ Bu Günü CSV Aktar",
+        "export_all_csv": "📥 Tüm Geçmişi CSV Aktar",
         "go_to_programs": "📋 Programlar",
         "programs_title": "Antrenman Programları",
         "back_to_person": "⬅️ Geri Dön",
@@ -785,9 +787,18 @@ elif st.session_state.sayfa == 'kisi_sayfasi':
     st.markdown(f"<h2 style='font-size: 1.5rem;'>📋 {secili_tarih.strftime('%d/%m/%Y')} {t['workout_of'] if secilen_dil == 'English' else 'Tarihli ' + t['workout_of']}</h2>", unsafe_allow_html=True)
     
     gunluk_gecmis = df_antrenmanlar[(df_antrenmanlar['Grup'] == st.session_state.secili_grup) & (df_antrenmanlar['Kullanıcı'] == st.session_state.secili_kisi) & (df_antrenmanlar['Tarih'] == secili_tarih.strftime("%Y-%m-%d"))]
+    kisi_tum_gecmis = df_antrenmanlar[(df_antrenmanlar['Grup'] == st.session_state.secili_grup) & (df_antrenmanlar['Kullanıcı'] == st.session_state.secili_kisi)].copy()
+    if not kisi_tum_gecmis.empty:
+        kisi_tum_gecmis['Tarih_sirala'] = pd.to_datetime(kisi_tum_gecmis['Tarih'], errors='coerce')
+        kisi_tum_gecmis = kisi_tum_gecmis.sort_values(by=['Tarih_sirala', 'Set'], ascending=[False, True]).drop(columns=['Tarih_sirala'], errors='ignore')
 
     if not gunluk_gecmis.empty:
-        st.download_button(label=t["export_csv"], data=gunluk_gecmis.to_csv(index=False).encode('utf-8-sig'), file_name=f"antrenman_{st.session_state.secili_kisi}_{secili_tarih.strftime('%Y-%m-%d')}.csv", mime="text/csv", use_container_width=True)
+        c_exp1, c_exp2 = st.columns(2)
+        with c_exp1:
+            st.download_button(label=t["export_csv"], data=gunluk_gecmis.to_csv(index=False).encode('utf-8-sig'), file_name=f"antrenman_{st.session_state.secili_kisi}_{secili_tarih.strftime('%Y-%m-%d')}.csv", mime="text/csv", use_container_width=True, key="gunluk_export_csv")
+        with c_exp2:
+            if not kisi_tum_gecmis.empty:
+                st.download_button(label=t["export_all_csv"], data=kisi_tum_gecmis.to_csv(index=False).encode('utf-8-sig'), file_name=f"tum_antrenmanlar_{st.session_state.secili_kisi}.csv", mime="text/csv", use_container_width=True, key="gunluk_export_all_csv")
         st.write("")
 
         # Günlük kayıtları artık (Hareket, Ekipman) ikilisine göre gruplandırıyoruz.
@@ -862,6 +873,8 @@ elif st.session_state.sayfa == 'kisi_sayfasi':
                     st.rerun()
     else:
         st.info(t["no_workout"])
+        if not kisi_tum_gecmis.empty:
+            st.download_button(label=t["export_all_csv"], data=kisi_tum_gecmis.to_csv(index=False).encode('utf-8-sig'), file_name=f"tum_antrenmanlar_{st.session_state.secili_kisi}.csv", mime="text/csv", use_container_width=True, key="bos_gun_export_all_csv")
 
 
 # --- SAYFA 4: ANTRENMAN PROGRAMLARI ---
@@ -1101,6 +1114,12 @@ elif st.session_state.sayfa == 'istatistik_sayfasi':
             c1.metric(t["total_days"], f"{kisi_gecmis['Tarih'].nunique()} Gün")
             c2.metric(t["most_frequent"], kisi_gecmis['Tam Hareket'].value_counts().idxmax() if not kisi_gecmis.empty else "-")
             c3.metric(t["total_cardio"], f"{int(pd.to_numeric(kisi_gecmis['Süre (dk)'], errors='coerce').fillna(0).sum())} dk")
+            
+            st.write("")
+            stat_export = kisi_gecmis.drop(columns=['Tam Hareket'], errors='ignore').copy()
+            stat_export['Tarih_sirala'] = pd.to_datetime(stat_export['Tarih'], errors='coerce')
+            stat_export = stat_export.sort_values(by=['Tarih_sirala', 'Set'], ascending=[False, True]).drop(columns=['Tarih_sirala'], errors='ignore')
+            st.download_button(label=t["export_all_csv"], data=stat_export.to_csv(index=False).encode('utf-8-sig'), file_name=f"tum_antrenmanlar_{st.session_state.secili_kisi}.csv", mime="text/csv", use_container_width=True, key="stat_export_all_csv")
 
     with st.container(border=True):
         st.markdown(f"<h3 style='font-size: 1.2rem; color: #888;'>{t['weight_history']}</h3>", unsafe_allow_html=True)
