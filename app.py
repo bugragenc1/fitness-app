@@ -306,13 +306,14 @@ custom_css = """
     input, select {
         border-radius: 10px !important;
     }
-    /* Dropdown / Selectbox'larda klavye ile yazmayı ve mobil sanal klavyeyi engelleme */
+    /* Dropdown / Selectbox'larda klavye ile serbest yazmayı ve mobil sanal klavyeyi engelleme */
     div[data-testid="stSelectbox"] input,
     .stSelectbox input,
     div[data-baseweb="select"] input {
-        pointer-events: none !important;
         caret-color: transparent !important;
         cursor: pointer !important;
+        -webkit-user-select: none !important;
+        user-select: none !important;
     }
     div[data-testid="stSelectbox"],
     .stSelectbox,
@@ -331,42 +332,50 @@ custom_css = """
 """
 st.markdown(custom_css, unsafe_allow_html=True)
 
-# Dropdown (selectbox) elemanlarında klavyenin açılmasını engelleyip yalnızca seçim yapılabilir hale getiren JS
+# Dropdown (selectbox) elemanlarında dokunulduğu an menüyü gecikmesiz açan, klavyeyi engelleyen hafif JS
 components.html(
     """
     <script>
-    function disableSelectboxKeyboard() {
+    function fixSelectboxesFast() {
         try {
             const parentDoc = window.parent.document;
             if (!parentDoc) return;
             const selectInputs = parentDoc.querySelectorAll('div[data-testid="stSelectbox"] input, .stSelectbox input, div[data-baseweb="select"] input');
-            selectInputs.forEach(input => {
-                input.setAttribute('inputmode', 'none');
-                input.setAttribute('readonly', 'true');
-                input.style.pointerEvents = 'none';
-                input.style.caretColor = 'transparent';
-                input.style.cursor = 'pointer';
-            });
+            for (let i = 0; i < selectInputs.length; i++) {
+                const input = selectInputs[i];
+                if (input.getAttribute('inputmode') !== 'none') {
+                    input.setAttribute('inputmode', 'none');
+                    input.style.caretColor = 'transparent';
+                    input.style.cursor = 'pointer';
+                    // Bilgisayarda harf yazmayı engelle, yön tuşları/Enter/Tab/Esc serbest kalsın
+                    input.addEventListener('keydown', function(e) {
+                        if (!['Tab', 'Escape', 'ArrowDown', 'ArrowUp', 'Enter'].includes(e.key)) {
+                            e.preventDefault();
+                        }
+                    });
+                }
+            }
         } catch (e) {}
     }
 
-    disableSelectboxKeyboard();
+    fixSelectboxesFast();
 
     try {
         const parentDoc = window.parent.document;
         if (parentDoc && !window.selectObserverInitialized) {
             window.selectObserverInitialized = true;
             
-            // Odaklanma anında klavyeyi yakalayıp engelle
+            // Dokunma/odak anında gecikmesiz klavye engeli
             parentDoc.addEventListener('focusin', function(e) {
                 if (e.target && e.target.matches && e.target.matches('div[data-testid="stSelectbox"] input, .stSelectbox input, div[data-baseweb="select"] input')) {
-                    e.target.setAttribute('inputmode', 'none');
-                    e.target.setAttribute('readonly', 'true');
+                    if (e.target.getAttribute('inputmode') !== 'none') {
+                        e.target.setAttribute('inputmode', 'none');
+                    }
                 }
             }, true);
 
             const observer = new MutationObserver(() => {
-                disableSelectboxKeyboard();
+                fixSelectboxesFast();
             });
             observer.observe(parentDoc.body, { childList: true, subtree: true });
         }
