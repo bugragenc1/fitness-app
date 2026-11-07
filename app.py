@@ -662,6 +662,49 @@ components.html(
     width=0,
 )
 
+# Açık bir dropdown'a tekrar dokunulunca kapanmasını sağlayan küçük betik
+# (yukarıdaki klavye engelleme betiğine dokunmaz, ondan bağımsız çalışır)
+components.html(
+    """
+    <script>
+    try {
+        const pw = window.parent;
+        const pd = pw.document;
+        if (pd && !pw.__ddToggleInit) {
+            pw.__ddToggleInit = true;
+            const SEL = 'div[data-testid="stSelectbox"] input';
+            let kapatildi = 0;
+            const kapat = function(inp) {
+                inp.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', code: 'Escape', bubbles: true }));
+                inp.blur();
+                kapatildi = Date.now();
+            };
+            const yakala = function(e) {
+                const inp = e.target && e.target.closest ? e.target.closest('div[data-testid="stSelectbox"]') : null;
+                if (!inp) return;
+                const input = inp.querySelector('input');
+                if (!input) return;
+                if (e.type === 'pointerdown' && input.getAttribute('aria-expanded') === 'true') {
+                    e.preventDefault(); e.stopPropagation(); e.stopImmediatePropagation();
+                    kapat(input);
+                    return;
+                }
+                // Kapatma dokunuşunun devamındaki olaylar menüyü yeniden açmasın
+                if (Date.now() - kapatildi < 600 && e.type !== 'pointerdown') {
+                    e.preventDefault(); e.stopPropagation(); e.stopImmediatePropagation();
+                }
+            };
+            ['pointerdown', 'pointerup', 'mousedown', 'mouseup', 'click', 'touchstart', 'touchend'].forEach(function(t) {
+                pd.addEventListener(t, yakala, true);
+            });
+        }
+    } catch (e) {}
+    </script>
+    """,
+    height=0,
+    width=0,
+)
+
 # Üst bar: solda uygulama logosu, sağda küçük dil seçici
 bos_kolon, dil_kolonu = st.columns([2.2, 1], vertical_alignment="center")
 with dil_kolonu:
