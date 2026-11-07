@@ -1,4 +1,5 @@
 import streamlit as st
+import streamlit.components.v1 as components
 from streamlit_gsheets import GSheetsConnection
 import pandas as pd
 import calendar as cal_module
@@ -305,9 +306,66 @@ custom_css = """
     input, select {
         border-radius: 10px !important;
     }
+    /* Dropdown / Selectbox'larda klavye ile yazmayı ve mobil sanal klavyeyi engelleme */
+    div[data-baseweb="select"] input {
+        pointer-events: none !important;
+        caret-color: transparent !important;
+        cursor: pointer !important;
+    }
+    div[data-baseweb="select"] {
+        cursor: pointer !important;
+    }
+    iframe[title="streamlit.components.v1.html"] {
+        position: absolute !important;
+        width: 0 !important;
+        height: 0 !important;
+        border: none !important;
+        opacity: 0 !important;
+        pointer-events: none !important;
+    }
 </style>
 """
 st.markdown(custom_css, unsafe_allow_html=True)
+
+# Dropdown (selectbox) elemanlarında klavyenin açılmasını engelleyip yalnızca seçim yapılabilir hale getiren JS
+components.html(
+    """
+    <script>
+    function disableSelectboxKeyboard() {
+        try {
+            const parentDoc = window.parent.document;
+            if (!parentDoc) return;
+            const selectInputs = parentDoc.querySelectorAll('div[data-baseweb="select"] input');
+            selectInputs.forEach(input => {
+                if (!input.hasAttribute('data-keyboard-locked')) {
+                    input.setAttribute('inputmode', 'none');
+                    input.setAttribute('readonly', 'true');
+                    input.setAttribute('data-keyboard-locked', 'true');
+                    input.style.pointerEvents = 'none';
+                    input.style.caretColor = 'transparent';
+                    input.style.cursor = 'pointer';
+                }
+            });
+        } catch (e) {}
+    }
+
+    disableSelectboxKeyboard();
+
+    try {
+        const parentDoc = window.parent.document;
+        if (parentDoc && !window.selectObserverInitialized) {
+            window.selectObserverInitialized = true;
+            const observer = new MutationObserver(() => {
+                disableSelectboxKeyboard();
+            });
+            observer.observe(parentDoc.body, { childList: true, subtree: true });
+        }
+    } catch (e) {}
+    </script>
+    """,
+    height=0,
+    width=0,
+)
 
 # Dil seçeneğini ana ekranın en üstüne, küçük bir buton gibi ekliyoruz
 dil_kolonu, bos_kolon = st.columns([1, 2])
