@@ -307,11 +307,15 @@ custom_css = """
         border-radius: 10px !important;
     }
     /* Dropdown / Selectbox'larda klavye ile yazmayı ve mobil sanal klavyeyi engelleme */
+    div[data-testid="stSelectbox"] input,
+    .stSelectbox input,
     div[data-baseweb="select"] input {
         pointer-events: none !important;
         caret-color: transparent !important;
         cursor: pointer !important;
     }
+    div[data-testid="stSelectbox"],
+    .stSelectbox,
     div[data-baseweb="select"] {
         cursor: pointer !important;
     }
@@ -335,16 +339,13 @@ components.html(
         try {
             const parentDoc = window.parent.document;
             if (!parentDoc) return;
-            const selectInputs = parentDoc.querySelectorAll('div[data-baseweb="select"] input');
+            const selectInputs = parentDoc.querySelectorAll('div[data-testid="stSelectbox"] input, .stSelectbox input, div[data-baseweb="select"] input');
             selectInputs.forEach(input => {
-                if (!input.hasAttribute('data-keyboard-locked')) {
-                    input.setAttribute('inputmode', 'none');
-                    input.setAttribute('readonly', 'true');
-                    input.setAttribute('data-keyboard-locked', 'true');
-                    input.style.pointerEvents = 'none';
-                    input.style.caretColor = 'transparent';
-                    input.style.cursor = 'pointer';
-                }
+                input.setAttribute('inputmode', 'none');
+                input.setAttribute('readonly', 'true');
+                input.style.pointerEvents = 'none';
+                input.style.caretColor = 'transparent';
+                input.style.cursor = 'pointer';
             });
         } catch (e) {}
     }
@@ -355,6 +356,15 @@ components.html(
         const parentDoc = window.parent.document;
         if (parentDoc && !window.selectObserverInitialized) {
             window.selectObserverInitialized = true;
+            
+            // Odaklanma anında klavyeyi yakalayıp engelle
+            parentDoc.addEventListener('focusin', function(e) {
+                if (e.target && e.target.matches && e.target.matches('div[data-testid="stSelectbox"] input, .stSelectbox input, div[data-baseweb="select"] input')) {
+                    e.target.setAttribute('inputmode', 'none');
+                    e.target.setAttribute('readonly', 'true');
+                }
+            }, true);
+
             const observer = new MutationObserver(() => {
                 disableSelectboxKeyboard();
             });
@@ -657,6 +667,10 @@ elif st.session_state.sayfa == 'kisi_sayfasi':
                     st.caption(f"{t['mechanic']}: **{leg_mekanik}**")
 
                     leg_varsayilan_ekip = leg_row['Ekipman'] if 'Ekipman' in leg_row else "Barbell"
+                    if st.session_state.get("_aktif_leg_hareket") != leg_hareket:
+                        st.session_state["_aktif_leg_hareket"] = leg_hareket
+                        if leg_varsayilan_ekip in EKIPMAN_LISTESI:
+                            st.session_state["leg_ekip_sec"] = leg_varsayilan_ekip
                     leg_ekipman = st.selectbox(t["equipment"], EKIPMAN_LISTESI, index=EKIPMAN_LISTESI.index(leg_varsayilan_ekip) if leg_varsayilan_ekip in EKIPMAN_LISTESI else 0, key="leg_ekip_sec")
 
                     # Şablon/önceki ağırlık takibi Hareket+Ekipman ikilisine göre tetikleniyor
@@ -758,6 +772,10 @@ elif st.session_state.sayfa == 'kisi_sayfasi':
             st.caption(f"{t['mechanic']}: **{mekanik_degeri}**") 
             
             veritabanindaki_ekipman = filtrelenmis_df[filtrelenmis_df['Hareket Tipi'] == secili_hareket]['Ekipman'].values[0] if 'Ekipman' in filtrelenmis_df.columns else "Barbell"
+            if st.session_state.get("_aktif_gunluk_hareket") != secili_hareket:
+                st.session_state["_aktif_gunluk_hareket"] = secili_hareket
+                if veritabanindaki_ekipman in EKIPMAN_LISTESI:
+                    st.session_state["gunluk_ekipman_sec"] = veritabanindaki_ekipman
             secili_ekipman = st.selectbox(t["equipment"], EKIPMAN_LISTESI, index=EKIPMAN_LISTESI.index(veritabanindaki_ekipman) if veritabanindaki_ekipman in EKIPMAN_LISTESI else 0, key="gunluk_ekipman_sec")
 
             # Şablon/önceki ağırlık takibi artık Hareket+Ekipman ikilisine göre tetikleniyor,
@@ -1033,6 +1051,10 @@ elif st.session_state.sayfa == 'program_sayfasi':
 
             if p_hareket:
                 p_ekip = df_hareketler[df_hareketler['Hareket Tipi'] == p_hareket]['Ekipman'].values[0] if 'Ekipman' in df_hareketler.columns else "Barbell"
+                if st.session_state.get("_aktif_p_hareket") != p_hareket:
+                    st.session_state["_aktif_p_hareket"] = p_hareket
+                    if p_ekip in EKIPMAN_LISTESI:
+                        st.session_state["pekip"] = p_ekip
                 p_secili_ekipman = st.selectbox(t["equipment"], EKIPMAN_LISTESI, index=EKIPMAN_LISTESI.index(p_ekip) if p_ekip in EKIPMAN_LISTESI else 0, key="pekip")
 
                 # Şablon takibi artık Hareket+Ekipman ikilisine göre tetikleniyor
@@ -1099,6 +1121,10 @@ elif st.session_state.sayfa == 'program_sayfasi':
                         st.warning(t["cardio_not_supported_in_program"])
                     else:
                         pleg_varsayilan_ekip = pleg_row['Ekipman'] if 'Ekipman' in pleg_row else "Barbell"
+                        if st.session_state.get("_aktif_pleg_hareket") != pleg_hareket:
+                            st.session_state["_aktif_pleg_hareket"] = pleg_hareket
+                            if pleg_varsayilan_ekip in EKIPMAN_LISTESI:
+                                st.session_state["pleg_ekip_sec"] = pleg_varsayilan_ekip
                         pleg_ekipman = st.selectbox(t["equipment"], EKIPMAN_LISTESI, index=EKIPMAN_LISTESI.index(pleg_varsayilan_ekip) if pleg_varsayilan_ekip in EKIPMAN_LISTESI else 0, key="pleg_ekip_sec")
 
                         # Şablon takibi Hareket+Ekipman ikilisine göre tetikleniyor
