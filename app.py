@@ -115,7 +115,7 @@ LANG = {
         "comp_days": "Workout Days by Member",
         "comp_cardio": "Total Cardio Duration (min) by Member",
         "nav_daily": "📝 Daily Log",
-        "calendar_legend": "🟢 Workout day · 🟠 Selected day",
+        "calendar_legend": "▪ Workout day · ■ Selected day",
         "legacy_add_panel": "📚 Add From Legacy List To Today",
         "legacy_add_desc": "Pick a common exercise from the curated legacy list and log it directly to today's workout. This does NOT add it to your personal exercise database.",
         "legacy_select_group": "Muscle Group",
@@ -137,7 +137,7 @@ LANG = {
         "group_eyebrow": "Group",
         "group_sub": "Choose a member to open their log.",
         "nav_groups": "👥 Group",
-        "nav_programs": "📋 Programs",
+        "nav_programs": "📋 Program",
         "nav_stats": "📊 Stats",
         "day_workout": "Workout of the Day",
         "tools": "Tools",
@@ -147,6 +147,12 @@ LANG = {
         "days_unit": "days",
         "min_unit": "min",
         "program_eyebrow": "Program",
+        "tab_add_set": "➕ Add Set",
+        "nav_log": "📝 Log",
+        "tab_program": "📥 Program",
+        "tab_legacy": "📚 Legacy",
+        "tab_manage": "🛠️ Manage",
+        "today": "Today",
     },
     "Türkçe": {
         "groups_title": "🏋️‍♂️ Antrenman Grupları",
@@ -255,7 +261,7 @@ LANG = {
         "comp_days": "Üyelere Göre Antrenman Günleri",
         "comp_cardio": "Üyelere Göre Toplam Kardiyo (dk)",
         "nav_daily": "📝 Günlük",
-        "calendar_legend": "🟢 Antrenman yapılan gün · 🟠 Seçili gün",
+        "calendar_legend": "▪ Antrenman günü · ■ Seçili gün",
         "legacy_add_panel": "📚 Temel Hareketten Bugüne Ekle",
         "legacy_add_desc": "Hazır temel hareket listesinden seçip doğrudan bugünün antrenmanına ekleyin. Bu işlem hareketi kişisel veritabanınıza (Hareketler) EKLEMEZ.",
         "legacy_select_group": "Kas Grubu",
@@ -287,6 +293,12 @@ LANG = {
         "days_unit": "gün",
         "min_unit": "dk",
         "program_eyebrow": "Program",
+        "tab_add_set": "➕ Set Ekle",
+        "nav_log": "📝 Günlük",
+        "tab_program": "📥 Program",
+        "tab_legacy": "📚 Temel",
+        "tab_manage": "🛠️ Yönet",
+        "today": "Bugün",
     }
 }
 
@@ -298,26 +310,27 @@ st.set_page_config(page_title="Workout App", page_icon="💪", layout="centered"
 
 custom_css = """
 <style>
-    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Anton&family=Archivo:wght@400;500;600;700;800;900&display=swap');
 
-    /* ===== TASARIM DEĞİŞKENLERİ ===== */
+    /* ===== TASARIM DEĞİŞKENLERİ — "Gym Poster" teması ===== */
     :root {
-        --acc: #FF6B3D;
-        --acc-2: #FF9A4D;
-        --acc-soft: rgba(255, 107, 61, 0.14);
-        --ok: #3DDC97;
-        --ok-soft: rgba(61, 220, 151, 0.14);
-        --bg: #0B0D12;
-        --card: #141821;
-        --card-2: #1B2030;
-        --line: rgba(255, 255, 255, 0.08);
-        --line-2: rgba(255, 255, 255, 0.14);
-        --txt: #ECEEF3;
-        --muted: #8A93A6;
-        --danger: #FF5C6C;
-        --r-lg: 20px;
-        --r-md: 14px;
-        --r-sm: 10px;
+        --acc: #C8FF2E;          /* neon lime */
+        --acc-dim: #9FD11A;
+        --acc-soft: rgba(200, 255, 46, 0.12);
+        --on-acc: #0A0A0B;
+        --hot: #FF4D2E;          /* kardiyo / uyarı */
+        --hot-soft: rgba(255, 77, 46, 0.14);
+        --bg: #0A0A0B;
+        --card: #121214;
+        --card-2: #1A1A1D;
+        --line: #26262B;
+        --line-2: #35353C;
+        --txt: #F4F4F0;
+        --muted: #8C8C94;
+        --danger: #FF4D5E;
+        --r: 6px;
+        --display: 'Anton', 'Impact', 'Arial Narrow Bold', sans-serif;
+        --body: 'Archivo', 'Segoe UI', system-ui, sans-serif;
     }
 
     #MainMenu {visibility: hidden;}
@@ -325,276 +338,247 @@ custom_css = """
     footer {visibility: hidden;}
 
     .stApp {
-        font-family: 'Plus Jakarta Sans', 'Segoe UI', system-ui, sans-serif;
-        background:
-            radial-gradient(900px 420px at 50% -160px, rgba(255, 107, 61, 0.16), transparent 70%),
-            var(--bg);
+        font-family: var(--body);
         color: var(--txt);
+        background-color: var(--bg);
+        background-image:
+            linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
+        background-size: 28px 28px;
     }
-    .stApp p, .stApp label, .stApp input, .stApp button, .stApp summary, .stApp h1, .stApp h2, .stApp h3 {
-        font-family: 'Plus Jakarta Sans', 'Segoe UI', system-ui, sans-serif;
-    }
+    .stApp p, .stApp label, .stApp input, .stApp button, .stApp summary { font-family: var(--body); }
     .block-container {
         padding-top: 0.5rem;
-        padding-bottom: 7.5rem;   /* alttaki sabit menü için boşluk */
+        padding-bottom: 7.5rem;
         padding-left: 1rem;
         padding-right: 1rem;
         max-width: 760px;
     }
-    hr { border-color: var(--line) !important; margin: 1rem 0 !important; }
-    /* Görünmez yardımcı öğelerin (stil + dropdown betiği) boşluk kaplamasını önle */
+    hr { border-color: var(--line) !important; margin: 1.2rem 0 !important; }
     div[data-testid="stElementContainer"]:has(> div > div > style),
     div[data-testid="stElementContainer"]:has(iframe[title="streamlit.components.v1.html"]) { margin-bottom: -1rem; }
 
-    /* ===== MOBİLDE KOLONLAR ALT ALTA DÜŞMESİN (set satırları, menü vb. yan yana kalsın) ===== */
-    div[data-testid="stHorizontalBlock"] {
-        flex-wrap: nowrap !important;
-        gap: 0.5rem !important;
-    }
-    div[data-testid="stColumn"] {
-        min-width: 0 !important;
-    }
+    /* Mobilde kolonlar alt alta düşmesin */
+    div[data-testid="stHorizontalBlock"] { flex-wrap: nowrap !important; gap: 0.5rem !important; }
+    div[data-testid="stColumn"] { min-width: 0 !important; }
 
     /* ===== ÜST BAR ===== */
-    .brand {
-        display: flex; align-items: center; gap: 10px;
-        font-weight: 800; font-size: 1.05rem; letter-spacing: -0.01em;
-        padding-top: 4px;
-    }
+    .brand { display: flex; align-items: center; gap: 10px; padding-top: 4px; }
     .brand-logo {
-        width: 34px; height: 34px; border-radius: 11px;
-        display: grid; place-items: center; font-size: 1.05rem;
-        background: linear-gradient(135deg, var(--acc), var(--acc-2));
-        box-shadow: 0 6px 18px rgba(255, 107, 61, 0.35);
+        width: 36px; height: 36px; border-radius: var(--r);
+        display: grid; place-items: center; font-size: 1.1rem;
+        background: var(--acc); transform: skewX(-8deg);
     }
-    .brand small { display: block; font-weight: 500; font-size: 0.72rem; color: var(--muted); letter-spacing: 0; margin-top: -2px; }
+    .brand-txt { font-family: var(--display); font-size: 1.45rem; letter-spacing: 0.04em; text-transform: uppercase; line-height: 1; }
+    .brand-txt small { display: block; font-family: var(--body); font-size: 0.66rem; font-weight: 700; letter-spacing: 0.14em; color: var(--acc); margin-top: 3px; }
 
     /* ===== SAYFA BAŞLIKLARI ===== */
-    .page-head { margin: 0.6rem 0 1.1rem 0; display: flex; align-items: center; gap: 14px; }
-    .page-head .ph-icon {
-        flex: 0 0 auto; width: 52px; height: 52px; border-radius: 16px;
-        display: grid; place-items: center; font-size: 1.5rem; font-weight: 800; color: #fff;
-        background: linear-gradient(135deg, var(--acc), var(--acc-2));
-        box-shadow: 0 8px 24px rgba(255, 107, 61, 0.30);
+    .page-head { margin: 1rem 0 1.2rem 0; position: relative; }
+    .page-head .ph-eyebrow {
+        display: inline-block; font-size: 0.7rem; font-weight: 800; letter-spacing: 0.16em; text-transform: uppercase;
+        color: var(--on-acc); background: var(--acc); padding: 3px 8px; border-radius: 3px; margin-bottom: 8px;
     }
-    .page-head .ph-icon.soft { background: var(--card-2); box-shadow: none; border: 1px solid var(--line-2); }
-    .page-head .ph-eyebrow { font-size: 0.72rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--acc); }
-    .page-head .ph-title { font-size: 1.55rem; font-weight: 800; letter-spacing: -0.02em; line-height: 1.15; color: var(--txt); word-break: break-word; }
-    .page-head .ph-sub { font-size: 0.86rem; color: var(--muted); margin-top: 2px; }
+    .page-head .ph-title {
+        font-family: var(--display); font-weight: 400; text-transform: uppercase;
+        font-size: 2.6rem; line-height: 1.02; letter-spacing: 0.01em; padding-top: 2px; color: var(--txt); word-break: break-word;
+    }
+    .page-head .ph-sub { font-size: 0.88rem; color: var(--muted); margin-top: 8px; font-weight: 500; }
+    .page-head .ph-icon { display: none; }
+    .page-head.small .ph-title { font-size: 1.9rem; }
 
     .section-label {
         display: flex; align-items: center; gap: 8px;
-        font-size: 0.78rem; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase;
-        color: var(--muted); margin: 0.1rem 0 0.4rem 0;
+        font-size: 0.72rem; font-weight: 800; letter-spacing: 0.16em; text-transform: uppercase;
+        color: var(--muted); margin: 0.1rem 0 0.5rem 0;
     }
-    .section-label .count {
-        background: var(--card-2); color: var(--txt); border-radius: 999px;
-        padding: 1px 8px; font-size: 0.72rem; letter-spacing: 0;
-    }
-    .subhead { font-weight: 700; font-size: 0.95rem; margin: 0.4rem 0 0.3rem 0; color: var(--txt); }
+    .section-label::before { content: ""; width: 14px; height: 3px; background: var(--acc); }
+    .section-label .count { color: var(--acc); letter-spacing: 0; font-size: 0.8rem; }
+    .subhead { font-weight: 800; font-size: 0.95rem; margin: 0.5rem 0 0.4rem 0; color: var(--txt); }
 
-    /* ===== KARTLAR (çerçeveli container'lar) ===== */
+    /* ===== KARTLAR ===== */
     div[class*="st-key-card_"] {
         background: var(--card) !important;
         border: 1px solid var(--line) !important;
-        border-radius: var(--r-lg) !important;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+        border-radius: var(--r) !important;
     }
 
     /* ===== BUTONLAR ===== */
     div[data-testid="stButton"] > button,
     div[data-testid="stDownloadButton"] > button {
-        min-height: 46px;
-        border-radius: var(--r-md);
-        font-weight: 700;
-        transition: transform 0.15s ease, box-shadow 0.2s ease, background 0.2s ease, border-color 0.2s ease;
-    }
-    div[data-testid="stButton"] > button[kind="primary"] {
-        background: linear-gradient(135deg, var(--acc), var(--acc-2));
-        border: none;
-        color: #fff;
-        box-shadow: 0 8px 22px rgba(255, 107, 61, 0.28);
-    }
-    div[data-testid="stButton"] > button[kind="primary"]:hover {
-        transform: translateY(-1px);
-        box-shadow: 0 12px 28px rgba(255, 107, 61, 0.38);
-        color: #fff;
-    }
-    div[data-testid="stButton"] > button[kind="secondary"],
-    div[data-testid="stDownloadButton"] > button {
-        background: var(--card-2);
-        border: 1px solid var(--line);
-        color: var(--txt);
-    }
-    div[data-testid="stButton"] > button[kind="secondary"]:hover,
-    div[data-testid="stDownloadButton"] > button:hover {
-        border-color: var(--acc);
-        color: var(--txt);
+        min-height: 48px; border-radius: var(--r); font-weight: 800;
+        transition: transform 0.12s ease, background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
     }
     div[data-testid="stButton"] > button p,
     div[data-testid="stDownloadButton"] > button p { white-space: normal; overflow: visible; text-overflow: clip; line-height: 1.25; }
+    div[data-testid="stButton"] > button[kind="primary"] {
+        background: var(--acc); border: none; color: var(--on-acc);
+    }
+    div[data-testid="stButton"] > button[kind="primary"] p { text-transform: uppercase; letter-spacing: 0.06em; }
+    div[data-testid="stButton"] > button[kind="primary"]:hover { background: #D8FF66; color: var(--on-acc); }
+    div[data-testid="stButton"] > button[kind="secondary"],
+    div[data-testid="stDownloadButton"] > button {
+        background: var(--card-2); border: 1px solid var(--line-2); color: var(--txt);
+    }
+    div[data-testid="stButton"] > button[kind="secondary"]:hover,
+    div[data-testid="stDownloadButton"] > button:hover { border-color: var(--acc); color: var(--acc); }
     div[data-testid="stButton"] > button:active,
-    div[data-testid="stDownloadButton"] > button:active { transform: scale(0.98); }
+    div[data-testid="stDownloadButton"] > button:active { transform: scale(0.97); }
 
-    /* Liste butonları (gruplar, üyeler, programlar) -> dokunmatik liste satırı */
+    /* Grup / üye kutucukları */
+    div[class*="st-key-card_tiles"] div[data-testid="stButton"] > button {
+        min-height: 108px; align-items: flex-end; justify-content: flex-start;
+        padding: 14px; text-align: left; position: relative; overflow: hidden;
+        background: var(--card-2); border: 1px solid var(--line-2);
+    }
+    div[class*="st-key-card_tiles"] div[data-testid="stButton"] > button > div { justify-content: flex-start; width: 100%; }
+    div[class*="st-key-card_tiles"] div[data-testid="stButton"] > button p {
+        font-family: var(--display); font-weight: 400; font-size: 1.35rem; text-transform: uppercase; letter-spacing: 0.02em; line-height: 1.05; text-align: left;
+    }
+    div[class*="st-key-card_tiles"] div[data-testid="stButton"] > button::before {
+        content: "↗"; position: absolute; top: 10px; right: 12px; font-size: 1.1rem; color: var(--muted);
+    }
+    div[class*="st-key-card_tiles"] div[data-testid="stButton"] > button::after {
+        content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 4px; background: var(--acc); opacity: 0; transition: opacity .15s;
+    }
+    div[class*="st-key-card_tiles"] div[data-testid="stButton"] > button:hover { border-color: var(--acc); color: var(--txt); }
+    div[class*="st-key-card_tiles"] div[data-testid="stButton"] > button:hover::after { opacity: 1; }
+    div[class*="st-key-card_tiles"] div[data-testid="stButton"] > button:hover::before { color: var(--acc); }
+
+    /* Program listesi satırları */
     div[class*="st-key-card_list"] div[data-testid="stButton"] > button {
-        min-height: 58px;
-        justify-content: flex-start;
-        text-align: left;
-        padding: 0 16px;
-        background: var(--card-2);
-        border: 1px solid var(--line);
-        box-shadow: none;
-        position: relative;
+        min-height: 58px; justify-content: flex-start; text-align: left; padding: 0 16px; position: relative;
     }
     div[class*="st-key-card_list"] div[data-testid="stButton"] > button > div { justify-content: flex-start; width: 100%; }
-    div[class*="st-key-card_list"] div[data-testid="stButton"] > button p { font-size: 1rem; font-weight: 600; }
+    div[class*="st-key-card_list"] div[data-testid="stButton"] > button p { font-size: 1rem; font-weight: 700; }
     div[class*="st-key-card_list"] div[data-testid="stButton"] > button::after {
-        content: "›"; position: absolute; right: 16px; top: 50%; transform: translateY(-52%);
-        font-size: 1.6rem; font-weight: 400; color: var(--muted);
+        content: "→"; position: absolute; right: 16px; top: 50%; transform: translateY(-50%); color: var(--muted);
     }
-    div[class*="st-key-card_list"] div[data-testid="stButton"] > button:hover::after { color: var(--acc); }
 
-    /* Geri butonları -> sade, küçük */
+    /* Geri butonları */
     div[class*="st-key-back_"] { margin-top: 8px; }
     div[class*="st-key-back_"] div[data-testid="stButton"] > button {
-        min-height: 38px; width: auto !important; padding: 0 14px;
-        background: transparent; border: 1px solid var(--line); box-shadow: none;
-        color: var(--muted); font-weight: 600;
+        min-height: 36px; width: auto !important; padding: 0 12px;
+        background: transparent; border: 1px solid var(--line-2); color: var(--muted); font-weight: 700;
     }
-    div[class*="st-key-back_"] div[data-testid="stButton"] > button p { font-size: 0.88rem; }
+    div[class*="st-key-back_"] div[data-testid="stButton"] > button p { font-size: 0.82rem; text-transform: uppercase; letter-spacing: 0.08em; }
 
-    /* Satır silme (✕) butonları */
+    /* Satır silme (✕) */
     div[class*="st-key-d_"] button, div[class*="st-key-pd_"] button {
         min-height: 40px !important; padding: 0 !important; width: 100%;
-        background: transparent !important; border: 1px solid var(--line) !important;
-        color: var(--danger) !important; box-shadow: none !important;
+        background: transparent !important; border: 1px solid var(--line-2) !important; color: var(--danger) !important;
     }
-    div[class*="st-key-d_"] button:hover, div[class*="st-key-pd_"] button:hover {
-        background: rgba(255, 92, 108, 0.12) !important; border-color: var(--danger) !important;
-    }
-
-    /* Tehlikeli eylem butonları (tamamen silme) */
+    div[class*="st-key-d_"] button:hover, div[class*="st-key-pd_"] button:hover { background: rgba(255,77,94,0.12) !important; border-color: var(--danger) !important; }
     div[class*="st-key-del_btn_"] button, div[class*="st-key-d_p_"] button {
-        color: var(--danger) !important; border-color: rgba(255, 92, 108, 0.35) !important; background: transparent !important;
+        color: var(--danger) !important; border-color: rgba(255,77,94,0.4) !important; background: transparent !important;
     }
 
-    /* ===== ALT SABİT MENÜ (tab bar) ===== */
+    /* ===== ALT SABİT MENÜ ===== */
     div.st-key-topnav {
-        position: fixed;
-        left: 0; right: 0; bottom: 0;
-        z-index: 999;
-        padding: 10px max(12px, calc((100vw - 760px) / 2 + 12px)) calc(10px + env(safe-area-inset-bottom));
-        background: rgba(11, 13, 18, 0.88);
-        backdrop-filter: blur(16px);
-        -webkit-backdrop-filter: blur(16px);
-        border-top: 1px solid var(--line);
+        position: fixed; left: 0; right: 0; bottom: 0; z-index: 999;
+        padding: 8px max(10px, calc((100vw - 760px) / 2 + 10px)) calc(8px + env(safe-area-inset-bottom));
+        background: rgba(10, 10, 11, 0.92);
+        backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+        border-top: 1px solid var(--line-2);
     }
     div.st-key-topnav div[data-testid="stHorizontalBlock"] { gap: 6px !important; }
     div.st-key-topnav div[data-testid="stButton"] > button {
-        min-height: 52px;
-        border-radius: 14px;
-        padding: 4px 2px;
-        background: transparent;
-        border: none;
-        box-shadow: none !important;
-        color: var(--muted);
+        min-height: 52px; padding: 4px 2px; background: transparent; border: none; box-shadow: none !important; color: var(--muted);
     }
-    div.st-key-topnav div[data-testid="stButton"] > button p { font-size: 0.8rem; font-weight: 700; line-height: 1.25; white-space: normal; }
-    div.st-key-topnav div[data-testid="stButton"] > button[kind="primary"] {
-        background: var(--acc-soft);
-        color: var(--acc);
-    }
-    div.st-key-topnav div[data-testid="stButton"] > button:hover { transform: none; color: var(--txt); }
+    div.st-key-topnav div[data-testid="stButton"] > button p { font-size: 0.74rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.04em; white-space: normal; }
+    div.st-key-topnav div[data-testid="stButton"] > button[kind="primary"] { background: var(--acc); color: var(--on-acc); }
+    div.st-key-topnav div[data-testid="stButton"] > button[kind="secondary"]:hover { color: var(--txt); }
 
-    /* ===== EXPANDER (açılır paneller) ===== */
+    /* ===== TARİH KARTI ===== */
+    div.st-key-card_date {
+        background: var(--acc) !important; border: none !important; border-radius: var(--r) !important;
+        padding: 14px 16px 12px 16px; color: var(--on-acc);
+    }
+    .date-hero { display: flex; align-items: center; gap: 14px; }
+    .date-hero .dh-day { font-family: var(--display); font-size: 4.2rem; line-height: 0.9; color: var(--on-acc); }
+    .date-hero .dh-week { font-weight: 900; font-size: 1.05rem; text-transform: uppercase; letter-spacing: 0.04em; color: var(--on-acc); display: flex; align-items: center; gap: 8px; }
+    .date-hero .dh-month { font-weight: 600; font-size: 0.9rem; color: rgba(10,10,11,0.7); }
+    .today-tag { background: var(--on-acc); color: var(--acc); font-size: 0.62rem; padding: 2px 6px; border-radius: 3px; letter-spacing: 0.1em; }
+    div.st-key-card_date [data-testid="stDateInput"] div[data-baseweb="input"],
+    div.st-key-card_date [data-testid="stDateInput"] input {
+        background: var(--on-acc) !important; color: var(--acc) !important; font-weight: 800; border-color: var(--on-acc) !important;
+    }
+    div.st-key-card_date [data-testid="stCaptionContainer"], div.st-key-card_date [data-testid="stCaptionContainer"] p { color: rgba(10,10,11,0.75) !important; font-weight: 600; }
+    .day-chip {
+        display: inline-grid; place-items: center; min-width: 32px; height: 32px; padding: 0 6px;
+        margin: 3px 3px 0 0; border-radius: 4px; font-size: 0.85rem; font-weight: 800;
+        background: rgba(10,10,11,0.14); color: var(--on-acc);
+    }
+    .day-chip.sel { background: var(--on-acc); color: var(--acc); }
+
+    /* ===== SEKMELER ===== */
+    div.st-key-tools_wrap { margin-top: 0.4rem; }
+    div[data-testid="stTabs"] [role="tablist"] {
+        gap: 6px; border-bottom: none !important; overflow-x: auto; scrollbar-width: none; padding-bottom: 2px;
+    }
+    div[data-testid="stTabs"] [role="tablist"]::-webkit-scrollbar { display: none; }
+    div[data-testid="stTabs"] [role="tab"] {
+        flex: 0 0 auto; height: 40px; padding: 0 14px !important; border-radius: var(--r);
+        background: var(--card-2); border: 1px solid var(--line-2); margin: 0 !important;
+    }
+    div[data-testid="stTabs"] [role="tab"] p { font-weight: 800 !important; font-size: 0.85rem !important; }
+    div[data-testid="stTabs"] [role="tab"][aria-selected="true"] { background: var(--txt); border-color: var(--txt); }
+    div[data-testid="stTabs"] [role="tab"][aria-selected="true"] p { color: var(--on-acc) !important; }
+    div[data-testid="stTabs"] [data-baseweb="tab-highlight"], div[data-testid="stTabs"] [data-baseweb="tab-border"] { display: none !important; }
+    div[data-testid="stTabs"] [role="tabpanel"] {
+        background: var(--card); border: 1px solid var(--line); border-radius: var(--r); padding: 14px 14px 16px 14px; margin-top: 8px;
+    }
+
+    /* ===== EXPANDER (antrenman kartları) ===== */
     div[data-testid="stExpander"] details {
-        background: var(--card);
-        border: 1px solid var(--line);
-        border-radius: var(--r-md);
-        overflow: hidden;
+        background: var(--card); border: 1px solid var(--line); border-left: 4px solid var(--acc);
+        border-radius: var(--r); overflow: hidden;
     }
-    div[data-testid="stExpander"] details[open] { border-color: var(--line-2); }
-    div[data-testid="stExpander"] summary {
-        padding: 0.85rem 1rem;
-        font-weight: 600;
-    }
+    div[data-testid="stExpander"] details[open] { border-color: var(--line-2); border-left-color: var(--acc); }
+    div[data-testid="stExpander"] summary { padding: 0.9rem 1rem; font-weight: 600; }
     div[data-testid="stExpander"] summary:hover { color: var(--acc); }
     div[data-testid="stExpander"] summary p { font-size: 0.95rem; }
-    .streamlit-expanderHeader { font-weight: 600 !important; font-size: 1.05rem !important; }
-    /* Kart içindeki paneller bir ton açık */
+    div[data-testid="stExpander"] summary strong { font-weight: 900; color: var(--acc); }
     div[class*="st-key-card_"] div[data-testid="stExpander"] details { background: var(--card-2); }
 
-    /* ===== FORM ELEMANLARI ===== */
-    input, select { border-radius: var(--r-sm) !important; }
-    div[data-baseweb="input"], div[data-baseweb="select"] > div, div[data-testid="stNumberInputContainer"] {
-        border-radius: var(--r-sm) !important;
-    }
-    div[data-testid="stNumberInput"] input { font-weight: 700; font-variant-numeric: tabular-nums; }
-    label[data-testid="stWidgetLabel"] p { font-size: 0.8rem !important; color: var(--muted) !important; font-weight: 600; }
+    /* ===== FORM ===== */
+    input, select { border-radius: var(--r) !important; }
+    div[data-baseweb="input"], div[data-testid="stNumberInputContainer"] { border-radius: var(--r) !important; }
+    div[data-testid="stNumberInput"] input { font-weight: 800; font-variant-numeric: tabular-nums; }
+    label[data-testid="stWidgetLabel"] p { font-size: 0.72rem !important; color: var(--muted) !important; font-weight: 800; text-transform: uppercase; letter-spacing: 0.08em; }
 
-    /* Set satırları */
     .set-pill {
-        height: 40px; border-radius: var(--r-sm);
-        display: grid; place-items: center;
-        background: var(--acc-soft); color: var(--acc);
-        font-weight: 800; font-size: 0.95rem; font-variant-numeric: tabular-nums;
+        height: 40px; border-radius: var(--r); display: grid; place-items: center;
+        background: var(--txt); color: var(--on-acc);
+        font-family: var(--display); font-size: 1.15rem;
     }
+    .set-pill.cardio { background: var(--hot); color: #fff; font-family: var(--body); }
     div[data-testid="stMarkdownContainer"]:has(.set-pill),
     div[data-testid="stMarkdownContainer"]:has(.col-head) { margin-bottom: 0 !important; }
-    .set-pill.cardio { background: var(--ok-soft); color: var(--ok); }
-    .col-head { font-size: 0.7rem; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase; color: var(--muted); text-align: center; }
+    .col-head { font-size: 0.66rem; font-weight: 800; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); text-align: center; }
 
-    /* Mekanik / bilgi rozetleri */
-    .chip {
-        display: inline-flex; align-items: center; gap: 6px;
-        padding: 3px 10px; border-radius: 999px; font-size: 0.78rem; font-weight: 700;
-        background: var(--card-2); border: 1px solid var(--line); color: var(--txt);
-    }
-    .chip.acc { background: var(--acc-soft); border-color: transparent; color: var(--acc); }
-    .chip.ok { background: var(--ok-soft); border-color: transparent; color: var(--ok); }
+    .chip { display: inline-flex; align-items: center; gap: 6px; padding: 3px 9px; border-radius: 3px; font-size: 0.72rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.08em; }
+    .chip.acc { background: var(--acc-soft); color: var(--acc); }
+    .chip.ok { background: var(--hot-soft); color: var(--hot); }
     .chip-row { display: flex; flex-wrap: wrap; gap: 6px; margin: 4px 0 6px 0; }
 
-    /* Takvim gün etiketleri */
-    .day-chip {
-        display: inline-grid; place-items: center; min-width: 34px; height: 34px; padding: 0 6px;
-        margin: 3px 3px 0 0; border-radius: 10px; font-size: 0.85rem; font-weight: 700;
-        background: var(--ok-soft); color: var(--ok);
-    }
-    .day-chip.sel { background: linear-gradient(135deg, var(--acc), var(--acc-2)); color: #fff; }
-
     /* ===== İSTATİSTİK KARTLARI ===== */
-    .stat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin: 4px 0 12px 0; }
-    .stat {
-        background: var(--card-2); border: 1px solid var(--line); border-radius: var(--r-md);
-        padding: 14px 14px 12px 14px; min-width: 0;
-    }
-    .stat .s-label { font-size: 0.72rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); }
-    .stat .s-value { font-size: 1.45rem; font-weight: 800; letter-spacing: -0.02em; margin-top: 4px; line-height: 1.2; word-break: break-word; }
-    .stat .s-value.small { font-size: 1rem; }
-    .stat .s-unit { font-size: 0.85rem; font-weight: 600; color: var(--muted); margin-left: 3px; }
-    .stat.hl { background: linear-gradient(135deg, rgba(255,107,61,0.22), rgba(255,154,77,0.10)); border-color: rgba(255,107,61,0.35); }
+    .stat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 8px; margin: 4px 0 12px 0; }
+    .stat { background: var(--card-2); border: 1px solid var(--line-2); border-radius: var(--r); padding: 12px 14px; min-width: 0; }
+    .stat .s-label { font-size: 0.66rem; font-weight: 800; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); }
+    .stat .s-value { font-family: var(--display); font-size: 2.2rem; line-height: 1; margin-top: 6px; word-break: break-word; }
+    .stat .s-value.small { font-family: var(--body); font-size: 1rem; font-weight: 900; text-transform: uppercase; line-height: 1.25; }
+    .stat .s-unit { font-family: var(--body); font-size: 0.8rem; font-weight: 700; color: var(--muted); margin-left: 4px; }
+    .stat.hl { background: var(--acc); border-color: var(--acc); }
+    .stat.hl .s-label, .stat.hl .s-unit { color: rgba(10,10,11,0.65); }
+    .stat.hl .s-value { color: var(--on-acc); }
     .summary-strip { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin: 0 0 12px 0; }
-    .summary-strip .stat { padding: 10px 12px; }
-    .summary-strip .s-value { font-size: 1.2rem; }
+    .summary-strip .s-value { font-size: 1.9rem; }
 
-    div[data-testid="metric-container"] {
-        background-color: var(--card-2);
-        border-radius: var(--r-md);
-        padding: 15px;
-        border: 1px solid var(--line);
-        text-align: center;
-    }
-
-    /* ===== UYARI / BİLGİ KUTULARI ===== */
-    div[data-testid="stAlert"] { border-radius: var(--r-md); }
+    div[data-testid="stAlert"] { border-radius: var(--r); }
     div[data-testid="stCaptionContainer"] { color: var(--muted); }
 
-    h1, h2, h3 { letter-spacing: -0.02em; }
-
-    /* ===== MASAÜSTÜ ===== */
     @media (min-width: 700px) {
-        .page-head .ph-title { font-size: 1.9rem; }
+        .page-head .ph-title { font-size: 3.4rem; }
         .block-container { padding-top: 1.5rem; }
     }
 
@@ -685,7 +669,7 @@ with dil_kolonu:
 t = LANG[secilen_dil]
 with bos_kolon:
     st.markdown(
-        f"<div class='brand'><div class='brand-logo'>💪</div><div>{t['app_name']}<small>{t['app_tagline']}</small></div></div>",
+        f"<div class='brand'><div class='brand-logo'>💪</div><div class='brand-txt'>{t['app_name']}<small>{t['app_tagline']}</small></div></div>",
         unsafe_allow_html=True,
     )
 
@@ -693,11 +677,18 @@ with bos_kolon:
 def _e(x):
     return html.escape(str(x))
 
+def buyuk(x):
+    # Türkçe uyumlu büyük harf (i -> İ, ı -> I)
+    x = str(x)
+    if secilen_dil == "Türkçe":
+        x = x.replace("i", "İ").replace("ı", "I")
+    return x.upper()
+
 def page_header(title, icon="", subtitle=None, eyebrow=None, soft=False):
     icon_html = f"<div class='ph-icon{' soft' if soft else ''}'>{icon}</div>" if icon else ""
     eyebrow_html = f"<div class='ph-eyebrow'>{_e(eyebrow)}</div>" if eyebrow else ""
     sub_html = f"<div class='ph-sub'>{subtitle}</div>" if subtitle else ""
-    st.markdown(f"<div class='page-head'>{icon_html}<div>{eyebrow_html}<div class='ph-title'>{_e(title)}</div>{sub_html}</div></div>", unsafe_allow_html=True)
+    st.markdown(f"<div class='page-head'>{icon_html}<div>{eyebrow_html}<div class='ph-title'>{_e(buyuk(title))}</div>{sub_html}</div></div>", unsafe_allow_html=True)
 
 def section_label(text, count=None):
     count_html = f"<span class='count'>{count}</span>" if count is not None else ""
@@ -722,7 +713,19 @@ def initials(name):
     parts = str(name).split()
     return _e("".join(p[0] for p in parts[:2]).upper() or "?")
 
-GRAFIK_RENGI = "#FF6B3D"
+GRAFIK_RENGI = "#C8FF2E"
+
+def date_hero(d):
+    gunler_tr = ["Pazartesi", "Salı", "Çarşamba", "Perşembe", "Cuma", "Cumartesi", "Pazar"]
+    aylar_tr = ["Ocak", "Şubat", "Mart", "Nisan", "Mayıs", "Haziran", "Temmuz", "Ağustos", "Eylül", "Ekim", "Kasım", "Aralık"]
+    gun_adi = gunler_tr[d.weekday()] if secilen_dil == "Türkçe" else cal_module.day_name[d.weekday()]
+    ay_adi = aylar_tr[d.month - 1] if secilen_dil == "Türkçe" else cal_module.month_name[d.month]
+    bugun = f"<span class='today-tag'>{t['today']}</span>" if d == date.today() else ""
+    st.markdown(
+        f"<div class='date-hero'><div class='dh-day'>{d.day:02d}</div>"
+        f"<div class='dh-meta'><div class='dh-week'>{gun_adi} {bugun}</div><div class='dh-month'>{ay_adi} {d.year}</div></div></div>",
+        unsafe_allow_html=True,
+    )
 
 # --- OTURUM DEĞİŞKENLER ---
 if 'sayfa' not in st.session_state: st.session_state.sayfa = 'ana_sayfa'
@@ -789,7 +792,7 @@ def render_top_nav():
                 st.session_state.sayfa = 'grup_sayfasi'
                 st.rerun()
         with n2:
-            if st.button(t["nav_daily"], key="nav_daily_btn", type="primary" if st.session_state.sayfa == 'kisi_sayfasi' else "secondary", use_container_width=True):
+            if st.button(t["nav_log"], key="nav_daily_btn", type="primary" if st.session_state.sayfa == 'kisi_sayfasi' else "secondary", use_container_width=True):
                 st.session_state.sayfa = 'kisi_sayfasi'
                 st.rerun()
         with n3:
@@ -844,14 +847,16 @@ if st.session_state.sayfa == 'ana_sayfa':
     df_gruplar = veri_getir("Gruplar", ["Grup Adı"])
     page_header(t['groups_title'].replace("🏋️‍♂️", "").strip(), icon="🏋️", subtitle=t['home_sub'], eyebrow=t['home_eyebrow'])
     
-    with st.container(border=True, key="card_list_groups"):
+    with st.container(border=True, key="card_tiles_groups"):
         section_label(t['existing_groups'], len(df_gruplar) if not df_gruplar.empty else None)
         if not df_gruplar.empty:
-            for index, row in df_gruplar.iterrows():
-                if st.button(f"📁 {row['Grup Adı']}", use_container_width=True):
-                    st.session_state.secili_grup = row['Grup Adı']
-                    st.session_state.sayfa = 'grup_sayfasi'
-                    st.rerun()
+            _grid = st.columns(2)
+            for _i, (index, row) in enumerate(df_gruplar.iterrows()):
+                with _grid[_i % 2]:
+                    if st.button(buyuk(row['Grup Adı']), key=f"grp_tile_{index}", use_container_width=True):
+                        st.session_state.secili_grup = row['Grup Adı']
+                        st.session_state.sayfa = 'grup_sayfasi'
+                        st.rerun()
         else:
             st.info(t["no_group"])
             
@@ -876,16 +881,18 @@ elif st.session_state.sayfa == 'grup_sayfasi':
             st.rerun()
     page_header(st.session_state.secili_grup, icon="👥", subtitle=t['group_sub'], eyebrow=t['group_eyebrow'])
         
-    with st.container(border=True, key="card_list_members"):
+    with st.container(border=True, key="card_tiles_members"):
         grup_uyeleri = df_kullanicilar[df_kullanicilar['Grup Adı'] == st.session_state.secili_grup]
         section_label(t['members'], len(grup_uyeleri) if not grup_uyeleri.empty else None)
         
         if not grup_uyeleri.empty:
-            for index, row in grup_uyeleri.iterrows():
-                if st.button(f"👤 {row['Kullanıcı Adı']}", use_container_width=True):
-                    st.session_state.secili_kisi = row['Kullanıcı Adı']
-                    st.session_state.sayfa = 'kisi_sayfasi'
-                    st.rerun()
+            _grid = st.columns(2)
+            for _i, (index, row) in enumerate(grup_uyeleri.iterrows()):
+                with _grid[_i % 2]:
+                    if st.button(buyuk(row['Kullanıcı Adı']), key=f"usr_tile_{index}", use_container_width=True):
+                        st.session_state.secili_kisi = row['Kullanıcı Adı']
+                        st.session_state.sayfa = 'kisi_sayfasi'
+                        st.rerun()
         else:
             st.info(t["no_member"])
             
@@ -931,13 +938,18 @@ elif st.session_state.sayfa == 'kisi_sayfasi':
         else:
             st.info(t["no_chart_data"])
 
-    with st.container(border=True, key="card_tools"):
-        secili_tarih_gorunen = st.session_state["secili_tarih_widget"].strftime('%d/%m/%Y')
-        with st.expander(f"📅 {t['date']}: **{secili_tarih_gorunen}**", expanded=False):
-            antrenman_takvimi_ciz(df_antrenmanlar, st.session_state.secili_kisi, st.session_state.secili_grup)
-        secili_tarih = st.session_state["secili_tarih_widget"]
+    # Tarih kartı: büyük tarih göstergesi + tarih seçici her zaman görünür
+    with st.container(key="card_date"):
+        date_hero(st.session_state["secili_tarih_widget"])
+        antrenman_takvimi_ciz(df_antrenmanlar, st.session_state.secili_kisi, st.session_state.secili_grup)
+    secili_tarih = st.session_state["secili_tarih_widget"]
 
-        with st.expander(t["load_program_panel"]):
+    # Eski açılır paneller yerine sekmeli araç kutusu
+    with st.container(key="tools_wrap"):
+        tab_set, tab_prog, tab_leg, tab_mng = st.tabs([t["tab_add_set"], t["tab_program"], t["tab_legacy"], t["tab_manage"]])
+
+        with tab_prog:
+            subhead(t["load_program_panel"])
             kisi_programlari_yukle = df_programlar[df_programlar['Kullanıcı'] == st.session_state.secili_kisi]
             if kisi_programlari_yukle.empty:
                 st.info(t["no_program"])
@@ -993,7 +1005,8 @@ elif st.session_state.sayfa == 'kisi_sayfasi':
                         st.rerun()
 
         # --- LEGACY HAREKETTEN BUGÜNE DİREKT EKLE ---
-        with st.expander(t["legacy_add_panel"]):
+        with tab_leg:
+            subhead(t["legacy_add_panel"])
             st.caption(t["legacy_add_desc"])
             if df_legacy.empty:
                 st.info(t["legacy_empty"])
@@ -1074,7 +1087,8 @@ elif st.session_state.sayfa == 'kisi_sayfasi':
                             st.rerun()
 
         # --- TEMEL HAREKET LİSTESİNİ YÖNET (EKLE/SİL) ---
-        with st.expander(t["legacy_manage_panel"]):
+        with tab_mng:
+            subhead(t["legacy_manage_panel"])
             st.caption(t["legacy_manage_desc"])
             mevcut_kas_gruplari_legacy = df_hareketler['Kas Grubu'].unique() if not df_hareketler.empty else ["Chest", "Back", "Shoulder", "Biceps", "Triceps", "Legs", "Cardio"]
             lc_kas, lc_har = st.columns(2)
@@ -1101,7 +1115,7 @@ elif st.session_state.sayfa == 'kisi_sayfasi':
                     st.success(f"{lc_sil_secim} {t['legacy_delete_success']}")
                     st.rerun()
 
-    with st.expander(f"➕ {t['add_new_set']}", expanded=False):
+    with tab_set:
         col1, col2 = st.columns(2)
         mevcut_kas_gruplari = df_hareketler['Kas Grubu'].unique() if not df_hareketler.empty else ["Chest", "Back", "Shoulder", "Biceps", "Triceps", "Legs", "Cardio"]
         with col1: secili_kas = st.selectbox(t["muscle_group"], mevcut_kas_gruplari)
@@ -1358,7 +1372,7 @@ elif st.session_state.sayfa == 'program_sayfasi':
                 st.session_state.secili_program = None
                 st.rerun()
         section_label(f"📁 {t['program_eyebrow']}")
-        st.markdown(f"<div class='ph-title' style='font-size:1.35rem;font-weight:800;margin:-4px 0 10px 0;'>{_e(st.session_state.secili_program)}</div>", unsafe_allow_html=True)
+        st.markdown(f"<div style='font-family:var(--display);font-size:2rem;line-height:1.05;margin:-2px 0 12px 0;'>{_e(buyuk(st.session_state.secili_program))}</div>", unsafe_allow_html=True)
 
         program_icerik = df_program_detay[(df_program_detay['Program Adı'] == st.session_state.secili_program) & (df_program_detay['Kullanıcı'] == st.session_state.secili_kisi)]
 
@@ -1610,6 +1624,6 @@ elif st.session_state.sayfa == 'istatistik_sayfasi':
             grup_gecmisi['Süre (dk)'] = pd.to_numeric(grup_gecmisi['Süre (dk)'], errors='coerce').fillna(0)
             kard_s = grup_gecmisi.groupby('Kullanıcı')['Süre (dk)'].sum().reset_index()
             kard_s.set_index('Kullanıcı', inplace=True)
-            st.bar_chart(kard_s['Süre (dk)'], color="#3DDC97")
+            st.bar_chart(kard_s['Süre (dk)'], color="#FF4D2E")
         else:
             st.info(t["no_chart_data"])
