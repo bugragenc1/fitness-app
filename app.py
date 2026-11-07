@@ -3,6 +3,7 @@ import streamlit.components.v1 as components
 from streamlit_gsheets import GSheetsConnection
 import pandas as pd
 import calendar as cal_module
+import html
 from datetime import date
 
 # --- DİL (LANGUAGE) SÖZLÜĞÜ ---
@@ -114,7 +115,7 @@ LANG = {
         "comp_days": "Workout Days by Member",
         "comp_cardio": "Total Cardio Duration (min) by Member",
         "nav_daily": "📝 Daily Log",
-        "calendar_legend": "🟢 Workout day · 🔵 Selected day",
+        "calendar_legend": "🟢 Workout day · 🟠 Selected day",
         "legacy_add_panel": "📚 Add From Legacy List To Today",
         "legacy_add_desc": "Pick a common exercise from the curated legacy list and log it directly to today's workout. This does NOT add it to your personal exercise database.",
         "legacy_select_group": "Muscle Group",
@@ -129,6 +130,23 @@ LANG = {
         "legacy_delete_select": "Select Legacy Exercise to Delete",
         "legacy_delete_btn": "Delete from Legacy List",
         "legacy_delete_success": "deleted from the legacy list!",
+        "app_name": "Workout",
+        "app_tagline": "Track · Plan · Progress",
+        "home_eyebrow": "Welcome",
+        "home_sub": "Pick a group to continue or create a new one.",
+        "group_eyebrow": "Group",
+        "group_sub": "Choose a member to open their log.",
+        "nav_groups": "👥 Group",
+        "nav_programs": "📋 Programs",
+        "nav_stats": "📊 Stats",
+        "day_workout": "Workout of the Day",
+        "tools": "Tools",
+        "exercises_short": "Exercises",
+        "sets_short": "Sets",
+        "volume_short": "Volume",
+        "days_unit": "days",
+        "min_unit": "min",
+        "program_eyebrow": "Program",
     },
     "Türkçe": {
         "groups_title": "🏋️‍♂️ Antrenman Grupları",
@@ -237,7 +255,7 @@ LANG = {
         "comp_days": "Üyelere Göre Antrenman Günleri",
         "comp_cardio": "Üyelere Göre Toplam Kardiyo (dk)",
         "nav_daily": "📝 Günlük",
-        "calendar_legend": "🟢 Antrenman yapılan gün · 🔵 Seçili gün",
+        "calendar_legend": "🟢 Antrenman yapılan gün · 🟠 Seçili gün",
         "legacy_add_panel": "📚 Temel Hareketten Bugüne Ekle",
         "legacy_add_desc": "Hazır temel hareket listesinden seçip doğrudan bugünün antrenmanına ekleyin. Bu işlem hareketi kişisel veritabanınıza (Hareketler) EKLEMEZ.",
         "legacy_select_group": "Kas Grubu",
@@ -252,6 +270,23 @@ LANG = {
         "legacy_delete_select": "Silinecek Temel Hareketi Seçin",
         "legacy_delete_btn": "Listeden Sil",
         "legacy_delete_success": "temel hareket listesinden silindi!",
+        "app_name": "Workout",
+        "app_tagline": "Takip · Plan · Gelişim",
+        "home_eyebrow": "Hoş geldin",
+        "home_sub": "Devam etmek için bir grup seç ya da yenisini oluştur.",
+        "group_eyebrow": "Grup",
+        "group_sub": "Günlüğünü açmak için bir üye seç.",
+        "nav_groups": "👥 Grup",
+        "nav_programs": "📋 Program",
+        "nav_stats": "📊 İstatistik",
+        "day_workout": "Günün Antrenmanı",
+        "tools": "Araçlar",
+        "exercises_short": "Hareket",
+        "sets_short": "Set",
+        "volume_short": "Hacim",
+        "days_unit": "gün",
+        "min_unit": "dk",
+        "program_eyebrow": "Program",
     }
 }
 
@@ -263,49 +298,306 @@ st.set_page_config(page_title="Workout App", page_icon="💪", layout="centered"
 
 custom_css = """
 <style>
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+
+    /* ===== TASARIM DEĞİŞKENLERİ ===== */
+    :root {
+        --acc: #FF6B3D;
+        --acc-2: #FF9A4D;
+        --acc-soft: rgba(255, 107, 61, 0.14);
+        --ok: #3DDC97;
+        --ok-soft: rgba(61, 220, 151, 0.14);
+        --bg: #0B0D12;
+        --card: #141821;
+        --card-2: #1B2030;
+        --line: rgba(255, 255, 255, 0.08);
+        --line-2: rgba(255, 255, 255, 0.14);
+        --txt: #ECEEF3;
+        --muted: #8A93A6;
+        --danger: #FF5C6C;
+        --r-lg: 20px;
+        --r-md: 14px;
+        --r-sm: 10px;
+    }
+
     #MainMenu {visibility: hidden;}
     header {visibility: hidden;}
     footer {visibility: hidden;}
+
+    .stApp {
+        font-family: 'Plus Jakarta Sans', 'Segoe UI', system-ui, sans-serif;
+        background:
+            radial-gradient(900px 420px at 50% -160px, rgba(255, 107, 61, 0.16), transparent 70%),
+            var(--bg);
+        color: var(--txt);
+    }
+    .stApp p, .stApp label, .stApp input, .stApp button, .stApp summary, .stApp h1, .stApp h2, .stApp h3 {
+        font-family: 'Plus Jakarta Sans', 'Segoe UI', system-ui, sans-serif;
+    }
     .block-container {
-        padding-top: 1.5rem;
-        padding-bottom: 2rem;
+        padding-top: 0.5rem;
+        padding-bottom: 7.5rem;   /* alttaki sabit menü için boşluk */
         padding-left: 1rem;
         padding-right: 1rem;
-        max-width: 800px;
+        max-width: 760px;
     }
-    div[data-testid="stButton"] > button {
-        border-radius: 20px;
-        font-weight: 600;
+    hr { border-color: var(--line) !important; margin: 1rem 0 !important; }
+    /* Görünmez yardımcı öğelerin (stil + dropdown betiği) boşluk kaplamasını önle */
+    div[data-testid="stElementContainer"]:has(> div > div > style),
+    div[data-testid="stElementContainer"]:has(iframe[title="streamlit.components.v1.html"]) { margin-bottom: -1rem; }
+
+    /* ===== MOBİLDE KOLONLAR ALT ALTA DÜŞMESİN (set satırları, menü vb. yan yana kalsın) ===== */
+    div[data-testid="stHorizontalBlock"] {
+        flex-wrap: nowrap !important;
+        gap: 0.5rem !important;
+    }
+    div[data-testid="stColumn"] {
+        min-width: 0 !important;
+    }
+
+    /* ===== ÜST BAR ===== */
+    .brand {
+        display: flex; align-items: center; gap: 10px;
+        font-weight: 800; font-size: 1.05rem; letter-spacing: -0.01em;
+        padding-top: 4px;
+    }
+    .brand-logo {
+        width: 34px; height: 34px; border-radius: 11px;
+        display: grid; place-items: center; font-size: 1.05rem;
+        background: linear-gradient(135deg, var(--acc), var(--acc-2));
+        box-shadow: 0 6px 18px rgba(255, 107, 61, 0.35);
+    }
+    .brand small { display: block; font-weight: 500; font-size: 0.72rem; color: var(--muted); letter-spacing: 0; margin-top: -2px; }
+
+    /* ===== SAYFA BAŞLIKLARI ===== */
+    .page-head { margin: 0.6rem 0 1.1rem 0; display: flex; align-items: center; gap: 14px; }
+    .page-head .ph-icon {
+        flex: 0 0 auto; width: 52px; height: 52px; border-radius: 16px;
+        display: grid; place-items: center; font-size: 1.5rem; font-weight: 800; color: #fff;
+        background: linear-gradient(135deg, var(--acc), var(--acc-2));
+        box-shadow: 0 8px 24px rgba(255, 107, 61, 0.30);
+    }
+    .page-head .ph-icon.soft { background: var(--card-2); box-shadow: none; border: 1px solid var(--line-2); }
+    .page-head .ph-eyebrow { font-size: 0.72rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--acc); }
+    .page-head .ph-title { font-size: 1.55rem; font-weight: 800; letter-spacing: -0.02em; line-height: 1.15; color: var(--txt); word-break: break-word; }
+    .page-head .ph-sub { font-size: 0.86rem; color: var(--muted); margin-top: 2px; }
+
+    .section-label {
+        display: flex; align-items: center; gap: 8px;
+        font-size: 0.78rem; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase;
+        color: var(--muted); margin: 0.1rem 0 0.4rem 0;
+    }
+    .section-label .count {
+        background: var(--card-2); color: var(--txt); border-radius: 999px;
+        padding: 1px 8px; font-size: 0.72rem; letter-spacing: 0;
+    }
+    .subhead { font-weight: 700; font-size: 0.95rem; margin: 0.4rem 0 0.3rem 0; color: var(--txt); }
+
+    /* ===== KARTLAR (çerçeveli container'lar) ===== */
+    div[class*="st-key-card_"] {
+        background: var(--card) !important;
+        border: 1px solid var(--line) !important;
+        border-radius: var(--r-lg) !important;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+    }
+
+    /* ===== BUTONLAR ===== */
+    div[data-testid="stButton"] > button,
+    div[data-testid="stDownloadButton"] > button {
+        min-height: 46px;
+        border-radius: var(--r-md);
+        font-weight: 700;
+        transition: transform 0.15s ease, box-shadow 0.2s ease, background 0.2s ease, border-color 0.2s ease;
+    }
+    div[data-testid="stButton"] > button[kind="primary"] {
+        background: linear-gradient(135deg, var(--acc), var(--acc-2));
         border: none;
-        transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-        box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+        color: #fff;
+        box-shadow: 0 8px 22px rgba(255, 107, 61, 0.28);
     }
-    div[data-testid="stButton"] > button:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 4px 8px rgba(0,0,0,0.25);
+    div[data-testid="stButton"] > button[kind="primary"]:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 12px 28px rgba(255, 107, 61, 0.38);
+        color: #fff;
     }
-    div[data-testid="stButton"] > button:active {
-        transform: translateY(0);
-        box-shadow: 0 1px 2px rgba(0,0,0,0.15);
+    div[data-testid="stButton"] > button[kind="secondary"],
+    div[data-testid="stDownloadButton"] > button {
+        background: var(--card-2);
+        border: 1px solid var(--line);
+        color: var(--txt);
     }
+    div[data-testid="stButton"] > button[kind="secondary"]:hover,
+    div[data-testid="stDownloadButton"] > button:hover {
+        border-color: var(--acc);
+        color: var(--txt);
+    }
+    div[data-testid="stButton"] > button p,
+    div[data-testid="stDownloadButton"] > button p { white-space: normal; overflow: visible; text-overflow: clip; line-height: 1.25; }
+    div[data-testid="stButton"] > button:active,
+    div[data-testid="stDownloadButton"] > button:active { transform: scale(0.98); }
+
+    /* Liste butonları (gruplar, üyeler, programlar) -> dokunmatik liste satırı */
+    div[class*="st-key-card_list"] div[data-testid="stButton"] > button {
+        min-height: 58px;
+        justify-content: flex-start;
+        text-align: left;
+        padding: 0 16px;
+        background: var(--card-2);
+        border: 1px solid var(--line);
+        box-shadow: none;
+        position: relative;
+    }
+    div[class*="st-key-card_list"] div[data-testid="stButton"] > button > div { justify-content: flex-start; width: 100%; }
+    div[class*="st-key-card_list"] div[data-testid="stButton"] > button p { font-size: 1rem; font-weight: 600; }
+    div[class*="st-key-card_list"] div[data-testid="stButton"] > button::after {
+        content: "›"; position: absolute; right: 16px; top: 50%; transform: translateY(-52%);
+        font-size: 1.6rem; font-weight: 400; color: var(--muted);
+    }
+    div[class*="st-key-card_list"] div[data-testid="stButton"] > button:hover::after { color: var(--acc); }
+
+    /* Geri butonları -> sade, küçük */
+    div[class*="st-key-back_"] { margin-top: 8px; }
+    div[class*="st-key-back_"] div[data-testid="stButton"] > button {
+        min-height: 38px; width: auto !important; padding: 0 14px;
+        background: transparent; border: 1px solid var(--line); box-shadow: none;
+        color: var(--muted); font-weight: 600;
+    }
+    div[class*="st-key-back_"] div[data-testid="stButton"] > button p { font-size: 0.88rem; }
+
+    /* Satır silme (✕) butonları */
+    div[class*="st-key-d_"] button, div[class*="st-key-pd_"] button {
+        min-height: 40px !important; padding: 0 !important; width: 100%;
+        background: transparent !important; border: 1px solid var(--line) !important;
+        color: var(--danger) !important; box-shadow: none !important;
+    }
+    div[class*="st-key-d_"] button:hover, div[class*="st-key-pd_"] button:hover {
+        background: rgba(255, 92, 108, 0.12) !important; border-color: var(--danger) !important;
+    }
+
+    /* Tehlikeli eylem butonları (tamamen silme) */
+    div[class*="st-key-del_btn_"] button, div[class*="st-key-d_p_"] button {
+        color: var(--danger) !important; border-color: rgba(255, 92, 108, 0.35) !important; background: transparent !important;
+    }
+
+    /* ===== ALT SABİT MENÜ (tab bar) ===== */
+    div.st-key-topnav {
+        position: fixed;
+        left: 0; right: 0; bottom: 0;
+        z-index: 999;
+        padding: 10px max(12px, calc((100vw - 760px) / 2 + 12px)) calc(10px + env(safe-area-inset-bottom));
+        background: rgba(11, 13, 18, 0.88);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        border-top: 1px solid var(--line);
+    }
+    div.st-key-topnav div[data-testid="stHorizontalBlock"] { gap: 6px !important; }
+    div.st-key-topnav div[data-testid="stButton"] > button {
+        min-height: 52px;
+        border-radius: 14px;
+        padding: 4px 2px;
+        background: transparent;
+        border: none;
+        box-shadow: none !important;
+        color: var(--muted);
+    }
+    div.st-key-topnav div[data-testid="stButton"] > button p { font-size: 0.8rem; font-weight: 700; line-height: 1.25; white-space: normal; }
+    div.st-key-topnav div[data-testid="stButton"] > button[kind="primary"] {
+        background: var(--acc-soft);
+        color: var(--acc);
+    }
+    div.st-key-topnav div[data-testid="stButton"] > button:hover { transform: none; color: var(--txt); }
+
+    /* ===== EXPANDER (açılır paneller) ===== */
+    div[data-testid="stExpander"] details {
+        background: var(--card);
+        border: 1px solid var(--line);
+        border-radius: var(--r-md);
+        overflow: hidden;
+    }
+    div[data-testid="stExpander"] details[open] { border-color: var(--line-2); }
+    div[data-testid="stExpander"] summary {
+        padding: 0.85rem 1rem;
+        font-weight: 600;
+    }
+    div[data-testid="stExpander"] summary:hover { color: var(--acc); }
+    div[data-testid="stExpander"] summary p { font-size: 0.95rem; }
+    .streamlit-expanderHeader { font-weight: 600 !important; font-size: 1.05rem !important; }
+    /* Kart içindeki paneller bir ton açık */
+    div[class*="st-key-card_"] div[data-testid="stExpander"] details { background: var(--card-2); }
+
+    /* ===== FORM ELEMANLARI ===== */
+    input, select { border-radius: var(--r-sm) !important; }
+    div[data-baseweb="input"], div[data-baseweb="select"] > div, div[data-testid="stNumberInputContainer"] {
+        border-radius: var(--r-sm) !important;
+    }
+    div[data-testid="stNumberInput"] input { font-weight: 700; font-variant-numeric: tabular-nums; }
+    label[data-testid="stWidgetLabel"] p { font-size: 0.8rem !important; color: var(--muted) !important; font-weight: 600; }
+
+    /* Set satırları */
+    .set-pill {
+        height: 40px; border-radius: var(--r-sm);
+        display: grid; place-items: center;
+        background: var(--acc-soft); color: var(--acc);
+        font-weight: 800; font-size: 0.95rem; font-variant-numeric: tabular-nums;
+    }
+    div[data-testid="stMarkdownContainer"]:has(.set-pill),
+    div[data-testid="stMarkdownContainer"]:has(.col-head) { margin-bottom: 0 !important; }
+    .set-pill.cardio { background: var(--ok-soft); color: var(--ok); }
+    .col-head { font-size: 0.7rem; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase; color: var(--muted); text-align: center; }
+
+    /* Mekanik / bilgi rozetleri */
+    .chip {
+        display: inline-flex; align-items: center; gap: 6px;
+        padding: 3px 10px; border-radius: 999px; font-size: 0.78rem; font-weight: 700;
+        background: var(--card-2); border: 1px solid var(--line); color: var(--txt);
+    }
+    .chip.acc { background: var(--acc-soft); border-color: transparent; color: var(--acc); }
+    .chip.ok { background: var(--ok-soft); border-color: transparent; color: var(--ok); }
+    .chip-row { display: flex; flex-wrap: wrap; gap: 6px; margin: 4px 0 6px 0; }
+
+    /* Takvim gün etiketleri */
+    .day-chip {
+        display: inline-grid; place-items: center; min-width: 34px; height: 34px; padding: 0 6px;
+        margin: 3px 3px 0 0; border-radius: 10px; font-size: 0.85rem; font-weight: 700;
+        background: var(--ok-soft); color: var(--ok);
+    }
+    .day-chip.sel { background: linear-gradient(135deg, var(--acc), var(--acc-2)); color: #fff; }
+
+    /* ===== İSTATİSTİK KARTLARI ===== */
+    .stat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin: 4px 0 12px 0; }
+    .stat {
+        background: var(--card-2); border: 1px solid var(--line); border-radius: var(--r-md);
+        padding: 14px 14px 12px 14px; min-width: 0;
+    }
+    .stat .s-label { font-size: 0.72rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); }
+    .stat .s-value { font-size: 1.45rem; font-weight: 800; letter-spacing: -0.02em; margin-top: 4px; line-height: 1.2; word-break: break-word; }
+    .stat .s-value.small { font-size: 1rem; }
+    .stat .s-unit { font-size: 0.85rem; font-weight: 600; color: var(--muted); margin-left: 3px; }
+    .stat.hl { background: linear-gradient(135deg, rgba(255,107,61,0.22), rgba(255,154,77,0.10)); border-color: rgba(255,107,61,0.35); }
+    .summary-strip { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin: 0 0 12px 0; }
+    .summary-strip .stat { padding: 10px 12px; }
+    .summary-strip .s-value { font-size: 1.2rem; }
+
     div[data-testid="metric-container"] {
-        background-color: rgba(255, 255, 255, 0.03);
-        border-radius: 15px;
+        background-color: var(--card-2);
+        border-radius: var(--r-md);
         padding: 15px;
-        border: 1px solid rgba(255,255,255,0.1);
-        text-align: center;
-        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-    }
-    .streamlit-expanderHeader {
-        font-weight: 600 !important;
-        font-size: 1.1rem !important;
-    }
-    h1, h2, h3 {
+        border: 1px solid var(--line);
         text-align: center;
     }
-    input, select {
-        border-radius: 10px !important;
+
+    /* ===== UYARI / BİLGİ KUTULARI ===== */
+    div[data-testid="stAlert"] { border-radius: var(--r-md); }
+    div[data-testid="stCaptionContainer"] { color: var(--muted); }
+
+    h1, h2, h3 { letter-spacing: -0.02em; }
+
+    /* ===== MASAÜSTÜ ===== */
+    @media (min-width: 700px) {
+        .page-head .ph-title { font-size: 1.9rem; }
+        .block-container { padding-top: 1.5rem; }
     }
+
     /* Dropdown / Selectbox'larda klavye ile serbest yazmayı ve mobil sanal klavyeyi engelleme */
     div[data-testid="stSelectbox"] input,
     .stSelectbox input,
@@ -386,11 +678,51 @@ components.html(
     width=0,
 )
 
-# Dil seçeneğini ana ekranın en üstüne, küçük bir buton gibi ekliyoruz
-dil_kolonu, bos_kolon = st.columns([1, 2])
+# Üst bar: solda uygulama logosu, sağda küçük dil seçici
+bos_kolon, dil_kolonu = st.columns([2.2, 1], vertical_alignment="center")
 with dil_kolonu:
     secilen_dil = st.selectbox("🌐 Dil", ["Türkçe", "English"], index=1, label_visibility="collapsed")
 t = LANG[secilen_dil]
+with bos_kolon:
+    st.markdown(
+        f"<div class='brand'><div class='brand-logo'>💪</div><div>{t['app_name']}<small>{t['app_tagline']}</small></div></div>",
+        unsafe_allow_html=True,
+    )
+
+# --- ARAYÜZ YARDIMCILARI (sadece görünüm) ---
+def _e(x):
+    return html.escape(str(x))
+
+def page_header(title, icon="", subtitle=None, eyebrow=None, soft=False):
+    icon_html = f"<div class='ph-icon{' soft' if soft else ''}'>{icon}</div>" if icon else ""
+    eyebrow_html = f"<div class='ph-eyebrow'>{_e(eyebrow)}</div>" if eyebrow else ""
+    sub_html = f"<div class='ph-sub'>{subtitle}</div>" if subtitle else ""
+    st.markdown(f"<div class='page-head'>{icon_html}<div>{eyebrow_html}<div class='ph-title'>{_e(title)}</div>{sub_html}</div></div>", unsafe_allow_html=True)
+
+def section_label(text, count=None):
+    count_html = f"<span class='count'>{count}</span>" if count is not None else ""
+    st.markdown(f"<div class='section-label'>{text}{count_html}</div>", unsafe_allow_html=True)
+
+def subhead(text):
+    st.markdown(f"<div class='subhead'>{text}</div>", unsafe_allow_html=True)
+
+def set_pill(col, n, cardio=False):
+    col.markdown(f"<div class='set-pill{' cardio' if cardio else ''}'>{n}</div>", unsafe_allow_html=True)
+
+def set_table_header(ratios, labels):
+    cols = st.columns(ratios)
+    for c, lbl in zip(cols, labels):
+        c.markdown(f"<div class='col-head'>{lbl}</div>", unsafe_allow_html=True)
+
+def mechanic_chip(mekanik):
+    cls = "ok" if mekanik == "Kardiyo" else "acc"
+    st.markdown(f"<div class='chip-row'><span class='chip {cls}'>{t['mechanic']}: {_e(mekanik)}</span></div>", unsafe_allow_html=True)
+
+def initials(name):
+    parts = str(name).split()
+    return _e("".join(p[0] for p in parts[:2]).upper() or "?")
+
+GRAFIK_RENGI = "#FF6B3D"
 
 # --- OTURUM DEĞİŞKENLER ---
 if 'sayfa' not in st.session_state: st.session_state.sayfa = 'ana_sayfa'
@@ -448,27 +780,26 @@ def pleg_sablon_guncelle():
         if key.startswith("pleg_w_new_"): st.session_state[key] = yeni_w
         elif key.startswith("pleg_r_new_"): st.session_state[key] = yeni_r
 
-# Ortak Navigasyon Barı
+# Ortak Navigasyon Barı (mobilde ekranın altına sabitlenen tab bar)
 def render_top_nav():
-    st.write("")
-    n1, n2, n3, n4 = st.columns([1,1,1,1.5])
-    with n1:
-        if st.button("👥 " + t["back_to_groups"].split(" ")[-1], use_container_width=True):
-            st.session_state.sayfa = 'grup_sayfasi'
-            st.rerun()
-    with n2:
-        if st.button(t["nav_daily"], type="primary" if st.session_state.sayfa == 'kisi_sayfasi' else "secondary", use_container_width=True):
-            st.session_state.sayfa = 'kisi_sayfasi'
-            st.rerun()
-    with n3:
-        if st.button("📋 Prog", type="primary" if st.session_state.sayfa == 'program_sayfasi' else "secondary", use_container_width=True):
-            st.session_state.sayfa = 'program_sayfasi'
-            st.rerun()
-    with n4:
-        if st.button("📊 Stats", type="primary" if st.session_state.sayfa == 'istatistik_sayfasi' else "secondary", use_container_width=True):
-            st.session_state.sayfa = 'istatistik_sayfasi'
-            st.rerun()
-    st.divider()
+    with st.container(key="topnav"):
+        n1, n2, n3, n4 = st.columns(4)
+        with n1:
+            if st.button(t["nav_groups"], key="nav_groups_btn", use_container_width=True):
+                st.session_state.sayfa = 'grup_sayfasi'
+                st.rerun()
+        with n2:
+            if st.button(t["nav_daily"], key="nav_daily_btn", type="primary" if st.session_state.sayfa == 'kisi_sayfasi' else "secondary", use_container_width=True):
+                st.session_state.sayfa = 'kisi_sayfasi'
+                st.rerun()
+        with n3:
+            if st.button(t["nav_programs"], key="nav_prog_btn", type="primary" if st.session_state.sayfa == 'program_sayfasi' else "secondary", use_container_width=True):
+                st.session_state.sayfa = 'program_sayfasi'
+                st.rerun()
+        with n4:
+            if st.button(t["nav_stats"], key="nav_stats_btn", type="primary" if st.session_state.sayfa == 'istatistik_sayfasi' else "secondary", use_container_width=True):
+                st.session_state.sayfa = 'istatistik_sayfasi'
+                st.rerun()
 
 # Antrenman Günlerini İşaretleyen Takvim Widget'ı
 # NOT: Özel buton-grid takvimi mobilde bazı cihaz/tarayıcılarda hâlâ büyük/dikey
@@ -498,11 +829,11 @@ def antrenman_takvimi_ciz(df_antrenmanlar, kullanici, grup):
 
     ay_gunleri = sorted(g.day for g in antrenman_gunleri if g.year == yeni_tarih.year and g.month == yeni_tarih.month)
     if ay_gunleri:
-        gun_etiketleri = " ".join(
-            f"<span style='display:inline-block; padding:2px 8px; margin:2px; border-radius:10px; background:rgba(46,204,113,0.18); color:#2ecc71; font-size:0.8rem; font-weight:600;'>{'🟢' if g != yeni_tarih.day else '🔵'} {g}</span>"
+        gun_etiketleri = "".join(
+            f"<span class='day-chip{' sel' if g == yeni_tarih.day else ''}'>{g}</span>"
             for g in ay_gunleri
         )
-        st.markdown(f"<div style='margin-top:4px;'>{gun_etiketleri}</div>", unsafe_allow_html=True)
+        st.markdown(f"<div style='margin-top:6px;'>{gun_etiketleri}</div>", unsafe_allow_html=True)
     st.caption(f"{ay_adi} {yeni_tarih.year} · {t['calendar_legend']}")
 
     return yeni_tarih
@@ -511,10 +842,10 @@ def antrenman_takvimi_ciz(df_antrenmanlar, kullanici, grup):
 # --- SAYFA 1: ANA SAYFA (GRUPLAR) ---
 if st.session_state.sayfa == 'ana_sayfa':
     df_gruplar = veri_getir("Gruplar", ["Grup Adı"])
-    st.markdown(f"<h1>{t['groups_title']}</h1>", unsafe_allow_html=True)
+    page_header(t['groups_title'].replace("🏋️‍♂️", "").strip(), icon="🏋️", subtitle=t['home_sub'], eyebrow=t['home_eyebrow'])
     
-    with st.container(border=True):
-        st.markdown(f"<h3 style='font-size: 1.2rem; color: #888;'>{t['existing_groups']}</h3>", unsafe_allow_html=True)
+    with st.container(border=True, key="card_list_groups"):
+        section_label(t['existing_groups'], len(df_gruplar) if not df_gruplar.empty else None)
         if not df_gruplar.empty:
             for index, row in df_gruplar.iterrows():
                 if st.button(f"📁 {row['Grup Adı']}", use_container_width=True):
@@ -524,8 +855,8 @@ if st.session_state.sayfa == 'ana_sayfa':
         else:
             st.info(t["no_group"])
             
-    with st.container(border=True):
-        st.markdown(f"<h3 style='font-size: 1.2rem; color: #888;'>➕ {t['new_group']}</h3>", unsafe_allow_html=True)
+    with st.container(border=True, key="card_new_group"):
+        section_label(f"➕ {t['new_group']}")
         yeni_grup = st.text_input(t["new_group"], label_visibility="collapsed")
         if st.button(t["add_group"], type="primary", use_container_width=True):
             if yeni_grup:
@@ -539,15 +870,15 @@ if st.session_state.sayfa == 'ana_sayfa':
 # --- SAYFA 2: GRUP İÇİ (KİŞİLER) ---
 elif st.session_state.sayfa == 'grup_sayfasi':
     df_kullanicilar = veri_getir("Kullanicilar", ["Grup Adı", "Kullanıcı Adı"])
-    st.markdown(f"<h1>📁 {st.session_state.secili_grup}</h1>", unsafe_allow_html=True)
-    
-    if st.button(t["back_to_groups"], use_container_width=True):
-        st.session_state.sayfa = 'ana_sayfa'
-        st.rerun()
+    with st.container(key="back_groups"):
+        if st.button(t["back_to_groups"], use_container_width=True):
+            st.session_state.sayfa = 'ana_sayfa'
+            st.rerun()
+    page_header(st.session_state.secili_grup, icon="👥", subtitle=t['group_sub'], eyebrow=t['group_eyebrow'])
         
-    with st.container(border=True):
-        st.markdown(f"<h3 style='font-size: 1.2rem; color: #888;'>{t['members']}</h3>", unsafe_allow_html=True)
+    with st.container(border=True, key="card_list_members"):
         grup_uyeleri = df_kullanicilar[df_kullanicilar['Grup Adı'] == st.session_state.secili_grup]
+        section_label(t['members'], len(grup_uyeleri) if not grup_uyeleri.empty else None)
         
         if not grup_uyeleri.empty:
             for index, row in grup_uyeleri.iterrows():
@@ -558,8 +889,8 @@ elif st.session_state.sayfa == 'grup_sayfasi':
         else:
             st.info(t["no_member"])
             
-    with st.container(border=True):
-        st.markdown(f"<h3 style='font-size: 1.2rem; color: #888;'>➕ {t['new_member']}</h3>", unsafe_allow_html=True)
+    with st.container(border=True, key="card_new_member"):
+        section_label(f"➕ {t['new_member']}")
         yeni_kisi = st.text_input(t["new_member"], label_visibility="collapsed")
         if st.button(t["add_member"], type="primary", use_container_width=True):
             if yeni_kisi:
@@ -573,7 +904,7 @@ elif st.session_state.sayfa == 'grup_sayfasi':
 # --- SAYFA 3: KİŞİ DETAYI (GÜNLÜK) ---
 elif st.session_state.sayfa == 'kisi_sayfasi':
     render_top_nav()
-    st.markdown(f"<h2>👤 {st.session_state.secili_kisi} - {t['daily_log']}</h2>", unsafe_allow_html=True)
+    page_header(st.session_state.secili_kisi, icon=initials(st.session_state.secili_kisi), subtitle=f"👥 {_e(st.session_state.secili_grup)}", eyebrow=t['daily_log'])
     
     df_antrenmanlar = veri_getir("Antrenmanlar", ["Tarih", "Grup", "Kullanıcı", "Kas Grubu", "Hareket", "Set", "Ağırlık", "Tekrar", "Süre (dk)", "Kalori", "Mekanik", "Ekipman"])
     df_hareketler = veri_getir("Hareketler", ["Kas Grubu", "Hareket Tipi", "Mekanik", "Ekipman"])
@@ -596,11 +927,11 @@ elif st.session_state.sayfa == 'kisi_sayfasi':
             grafik_verisi = gecmis_tum_setler.groupby('Tarih')['Ağırlık'].max().reset_index().sort_values(by='Tarih')
             grafik_verisi['Tarih'] = grafik_verisi['Tarih'].dt.strftime('%d/%m/%Y')
             grafik_verisi.set_index('Tarih', inplace=True)
-            st.line_chart(grafik_verisi['Ağırlık'].astype(float))
+            st.line_chart(grafik_verisi['Ağırlık'].astype(float), color=GRAFIK_RENGI)
         else:
             st.info(t["no_chart_data"])
 
-    with st.container(border=True):
+    with st.container(border=True, key="card_tools"):
         secili_tarih_gorunen = st.session_state["secili_tarih_widget"].strftime('%d/%m/%Y')
         with st.expander(f"📅 {t['date']}: **{secili_tarih_gorunen}**", expanded=False):
             antrenman_takvimi_ciz(df_antrenmanlar, st.session_state.secili_kisi, st.session_state.secili_grup)
@@ -617,7 +948,7 @@ elif st.session_state.sayfa == 'kisi_sayfasi':
                 if program_icerik_yukle.empty:
                     st.info(t["no_program_content"])
                 else:
-                    st.write(f"**{t['program_preview']}**")
+                    subhead(t['program_preview'])
                     yuklenecek_setler_l = []
                     # Program içeriğini artık (Hareket, Ekipman) ikilisine göre gruplandırıyoruz
                     program_icerik_yukle = program_icerik_yukle.copy()
@@ -628,10 +959,11 @@ elif st.session_state.sayfa == 'kisi_sayfasi':
                         kas_grubu_l = hareket_setleri_l.iloc[0]['Kas Grubu']
                         ekipman_l = hareket_setleri_l.iloc[0]['Ekipman'] if 'Ekipman' in hareket_setleri_l.columns else "-"
                         st.markdown(f"💪 **{ekipman_l} {kas_grubu_l} {hareket_l}**".replace("- ", "").strip())
+                        set_table_header([0.7, 2, 2], [t["set"], "kg", t["reps"]])
 
                         for p_idx, p_row in hareket_setleri_l.iterrows():
-                            cLabel, cW, cR = st.columns([1, 2, 2])
-                            cLabel.markdown(f"<div style='margin-top: 8px;'>{t['set']} {int(p_row['Set'])}</div>", unsafe_allow_html=True)
+                            cLabel, cW, cR = st.columns([0.7, 2, 2], vertical_alignment="center")
+                            set_pill(cLabel, int(p_row['Set']))
                             w_key_l = f"load_w_{secili_program_yukle}_{p_idx}"
                             r_key_l = f"load_r_{secili_program_yukle}_{p_idx}"
                             if w_key_l not in st.session_state: st.session_state[w_key_l] = float(p_row['Ağırlık'])
@@ -673,7 +1005,7 @@ elif st.session_state.sayfa == 'kisi_sayfasi':
                 if leg_hareket:
                     leg_row = df_legacy[(df_legacy['Kas Grubu'] == leg_kas) & (df_legacy['Hareket Tipi'] == leg_hareket)].iloc[0]
                     leg_mekanik = leg_row['Mekanik']
-                    st.caption(f"{t['mechanic']}: **{leg_mekanik}**")
+                    mechanic_chip(leg_mekanik)
 
                     leg_varsayilan_ekip = leg_row['Ekipman'] if 'Ekipman' in leg_row else "Barbell"
                     if st.session_state.get("_aktif_leg_hareket") != leg_hareket:
@@ -695,7 +1027,7 @@ elif st.session_state.sayfa == 'kisi_sayfasi':
                     st.divider()
 
                     if leg_mekanik == "Kardiyo":
-                        st.write(f"**{t['cardio_details']}**")
+                        subhead(t['cardio_details'])
                         def leg_kalori_hesapla(): st.session_state.leg_kardiyo_kalori = int(st.session_state.leg_kardiyo_sure * 10)
                         if 'leg_kardiyo_sure' not in st.session_state: st.session_state.leg_kardiyo_sure = 30
                         if 'leg_kardiyo_kalori' not in st.session_state: st.session_state.leg_kardiyo_kalori = 300
@@ -710,21 +1042,22 @@ elif st.session_state.sayfa == 'kisi_sayfasi':
                             st.success(f"{leg_hareket} {t['success_cardio']}")
                             st.rerun()
                     else:
-                        st.write(f"**{t['template_title']}**")
+                        subhead(t['template_title'])
                         leg_set_sayisi = st.number_input(t["how_many_sets"], min_value=1, max_value=10, value=3, step=1, key="leg_set_sayisi")
                         lc_hedef1, lc_hedef2 = st.columns(2)
                         lc_hedef1.number_input(t["template_w"], step=2.5, key="leg_sablon_w", on_change=leg_sablon_guncelle)
                         lc_hedef2.number_input(t["template_r"], step=1, key="leg_sablon_r", on_change=leg_sablon_guncelle)
 
-                        st.write(f"**{t['edit_sets']}**")
+                        subhead(t['edit_sets'])
+                        set_table_header([0.7, 2, 2], [t["set"], "kg", t["reps"]])
                         leg_bugunku_setler = df_antrenmanlar[(df_antrenmanlar['Tarih'] == secili_tarih.strftime("%Y-%m-%d")) & (df_antrenmanlar['Kullanıcı'] == st.session_state.secili_kisi) & (df_antrenmanlar['Hareket'] == leg_hareket) & (df_antrenmanlar['Ekipman'] == leg_ekipman)]
                         leg_baslangic_seti = len(leg_bugunku_setler) + 1
                         leg_eklenecek_setler = []
 
                         for i in range(leg_set_sayisi):
                             leg_guncel_set_no = leg_baslangic_seti + i
-                            lc_label, lc_w, lc_r = st.columns([1, 2, 2])
-                            lc_label.markdown(f"<div style='margin-top: 25px;'>**{t['set']} {leg_guncel_set_no}**</div>", unsafe_allow_html=True)
+                            lc_label, lc_w, lc_r = st.columns([0.7, 2, 2], vertical_alignment="center")
+                            set_pill(lc_label, leg_guncel_set_no)
                             leg_w_key, leg_r_key = f"leg_w_new_{leg_hareket}_{leg_ekipman}_{leg_guncel_set_no}", f"leg_r_new_{leg_hareket}_{leg_ekipman}_{leg_guncel_set_no}"
                             if leg_w_key not in st.session_state: st.session_state[leg_w_key] = st.session_state.leg_sablon_w
                             if leg_r_key not in st.session_state: st.session_state[leg_r_key] = st.session_state.leg_sablon_r
@@ -744,7 +1077,8 @@ elif st.session_state.sayfa == 'kisi_sayfasi':
         with st.expander(t["legacy_manage_panel"]):
             st.caption(t["legacy_manage_desc"])
             mevcut_kas_gruplari_legacy = df_hareketler['Kas Grubu'].unique() if not df_hareketler.empty else ["Chest", "Back", "Shoulder", "Biceps", "Triceps", "Legs", "Cardio"]
-            lc_kas, lc_har, lc_mek, lc_ekip = st.columns(4)
+            lc_kas, lc_har = st.columns(2)
+            lc_mek, lc_ekip = st.columns(2)
             lc_yeni_kas = lc_kas.selectbox(t["which_muscle"], mevcut_kas_gruplari_legacy, key="legacy_new_muscle")
             lc_yeni_har = lc_har.text_input(t["legacy_new_name"], key="legacy_new_name_input")
             lc_yeni_mek = lc_mek.selectbox(t["mechanic_type"], ["Compound", "Izole", "Kardiyo"], key="legacy_new_mek")
@@ -778,7 +1112,7 @@ elif st.session_state.sayfa == 'kisi_sayfasi':
 
         if secili_hareket:
             mekanik_degeri = filtrelenmis_df[filtrelenmis_df['Hareket Tipi'] == secili_hareket]['Mekanik'].values[0]
-            st.caption(f"{t['mechanic']}: **{mekanik_degeri}**") 
+            mechanic_chip(mekanik_degeri)
             
             veritabanindaki_ekipman = filtrelenmis_df[filtrelenmis_df['Hareket Tipi'] == secili_hareket]['Ekipman'].values[0] if 'Ekipman' in filtrelenmis_df.columns else "Barbell"
             if st.session_state.get("_aktif_gunluk_hareket") != secili_hareket:
@@ -801,7 +1135,7 @@ elif st.session_state.sayfa == 'kisi_sayfasi':
             st.divider()
             
             if mekanik_degeri == "Kardiyo":
-                st.write(f"**{t['cardio_details']}**")
+                subhead(t['cardio_details'])
                 def kalori_hesapla(): st.session_state.kardiyo_kalori = int(st.session_state.kardiyo_sure * 10)
                 if 'kardiyo_sure' not in st.session_state: st.session_state.kardiyo_sure = 30
                 if 'kardiyo_kalori' not in st.session_state: st.session_state.kardiyo_kalori = 300
@@ -816,13 +1150,14 @@ elif st.session_state.sayfa == 'kisi_sayfasi':
                     st.success(f"{secili_hareket} {t['success_cardio']}")
                     st.rerun()
             else:
-                st.write(f"**{t['template_title']}**")
+                subhead(t['template_title'])
                 set_sayisi = st.number_input(t["how_many_sets"], min_value=1, max_value=10, value=3, step=1)
                 c_hedef1, c_hedef2 = st.columns(2)
                 c_hedef1.number_input(t["template_w"], step=2.5, key="sablon_w", on_change=sablon_guncelle)
                 c_hedef2.number_input(t["template_r"], step=1, key="sablon_r", on_change=sablon_guncelle)
                 
-                st.write(f"**{t['edit_sets']}**")
+                subhead(t['edit_sets'])
+                set_table_header([0.7, 2, 2], [t["set"], "kg", t["reps"]])
                 # Bugünkü set sayısı artık Hareket+Ekipman ikilisine göre hesaplanıyor
                 bugunku_setler = df_antrenmanlar[(df_antrenmanlar['Tarih'] == secili_tarih.strftime("%Y-%m-%d")) & (df_antrenmanlar['Kullanıcı'] == st.session_state.secili_kisi) & (df_antrenmanlar['Hareket'] == secili_hareket) & (df_antrenmanlar['Ekipman'] == secili_ekipman)]
                 baslangic_seti = len(bugunku_setler) + 1
@@ -830,8 +1165,8 @@ elif st.session_state.sayfa == 'kisi_sayfasi':
                 
                 for i in range(set_sayisi):
                     guncel_set_no = baslangic_seti + i
-                    c_label, c_w, c_r = st.columns([1,2,2])
-                    c_label.markdown(f"<div style='margin-top: 25px;'>**{t['set']} {guncel_set_no}**</div>", unsafe_allow_html=True)
+                    c_label, c_w, c_r = st.columns([0.7, 2, 2], vertical_alignment="center")
+                    set_pill(c_label, guncel_set_no)
                     w_key, r_key = f"w_new_{secili_hareket}_{secili_ekipman}_{guncel_set_no}", f"r_new_{secili_hareket}_{secili_ekipman}_{guncel_set_no}"
                     if w_key not in st.session_state: st.session_state[w_key] = st.session_state.sablon_w
                     if r_key not in st.session_state: st.session_state[r_key] = st.session_state.sablon_r
@@ -856,7 +1191,8 @@ elif st.session_state.sayfa == 'kisi_sayfasi':
                 st.rerun()
             if st.session_state.yeni_hareket_panel_acik:
                 st.caption(t["new_exercise_desc"])
-                c_kas, c_har, c_mek, c_ekip = st.columns(4)
+                c_kas, c_har = st.columns(2)
+                c_mek, c_ekip = st.columns(2)
                 yeni_kas = c_kas.selectbox(t["which_muscle"], mevcut_kas_gruplari, key="new_muscle")
                 yeni_har = c_har.text_input(t["new_exercise_name"])
                 yeni_mek = c_mek.selectbox(t["mechanic_type"], ["Compound", "Izole", "Kardiyo"])
@@ -869,7 +1205,7 @@ elif st.session_state.sayfa == 'kisi_sayfasi':
                     else: st.warning(t["warn_name"])
 
     st.divider()
-    st.markdown(f"<h2 style='font-size: 1.5rem;'>📋 {secili_tarih.strftime('%d/%m/%Y')} {t['workout_of'] if secilen_dil == 'English' else 'Tarihli ' + t['workout_of']}</h2>", unsafe_allow_html=True)
+    page_header(t['day_workout'], icon="📋", subtitle=f"📅 {secili_tarih.strftime('%d/%m/%Y')}", soft=True)
     
     gunluk_gecmis = df_antrenmanlar[(df_antrenmanlar['Grup'] == st.session_state.secili_grup) & (df_antrenmanlar['Kullanıcı'] == st.session_state.secili_kisi) & (df_antrenmanlar['Tarih'] == secili_tarih.strftime("%Y-%m-%d"))]
     kisi_tum_gecmis = df_antrenmanlar[(df_antrenmanlar['Grup'] == st.session_state.secili_grup) & (df_antrenmanlar['Kullanıcı'] == st.session_state.secili_kisi)].copy()
@@ -878,13 +1214,21 @@ elif st.session_state.sayfa == 'kisi_sayfasi':
         kisi_tum_gecmis = kisi_tum_gecmis.sort_values(by=['Tarih_sirala', 'Set'], ascending=[False, True]).drop(columns=['Tarih_sirala'], errors='ignore')
 
     if not gunluk_gecmis.empty:
-        c_exp1, c_exp2 = st.columns(2)
-        with c_exp1:
-            st.download_button(label=t["export_csv"], data=gunluk_gecmis.to_csv(index=False).encode('utf-8-sig'), file_name=f"antrenman_{st.session_state.secili_kisi}_{secili_tarih.strftime('%Y-%m-%d')}.csv", mime="text/csv", use_container_width=True, key="gunluk_export_csv")
-        with c_exp2:
-            if not kisi_tum_gecmis.empty:
-                st.download_button(label=t["export_all_csv"], data=kisi_tum_gecmis.to_csv(index=False).encode('utf-8-sig'), file_name=f"tum_antrenmanlar_{st.session_state.secili_kisi}.csv", mime="text/csv", use_container_width=True, key="gunluk_export_all_csv")
-        st.write("")
+        # CSV verisi kartlar çizilmeden önce hazırlanır (indirme butonları sayfanın altında gösterilir)
+        gunluk_csv_verisi = gunluk_gecmis.to_csv(index=False).encode('utf-8-sig')
+
+        # Günün kısa özeti (sadece görüntüleme)
+        _ozet_df = gunluk_gecmis[gunluk_gecmis['Mekanik'] != 'Kardiyo']
+        _hacim = float((pd.to_numeric(_ozet_df['Ağırlık'], errors='coerce').fillna(0) * pd.to_numeric(_ozet_df['Tekrar'], errors='coerce').fillna(0)).sum())
+        _hareket_sayisi = len(set(zip(gunluk_gecmis['Hareket'], gunluk_gecmis.get('Ekipman', '-'))))
+        st.markdown(
+            f"<div class='summary-strip'>"
+            f"<div class='stat'><div class='s-label'>{t['exercises_short']}</div><div class='s-value'>{_hareket_sayisi}</div></div>"
+            f"<div class='stat'><div class='s-label'>{t['sets_short']}</div><div class='s-value'>{len(_ozet_df)}</div></div>"
+            f"<div class='stat hl'><div class='s-label'>{t['volume_short']}</div><div class='s-value'>{_hacim:,.0f}<span class='s-unit'>kg</span></div></div>"
+            f"</div>",
+            unsafe_allow_html=True,
+        )
 
         # Günlük kayıtları artık (Hareket, Ekipman) ikilisine göre gruplandırıyoruz.
         # Bu sayede "Barbell Horizontal Press" ile "Dumbbell Horizontal Press" ayrı kartlarda görünür.
@@ -898,11 +1242,11 @@ elif st.session_state.sayfa == 'kisi_sayfasi':
             tam_adi = f"{ilk.get('Ekipman','-')} {ilk['Kas Grubu']} {hareket}".replace("- ", "").strip()
             
             if ilk['Mekanik'] == "Kardiyo":
-                ozet = " | ".join([f"{row['Süre (dk)']} dk, {row['Kalori']} kcal" for _, row in hareket_setleri.iterrows()])
-                baslik = f"🏃‍♂️ **{tam_adi}** 👉 {ozet}"
+                ozet = " · ".join([f"{row['Süre (dk)']} dk, {row['Kalori']} kcal" for _, row in hareket_setleri.iterrows()])
+                baslik = f"🏃‍♂️ **{tam_adi}** — {ozet}"
             else:
-                ozet = " | ".join([f"{row['Ağırlık']}x{row['Tekrar']}" for _, row in hareket_setleri.iterrows()])
-                baslik = f"💪 **{tam_adi}** ({len(hareket_setleri)} {t['set']}) 👉 {ozet}"
+                ozet = " · ".join([f"{row['Ağırlık']}×{row['Tekrar']}" for _, row in hareket_setleri.iterrows()])
+                baslik = f"💪 **{tam_adi}** — {len(hareket_setleri)} {t['set']} · {ozet}"
             
             with st.expander(baslik, key=f"exp_{hareket}_{ekipman_grp}_{secili_tarih}"):
                 h_key = f"{hareket}_{ekipman_grp}_{secili_tarih}"
@@ -930,17 +1274,21 @@ elif st.session_state.sayfa == 'kisi_sayfasi':
                     grafik_ciz(hareket, ekipman_grp)
                     st.divider()
 
+                if ilk['Mekanik'] == 'Kardiyo':
+                    set_table_header([0.7, 2, 2, 0.6], ["", t["min_unit"], "kcal", ""])
+                else:
+                    set_table_header([0.7, 2, 2, 0.6], [t["set"], "kg", t["reps"], ""])
                 for idx, row in hareket_setleri.iterrows():
-                    cL, c1, c2, cS = st.columns([0.8, 1.5, 1.5, 0.6])
+                    cL, c1, c2, cS = st.columns([0.7, 2, 2, 0.6], vertical_alignment="center")
                     if row['Mekanik'] == 'Kardiyo':
-                        cL.markdown("<div style='margin-top: 8px;'>⏱️</div>", unsafe_allow_html=True)
+                        set_pill(cL, "⏱", cardio=True)
                         c1.number_input(t["duration"], min_value=0, value=int(row['Süre (dk)']), step=1, key=f"ls_{idx}", label_visibility="collapsed")
                         c2.number_input(t["calories"], min_value=0, value=int(row['Kalori']), step=10, key=f"lk_{idx}", label_visibility="collapsed")
                     else:
-                        cL.markdown(f"<div style='margin-top: 8px;'>{t['set']} {int(row['Set'])}</div>", unsafe_allow_html=True)
+                        set_pill(cL, int(row['Set']))
                         c1.number_input(t["weight"], min_value=0.0, value=float(row['Ağırlık']), step=2.5, key=f"lw_{idx}", label_visibility="collapsed")
                         c2.number_input(t["reps"], min_value=0, value=int(row['Tekrar']), step=1, key=f"lr_{idx}", label_visibility="collapsed")
-                    if cS.button("❌", key=f"d_{idx}"):
+                    if cS.button("✕", key=f"d_{idx}"):
                         conn.update(worksheet="Antrenmanlar", data=df_antrenmanlar.drop(idx))
                         st.cache_data.clear()
                         st.rerun()
@@ -956,6 +1304,14 @@ elif st.session_state.sayfa == 'kisi_sayfasi':
                     conn.update(worksheet="Antrenmanlar", data=df_antrenmanlar)
                     st.cache_data.clear()
                     st.rerun()
+
+        st.write("")
+        c_exp1, c_exp2 = st.columns(2)
+        with c_exp1:
+            st.download_button(label=t["export_csv"], data=gunluk_csv_verisi, file_name=f"antrenman_{st.session_state.secili_kisi}_{secili_tarih.strftime('%Y-%m-%d')}.csv", mime="text/csv", use_container_width=True, key="gunluk_export_csv")
+        with c_exp2:
+            if not kisi_tum_gecmis.empty:
+                st.download_button(label=t["export_all_csv"], data=kisi_tum_gecmis.to_csv(index=False).encode('utf-8-sig'), file_name=f"tum_antrenmanlar_{st.session_state.secili_kisi}.csv", mime="text/csv", use_container_width=True, key="gunluk_export_all_csv")
     else:
         st.info(t["no_workout"])
         if not kisi_tum_gecmis.empty:
@@ -965,7 +1321,7 @@ elif st.session_state.sayfa == 'kisi_sayfasi':
 # --- SAYFA 4: ANTRENMAN PROGRAMLARI ---
 elif st.session_state.sayfa == 'program_sayfasi':
     render_top_nav()
-    st.markdown(f"<h2>📋 {st.session_state.secili_kisi} - {t['programs_title']}</h2>", unsafe_allow_html=True)
+    page_header(t['programs_title'], icon="📋", subtitle=f"👤 {_e(st.session_state.secili_kisi)}")
 
     df_programlar = veri_getir("Programlar", ["Kullanıcı", "Program Adı"])
     df_program_detay = veri_getir("ProgramDetay", ["Program Adı", "Kullanıcı", "Kas Grubu", "Hareket", "Set", "Ağırlık", "Tekrar", "Ekipman"])
@@ -975,8 +1331,8 @@ elif st.session_state.sayfa == 'program_sayfasi':
     kisi_programlari = df_programlar[df_programlar['Kullanıcı'] == st.session_state.secili_kisi]
 
     if st.session_state.secili_program is None:
-        with st.container(border=True):
-            st.markdown(f"<h3 style='font-size: 1.2rem; color: #888;'>{t['existing_programs']}</h3>", unsafe_allow_html=True)
+        with st.container(border=True, key="card_list_programs"):
+            section_label(t['existing_programs'], len(kisi_programlari) if not kisi_programlari.empty else None)
             if not kisi_programlari.empty:
                 for idx, row in kisi_programlari.iterrows():
                     if st.button(f"📁 {row['Program Adı']}", key=f"p_{idx}", use_container_width=True):
@@ -985,8 +1341,8 @@ elif st.session_state.sayfa == 'program_sayfasi':
             else:
                 st.info(t["no_program"])
                 
-        with st.container(border=True):
-            st.markdown(f"<h3 style='font-size: 1.2rem; color: #888;'>➕ {t['create_program']}</h3>", unsafe_allow_html=True)
+        with st.container(border=True, key="card_new_program"):
+            section_label(t['create_program'])
             yeni_prog = st.text_input(t["new_program_name"], label_visibility="collapsed")
             if st.button(t["create_program"], type="primary", use_container_width=True):
                 if yeni_prog and yeni_prog not in kisi_programlari['Program Adı'].values:
@@ -997,14 +1353,16 @@ elif st.session_state.sayfa == 'program_sayfasi':
                 elif yeni_prog: st.warning(t["program_exists"])
 
     else:
-        st.markdown(f"<h3>📁 {st.session_state.secili_program}</h3>", unsafe_allow_html=True)
-        if st.button(t["back_to_programs"], use_container_width=True):
-            st.session_state.secili_program = None
-            st.rerun()
+        with st.container(key="back_programs"):
+            if st.button(t["back_to_programs"], use_container_width=True):
+                st.session_state.secili_program = None
+                st.rerun()
+        section_label(f"📁 {t['program_eyebrow']}")
+        st.markdown(f"<div class='ph-title' style='font-size:1.35rem;font-weight:800;margin:-4px 0 10px 0;'>{_e(st.session_state.secili_program)}</div>", unsafe_allow_html=True)
 
         program_icerik = df_program_detay[(df_program_detay['Program Adı'] == st.session_state.secili_program) & (df_program_detay['Kullanıcı'] == st.session_state.secili_kisi)]
 
-        st.write(f"**{t['program_content']}**")
+        section_label(t['program_content'])
         if not program_icerik.empty:
             # Program içeriği de (Hareket, Ekipman) ikilisine göre gruplandırılıyor
             program_icerik = program_icerik.copy()
@@ -1014,9 +1372,9 @@ elif st.session_state.sayfa == 'program_sayfasi':
                 h_set_p = program_icerik[program_icerik['_grp'] == grp_key].sort_values(by="Set")
                 ilk_p = h_set_p.iloc[0]
                 tam_adi = f"{ilk_p.get('Ekipman','-')} {ilk_p['Kas Grubu']} {hareket_p}".replace("- ", "").strip()
-                ozet = " | ".join([f"{r['Ağırlık']}x{r['Tekrar']}" for _, r in h_set_p.iterrows()])
+                ozet = " · ".join([f"{r['Ağırlık']}×{r['Tekrar']}" for _, r in h_set_p.iterrows()])
                 
-                with st.expander(f"💪 **{tam_adi}** 👉 {ozet}", key=f"e_{hareket_p}_{ekipman_p_grp}"):
+                with st.expander(f"💪 **{tam_adi}** — {len(h_set_p)} {t['set']} · {ozet}", key=f"e_{hareket_p}_{ekipman_p_grp}"):
                     p_key = f"{st.session_state.secili_program}_{hareket_p}_{ekipman_p_grp}"
                     if st.button(t["delete_exercise_from_program"], key=f"d_p_{p_key}", use_container_width=True):
                         st.session_state.program_silme_onay_hareket = None if st.session_state.program_silme_onay_hareket == p_key else p_key
@@ -1031,12 +1389,13 @@ elif st.session_state.sayfa == 'program_sayfasi':
                         if c2.button(t["cancel"], key=f"c_d_{p_key}", use_container_width=True): st.session_state.program_silme_onay_hareket = None
 
                     st.divider()
+                    set_table_header([0.7, 2, 2, 0.6], [t["set"], "kg", t["reps"], ""])
                     for idx, row in h_set_p.iterrows():
-                        cL, cW, cR, cS = st.columns([0.8, 1.5, 1.5, 0.6])
-                        cL.markdown(f"<div style='margin-top: 8px;'>{t['set']} {int(row['Set'])}</div>", unsafe_allow_html=True)
+                        cL, cW, cR, cS = st.columns([0.7, 2, 2, 0.6], vertical_alignment="center")
+                        set_pill(cL, int(row['Set']))
                         cW.number_input(t["weight"], min_value=0.0, value=float(row['Ağırlık']), step=2.5, key=f"pw_{idx}", label_visibility="collapsed")
                         cR.number_input(t["reps"], min_value=0, value=int(row['Tekrar']), step=1, key=f"pr_{idx}", label_visibility="collapsed")
-                        if cS.button("❌", key=f"pd_{idx}"):
+                        if cS.button("✕", key=f"pd_{idx}"):
                             conn.update(worksheet="ProgramDetay", data=df_program_detay.drop(idx))
                             st.cache_data.clear()
                             st.rerun()
@@ -1050,8 +1409,8 @@ elif st.session_state.sayfa == 'program_sayfasi':
         else:
             st.info(t["no_program_content"])
 
-        with st.container(border=True):
-            st.markdown(f"<h3 style='font-size: 1.2rem; color: #888;'>➕ {t['add_exercise_to_program']}</h3>", unsafe_allow_html=True)
+        with st.container(border=True, key="card_add_to_program"):
+            section_label(t['add_exercise_to_program'])
             pc1, pc2 = st.columns(2)
             mevcut_kas = df_hareketler['Kas Grubu'].unique() if not df_hareketler.empty else ["Chest", "Back", "Legs"]
             p_kas = pc1.selectbox(t["muscle_group"], mevcut_kas, key="pkas")
@@ -1092,11 +1451,12 @@ elif st.session_state.sayfa == 'program_sayfasi':
                     mevcut_prog_set_har = program_icerik[(program_icerik['Hareket'] == p_hareket) & (program_icerik['Ekipman'] == p_secili_ekipman)]
                     p_bas_set = len(mevcut_prog_set_har) + 1
                     p_ekle_set = []
+                    set_table_header([0.7, 2, 2], [t["set"], "kg", t["reps"]])
 
                     for i in range(p_set_sayisi):
                         g_set = p_bas_set + i
-                        cl, cw, cr = st.columns([1, 2, 2])
-                        cl.markdown(f"<div style='margin-top: 25px;'>**{t['set']} {g_set}**</div>", unsafe_allow_html=True)
+                        cl, cw, cr = st.columns([0.7, 2, 2], vertical_alignment="center")
+                        set_pill(cl, g_set)
                         kw, kr = f"p_w_new_{p_hareket}_{p_secili_ekipman}_{g_set}", f"p_r_new_{p_hareket}_{p_secili_ekipman}_{g_set}"
                         if kw not in st.session_state: st.session_state[kw] = st.session_state.p_sablon_w
                         if kr not in st.session_state: st.session_state[kr] = st.session_state.p_sablon_r
@@ -1124,7 +1484,7 @@ elif st.session_state.sayfa == 'program_sayfasi':
                 if pleg_hareket:
                     pleg_row = df_legacy_prog[(df_legacy_prog['Kas Grubu'] == pleg_kas) & (df_legacy_prog['Hareket Tipi'] == pleg_hareket)].iloc[0]
                     pleg_mekanik = pleg_row['Mekanik']
-                    st.caption(f"{t['mechanic']}: **{pleg_mekanik}**")
+                    mechanic_chip(pleg_mekanik)
 
                     if pleg_mekanik == "Kardiyo":
                         st.warning(t["cardio_not_supported_in_program"])
@@ -1153,11 +1513,12 @@ elif st.session_state.sayfa == 'program_sayfasi':
                         pleg_mevcut_setler = program_icerik[(program_icerik['Hareket'] == pleg_hareket) & (program_icerik['Ekipman'] == pleg_ekipman)]
                         pleg_bas_set = len(pleg_mevcut_setler) + 1
                         pleg_ekle_set = []
+                        set_table_header([0.7, 2, 2], [t["set"], "kg", t["reps"]])
 
                         for i in range(pleg_set_sayisi):
                             pleg_g_set = pleg_bas_set + i
-                            plcl, plcw, plcr = st.columns([1, 2, 2])
-                            plcl.markdown(f"<div style='margin-top: 25px;'>**{t['set']} {pleg_g_set}**</div>", unsafe_allow_html=True)
+                            plcl, plcw, plcr = st.columns([0.7, 2, 2], vertical_alignment="center")
+                            set_pill(plcl, pleg_g_set)
                             pleg_w_key, pleg_r_key = f"pleg_w_new_{pleg_hareket}_{pleg_ekipman}_{pleg_g_set}", f"pleg_r_new_{pleg_hareket}_{pleg_ekipman}_{pleg_g_set}"
                             if pleg_w_key not in st.session_state: st.session_state[pleg_w_key] = st.session_state.pleg_sablon_w
                             if pleg_r_key not in st.session_state: st.session_state[pleg_r_key] = st.session_state.pleg_sablon_r
@@ -1185,12 +1546,12 @@ elif st.session_state.sayfa == 'program_sayfasi':
 # --- SAYFA 5: İSTATİSTİKLER ---
 elif st.session_state.sayfa == 'istatistik_sayfasi':
     render_top_nav()
-    st.markdown(f"<h2>{t['stats_title']}</h2>", unsafe_allow_html=True)
+    page_header(t['stats_title'].replace("📊", "").strip(), icon="📊", subtitle=f"👤 {_e(st.session_state.secili_kisi)} · 👥 {_e(st.session_state.secili_grup)}")
     
     df_antrenmanlar = veri_getir("Antrenmanlar", ["Tarih", "Grup", "Kullanıcı", "Kas Grubu", "Hareket", "Set", "Ağırlık", "Tekrar", "Süre (dk)", "Kalori", "Mekanik", "Ekipman"])
     
-    with st.container(border=True):
-        st.markdown(f"<h3 style='font-size: 1.2rem; color: #888;'>{t['personal_summary']}</h3>", unsafe_allow_html=True)
+    with st.container(border=True, key="card_stat_summary"):
+        section_label(t['personal_summary'])
         kisi_gecmis = df_antrenmanlar[(df_antrenmanlar['Grup'] == st.session_state.secili_grup) & (df_antrenmanlar['Kullanıcı'] == st.session_state.secili_kisi)].copy()
 
         if kisi_gecmis.empty:
@@ -1203,19 +1564,24 @@ elif st.session_state.sayfa == 'istatistik_sayfasi':
                 axis=1
             )
             
-            c1, c2, c3 = st.columns(3)
-            c1.metric(t["total_days"], f"{kisi_gecmis['Tarih'].nunique()} Gün")
-            c2.metric(t["most_frequent"], kisi_gecmis['Tam Hareket'].value_counts().idxmax() if not kisi_gecmis.empty else "-")
-            c3.metric(t["total_cardio"], f"{int(pd.to_numeric(kisi_gecmis['Süre (dk)'], errors='coerce').fillna(0).sum())} dk")
-            
-            st.write("")
+            _toplam_gun = kisi_gecmis['Tarih'].nunique()
+            _en_sik = kisi_gecmis['Tam Hareket'].value_counts().idxmax() if not kisi_gecmis.empty else "-"
+            _toplam_kardiyo = int(pd.to_numeric(kisi_gecmis['Süre (dk)'], errors='coerce').fillna(0).sum())
+            st.markdown(
+                f"<div class='stat-grid'>"
+                f"<div class='stat hl'><div class='s-label'>{t['total_days']}</div><div class='s-value'>{_toplam_gun}<span class='s-unit'>{t['days_unit']}</span></div></div>"
+                f"<div class='stat'><div class='s-label'>{t['total_cardio']}</div><div class='s-value'>{_toplam_kardiyo}<span class='s-unit'>{t['min_unit']}</span></div></div>"
+                f"<div class='stat' style='grid-column: 1 / -1;'><div class='s-label'>{t['most_frequent']}</div><div class='s-value small'>{_e(_en_sik)}</div></div>"
+                f"</div>",
+                unsafe_allow_html=True,
+            )
             stat_export = kisi_gecmis.drop(columns=['Tam Hareket'], errors='ignore').copy()
             stat_export['Tarih_sirala'] = pd.to_datetime(stat_export['Tarih'], errors='coerce')
             stat_export = stat_export.sort_values(by=['Tarih_sirala', 'Set'], ascending=[False, True]).drop(columns=['Tarih_sirala'], errors='ignore')
             st.download_button(label=t["export_all_csv"], data=stat_export.to_csv(index=False).encode('utf-8-sig'), file_name=f"tum_antrenmanlar_{st.session_state.secili_kisi}.csv", mime="text/csv", use_container_width=True, key="stat_export_all_csv")
 
-    with st.container(border=True):
-        st.markdown(f"<h3 style='font-size: 1.2rem; color: #888;'>{t['weight_history']}</h3>", unsafe_allow_html=True)
+    with st.container(border=True, key="card_stat_weight"):
+        section_label(t['weight_history'])
         agirlik_h = kisi_gecmis[kisi_gecmis['Mekanik'] != 'Kardiyo']['Tam Hareket'].unique() if not kisi_gecmis.empty else []
         
         if len(agirlik_h) > 0:
@@ -1226,24 +1592,24 @@ elif st.session_state.sayfa == 'istatistik_sayfasi':
                 g = graf.groupby('Tarih')['Ağırlık'].max().reset_index().sort_values(by='Tarih')
                 g['Tarih'] = g['Tarih'].dt.strftime('%d/%m/%Y')
                 g.set_index('Tarih', inplace=True)
-                st.line_chart(g['Ağırlık'].astype(float))
+                st.line_chart(g['Ağırlık'].astype(float), color=GRAFIK_RENGI)
         else:
             st.info(t["no_chart_data"])
             
-    with st.container(border=True):
-        st.markdown(f"<h3 style='font-size: 1.2rem; color: #888;'>{t['group_comparison']}</h3>", unsafe_allow_html=True)
+    with st.container(border=True, key="card_stat_group"):
+        section_label(t['group_comparison'])
         grup_gecmisi = df_antrenmanlar[df_antrenmanlar['Grup'] == st.session_state.secili_grup].copy()
 
         if not grup_gecmisi.empty:
-            st.markdown(f"**{t['comp_days']}**")
+            subhead(t['comp_days'])
             gun_s = grup_gecmisi.groupby('Kullanıcı')['Tarih'].nunique().reset_index()
             gun_s.set_index('Kullanıcı', inplace=True)
-            st.bar_chart(gun_s['Tarih'])
+            st.bar_chart(gun_s['Tarih'], color=GRAFIK_RENGI)
 
-            st.markdown(f"**{t['comp_cardio']}**")
+            subhead(t['comp_cardio'])
             grup_gecmisi['Süre (dk)'] = pd.to_numeric(grup_gecmisi['Süre (dk)'], errors='coerce').fillna(0)
             kard_s = grup_gecmisi.groupby('Kullanıcı')['Süre (dk)'].sum().reset_index()
             kard_s.set_index('Kullanıcı', inplace=True)
-            st.bar_chart(kard_s['Süre (dk)'])
+            st.bar_chart(kard_s['Süre (dk)'], color="#3DDC97")
         else:
             st.info(t["no_chart_data"])
